@@ -20,34 +20,29 @@
   letter-spacing: 0.3em;
 }
 
-.link {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-  padding: 2px 0 5px;
-  border-bottom: 1px solid #242423;
-  color: #333331;
-  font-family: inherit;
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  transition:
-    color 180ms ease,
-    border-color 180ms ease,
-    gap 180ms ease;
+.address {
+  margin: 14px 0 0;
+  color: #5d5d5a;
+  font-size: 0.86rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
 }
 
-.link:hover {
-  gap: 17px;
-  border-color: #83837f;
-  color: #777772;
+.mapImage {
+  display: block;
+  width: min(560px, 100%);
+  height: auto;
+  margin-top: 30px;
 }
 
-.link:focus-visible {
-  border-radius: 2px;
-  outline: 2px solid #222;
-  outline-offset: 6px;
+.mapLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 26px;
 }
 
 @media (max-width: 640px) {
@@ -65,8 +60,17 @@
     letter-spacing: 0.25em;
   }
 
-  .link {
-    margin-top: 17px;
-    font-size: 0.82rem;
+  .address {
+    margin-top: 12px;
+    font-size: 0.78rem;
+  }
+
+  .mapLinks {
+    margin-top: 22px;
+  }
+
+  .mapImage {
+    width: 100%;
+    margin-top: 26px;
   }
 }

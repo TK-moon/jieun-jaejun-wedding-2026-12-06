@@ -12,10 +12,12 @@ const App: FC<Props> = () => {
     <main className={styles.weddingPage}>
       <LineMotif />
       <Hero>
-        <div className={styles.countdownSection}>
-          <p className={styles.countdownIntro}>우리의 결혼식까지</p>
+        <section className={styles.countdownSection} aria-labelledby="countdown-intro">
+          <p className={styles.countdownIntro} id="countdown-intro">
+            우리의 결혼식까지
+          </p>
           <CountdownTimer />
-        </div>
+        </section>
         <Venue />
       </Hero>
     </main>

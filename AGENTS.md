@@ -38,6 +38,9 @@
 - Use arrow functions for components and exported helpers.
 - Keep components focused on rendering and interaction. Move pure calculations and static data into `_utils` and `_constants` when appropriate.
 - Prefer direct, named imports over default imports and broad barrel imports.
+- Use native semantic HTML before `div` and ARIA roles. Choose `main`, `section`, `nav`, `header`, `footer`, `article`, `address`, `time`, `ol`/`ul`, and heading elements when they describe the content.
+- Use `dl`, `dt`, and `dd` for term-and-description pairs such as labels and values, stop names and routes, or specifications. Use `div` only for non-semantic layout grouping, including decorative elements marked `aria-hidden`.
+- Do not add an ARIA role when the equivalent native HTML element provides the same meaning.
 
 ## Styling
 
