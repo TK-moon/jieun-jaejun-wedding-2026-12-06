@@ -1,0 +1,28 @@
+.motif {
+  position: absolute;
+  inset: 4.5vh 0 auto;
+  height: clamp(88px, 14vw, 160px);
+  pointer-events: none;
+}
+
+.motif svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.motif path {
+  fill: none;
+  stroke: #d8d8d6;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+@media (max-width: 640px) {
+  .motif {
+    inset-top: 3vh;
+    width: 140%;
+    height: 92px;
+    margin-left: -20%;
+  }
+}

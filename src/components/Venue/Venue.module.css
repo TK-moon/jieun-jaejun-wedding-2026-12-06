@@ -1,0 +1,72 @@
+.venue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(54px, 8vh, 82px);
+}
+
+.rule {
+  width: 112px;
+  height: 1px;
+  margin-bottom: 32px;
+  background: #a8a8a5;
+}
+
+.name {
+  margin: 0;
+  color: #1e1e1d;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 2px 0 5px;
+  border-bottom: 1px solid #242423;
+  color: #333331;
+  font-family: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    gap 180ms ease;
+}
+
+.link:hover {
+  gap: 17px;
+  border-color: #83837f;
+  color: #777772;
+}
+
+.link:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid #222;
+  outline-offset: 6px;
+}
+
+@media (max-width: 640px) {
+  .venue {
+    margin-top: clamp(48px, 8vh, 66px);
+  }
+
+  .rule {
+    width: 72px;
+    margin-bottom: 25px;
+  }
+
+  .name {
+    font-size: 0.98rem;
+    letter-spacing: 0.25em;
+  }
+
+  .link {
+    margin-top: 17px;
+    font-size: 0.82rem;
+  }
+}

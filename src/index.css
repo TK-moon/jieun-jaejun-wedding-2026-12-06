@@ -1,7 +1,13 @@
 :root {
   --display-font: 'Iowan Old Style', 'Baskerville', 'Times New Roman', 'Noto Serif KR', serif;
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
-    'Noto Sans KR', 'Segoe UI', sans-serif;
+  font-family:
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Segoe UI',
+    sans-serif;
   color: #1d1d1c;
   background: #fff;
   font-synthesis: none;
@@ -30,4 +36,13 @@ a {
 ::selection {
   color: #fff;
   background: #222;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

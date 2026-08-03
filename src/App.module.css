@@ -1,0 +1,30 @@
+.weddingPage {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #fff;
+}
+
+.countdownSection {
+  width: min(940px, 100%);
+  margin-top: clamp(28px, 4.5vh, 48px);
+}
+
+.countdownIntro {
+  margin: 0 0 clamp(26px, 3.6vh, 38px);
+  color: #535352;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.09em;
+}
+
+@media (max-width: 640px) {
+  .countdownSection {
+    margin-top: 34px;
+  }
+
+  .countdownIntro {
+    margin-bottom: 29px;
+    font-size: 0.84rem;
+  }
+}

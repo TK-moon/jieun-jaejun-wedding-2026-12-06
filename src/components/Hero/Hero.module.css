@@ -1,0 +1,72 @@
+.hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100svh;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(164px, 19vh, 210px) 24px clamp(54px, 7vh, 84px);
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  color: #161616;
+  font-family: var(--display-font);
+  font-size: clamp(3rem, 6.1vw, 6.25rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: 0.11em;
+}
+
+.titleRule {
+  width: 48px;
+  height: 1px;
+  margin-top: clamp(30px, 4.2vh, 46px);
+  background: #a6a6a2;
+}
+
+.date {
+  margin: 27px 0 0;
+  color: #1d1d1c;
+  font-size: clamp(0.82rem, 1.35vw, 1.08rem);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    justify-content: flex-start;
+    padding: clamp(132px, 20vh, 166px) 18px 42px;
+  }
+
+  .title {
+    max-width: 100%;
+    font-size: clamp(2rem, 10.3vw, 2.75rem);
+    letter-spacing: 0.055em;
+    white-space: nowrap;
+  }
+
+  .titleRule {
+    width: 34px;
+    margin-top: 28px;
+  }
+
+  .date {
+    margin-top: 21px;
+    font-size: clamp(0.7rem, 3vw, 0.8rem);
+    letter-spacing: 0.2em;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero {
+    padding-inline: 12px;
+  }
+
+  .title {
+    font-size: 1.92rem;
+  }
+}
