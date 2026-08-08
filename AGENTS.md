@@ -6,9 +6,20 @@
 - Preserve existing user changes. Do not delete assets, configuration, or unrelated files unless explicitly asked.
 - Keep changes focused on the requested feature or fix.
 
+## App Composition
+
+`src/App.tsx` has two regions:
+
+1. **Primary design** — the first `<main>` that composes `src/sections/*` (e.g. `BannerSection`, `TicketSection`).
+   - This is the active product UI. New screens, layout, and visual design belong here.
+2. **Reference archive** — the legacy block under `weddingPage` (`Hero`, `CountdownTimer`, `Venue`, `LineMotif`, and related styles).
+   - Keep it for wedding facts, assets, map links, transport copy, and reusable logic only.
+   - Do not extend or polish its visual design. When those features move into the primary design, reuse the data and logic, then restyle inside `src/sections`.
+
 ## Project Structure
 
-- Put each React component in its own directory under `src/components/<ComponentName>/`.
+- Put page sections for the primary design under `src/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
+- Put shared or reusable units under `src/components/<ComponentName>/`.
 - Keep the component implementation in `<ComponentName>.tsx` and its component-scoped style in `<ComponentName>.module.css`.
 - Co-locate component-specific supporting code in underscored directories:
   - `_constants/index.ts` for static values, labels, and configuration.
@@ -48,6 +59,15 @@
 - Use `src/index.css` only for global foundations: root variables, browser resets, base elements, and global accessibility preferences.
 - Do not use global element selectors or global class names in component styles unless targeting a child element owned by the component.
 - Keep responsive and interaction styles next to the component they affect.
+
+### Layout
+
+- Section content frames share one width and horizontal padding from `src/index.css`:
+  - `--layout-frame-width` for the main content frame (e.g. Banner `.frame`, Ticket `.ticket_frame`)
+  - `--layout-inline-padding` for section horizontal padding
+  - `--layout-section-padding-block` for non-full-viewport section vertical padding
+- Do not hardcode a competing frame max-width in section CSS. Change the shared variables when the content column needs to grow or shrink.
+- Keep section frames horizontally centered with the shared inline padding so stacked sections align.
 
 ## Formatting and Linting
 

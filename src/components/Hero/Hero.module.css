@@ -3,7 +3,6 @@
   z-index: 1;
   display: flex;
   min-height: 100svh;
-  box-sizing: border-box;
   flex-direction: column;
   align-items: center;
   justify-content: center;
