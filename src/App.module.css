@@ -13,7 +13,7 @@
 .countdownIntro {
   margin: 0 0 clamp(26px, 3.6vh, 38px);
   color: #535352;
-  font-size: 0.95rem;
+  font-size: 1.52rem;
   font-weight: 400;
   letter-spacing: 0.09em;
 }
@@ -25,6 +25,6 @@
 
   .countdownIntro {
     margin-bottom: 29px;
-    font-size: 0.84rem;
+    font-size: 1.34rem;
   }
 }
