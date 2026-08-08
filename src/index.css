@@ -8,24 +8,50 @@
     'Noto Sans KR',
     'Segoe UI',
     sans-serif;
-  color: #1d1d1c;
-  background: #fff;
+  color: var(--color-ink);
+  background: var(--color-canvas);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* —— Color palette: ivory ticket × sky accent —— */
+  /* Surfaces */
+  --color-canvas: #fffcf7; /* 페이지 기본 배경 (웜 화이트) */
+  --color-paper: #f7f3eb; /* 섹션/티켓 면 */
+  --color-paper-raised: #fffdf9; /* 카드·티켓 본문처럼 살짝 띄울 면 */
+  --color-sky-wash: #eaf4fb; /* 하늘색 연한 배경 포인트 */
+
+  /* Ink (텍스트) */
+  --color-ink: #1c2430; /* 본문 — 쿨 다크로 항공권 잉크 느낌 */
+  --color-ink-muted: #5c6570; /* 보조 문장, 라벨 */
+  --color-ink-subtle: #8b929a; /* 캡션, 메타, 희미한 안내 */
+
+  /* Sky accent (항공·하늘 포인트) */
+  --color-sky: #5b9fd4; /* 메인 포인트 — CTA, 강조 라인, 아이콘 */
+  --color-sky-soft: #a9cfe8; /* 연한 포인트 — 점선, 도장 테두리 */
+  --color-sky-deep: #2f6fa3; /* 호버/눌림, 강한 링크 */
+
+  /* Lines & stamp */
+  --color-line: #ddd7cc; /* 구분선, 절취선 */
+  --color-line-soft: #ebe6dc; /* 아주 옅은 보더 */
+  --color-stamp: #3d8bc4; /* 보딩패스 스탬프·배지용 */
+
+  /* Selection */
+  --color-selection-fg: #fffdf9;
+  --color-selection-bg: var(--color-sky-deep);
 }
 
 html {
   min-width: 320px;
-  background: #fff;
+  background: var(--color-canvas);
 }
 
 body {
   min-width: 320px;
   min-height: 100svh;
   margin: 0;
-  background: #fff;
+  background: var(--color-canvas);
 }
 
 button,
@@ -34,8 +60,8 @@ a {
 }
 
 ::selection {
-  color: #fff;
-  background: #222;
+  color: var(--color-selection-fg);
+  background: var(--color-selection-bg);
 }
 
 @media (prefers-reduced-motion: reduce) {
