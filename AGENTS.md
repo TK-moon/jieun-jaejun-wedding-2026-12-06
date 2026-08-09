@@ -8,12 +8,13 @@
 
 ## App Composition
 
-`src/App.tsx` composes the primary invitation UI inside `<main>` from `src/sections/*`:
+`src/App.tsx` composes the primary invitation UI inside `<main>` from `src/sections/*`, then site chrome such as the footer:
 
-- Current order: `BannerSection` → `GreetingSection` → `TicketSection` → `ContactSection`.
+- Current order: `BannerSection` → `GreetingSection` → `TicketSection` → `ContactSection`, then `FooterSection` after `</main>`.
 - New screens, layout, and visual design belong in `src/sections`.
 - Shared UI (titles, toast, map links, icons) belongs in `src/components`.
 - Wedding facts (names, phones, accounts, venue, ceremony) live in `src/constants` (`WEDDING_INFO`). Do not hardcode those values inside section components.
+- Site/creator footer copy lives in `src/sections/FooterSection/_constants` (`SITE_INFO`).
 
 ## Project Structure
 
