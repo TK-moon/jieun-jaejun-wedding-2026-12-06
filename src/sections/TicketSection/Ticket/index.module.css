@@ -1,13 +1,20 @@
 .ticket_frame {
   position: relative;
-  width: var(--layout-frame-width);
+  width: 100%;
   overflow: hidden;
   border-radius: 18px;
   background: var(--color-paper-raised);
   box-shadow:
+    0 -6px 16px rgb(47 111 163 / 10%),
     0 18px 40px rgb(47 111 163 / 12%),
     0 2px 8px rgb(28 36 48 / 6%);
   animation: ticket-rise 0.7s ease-out both;
+}
+
+@media (--tablet), (--desktop) {
+  .ticket_frame {
+    width: var(--layout-frame-width);
+  }
 }
 
 .body {
