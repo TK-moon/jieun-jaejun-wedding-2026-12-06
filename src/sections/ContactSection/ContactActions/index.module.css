@@ -1,27 +1,38 @@
 .actions {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
 }
 
 .link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  color: var(--color-sky);
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--color-ink-muted);
+  font-family: var(--body-font);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
   text-decoration: none;
-  border-radius: 0;
   transition: color 0.15s ease;
 }
 
 .link:hover,
 .link:focus-visible {
-  color: var(--color-sky-deep);
+  color: var(--color-ink);
 }
 
 .link:focus-visible {
-  outline: 2px solid var(--color-sky-soft);
+  outline: 2px solid var(--color-line);
   outline-offset: 2px;
+}
+
+.separator {
+  color: var(--color-ink-subtle);
+  font-size: 1.2rem;
+  line-height: 1;
+  user-select: none;
 }
