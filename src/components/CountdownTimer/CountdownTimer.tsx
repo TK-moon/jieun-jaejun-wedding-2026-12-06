@@ -1,19 +1,12 @@
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { useCountdown, UNITS_MAP } from '../../hooks/useCountdown';
+import { WEDDING_DAY } from './_constants';
 import styles from './CountdownTimer.module.css';
-import { getCountdown } from './_utils';
-import { UNITS_MAP, WEDDING_DAY } from './_constants';
 
 interface Props {}
 
 const CountdownTimer: FC<Props> = () => {
-  const [countdown, setCountdown] = useState(getCountdown(WEDDING_DAY.toDate()));
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setCountdown(getCountdown(WEDDING_DAY.toDate())), 1_000);
-
-    return () => window.clearInterval(timer);
-  }, []);
+  const countdown = useCountdown({ targetDate: WEDDING_DAY.toDate() }, { timeZone: 'KST' });
 
   return (
     <div className={styles.countdown} role="timer" aria-live="off">

@@ -1,10 +1,14 @@
 import type { FC } from 'react';
+import { WEDDING_DAY } from '../../components/CountdownTimer/_constants';
+import { useCountdown, UNITS_MAP } from '../../hooks/useCountdown';
 import { TICKET } from './_constants';
 import styles from './index.module.css';
 
 interface Props {}
 
 const TicketSection: FC<Props> = () => {
+  const countdown = useCountdown({ targetDate: WEDDING_DAY.toDate() }, { timeZone: 'KST' });
+
   return (
     <section className={styles.container} aria-labelledby="ticket-title">
       <article className={styles.ticket_frame}>
@@ -67,6 +71,23 @@ const TicketSection: FC<Props> = () => {
           </dl>
 
           <p className={styles.venue}>{TICKET.venue}</p>
+
+          <div
+            className={styles.countdown}
+            role="timer"
+            aria-live="off"
+            aria-label="Boarding countdown"
+          >
+            <p className={styles.countdown_caption}>Boarding In</p>
+            <dl className={styles.countdown_row}>
+              {UNITS_MAP.map(({ key, label }) => (
+                <div className={styles.countdown_item} key={key}>
+                  <dt>{label}</dt>
+                  <dd>{String(countdown[key]).padStart(key === 'days' ? 3 : 2, '0')}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
 
         <div className={styles.perforation} aria-hidden="true">
