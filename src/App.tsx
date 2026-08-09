@@ -1,4 +1,6 @@
 import type { FC } from 'react';
+import { Toast } from './components/Toast/Toast';
+import { ToastProvider } from './components/Toast/ToastProvider';
 import { BannerSection } from './sections/BannerSection';
 import { TicketSection } from './sections/TicketSection';
 
@@ -6,10 +8,13 @@ interface Props {}
 
 const App: FC<Props> = () => {
   return (
-    <main>
-      <BannerSection />
-      <TicketSection />
-    </main>
+    <ToastProvider>
+      <main>
+        <BannerSection />
+        <TicketSection />
+      </main>
+      <Toast />
+    </ToastProvider>
   );
 };
 

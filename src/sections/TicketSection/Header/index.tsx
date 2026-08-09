@@ -1,8 +1,8 @@
-import { useEffect, useState, type FC } from 'react';
+import type { FC } from 'react';
 import { CalendarIcon } from '../../../components/icons/CalendarIcon/CalendarIcon';
 import { CopyIcon } from '../../../components/icons/CopyIcon/CopyIcon';
-import { Toast } from '../../../components/Toast/Toast';
 import { WEDDING_INFO } from '../../../constants';
+import { useToast } from '../../../hooks/useToast';
 import { is_clipboard_available } from '../../../lib/clipboard';
 import { dayjs } from '../../../lib/dayjs';
 import { downloadWeddingIcs, getCeremonyDateTimeKo } from '../_utils';
@@ -12,36 +12,23 @@ interface Props {
   titleId: string;
 }
 
-const TOAST_DURATION_MS = 2000;
-
 const Header: FC<Props> = (props) => {
   const { titleId } = props;
+
+  const toast = useToast();
+
   const { venue } = WEDDING_INFO;
   const ceremony = dayjs.tz(WEDDING_INFO.ceremony);
   const { date, weekday, time } = getCeremonyDateTimeKo(WEDDING_INFO.ceremony);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
   const canCopy = is_clipboard_available();
-
-  useEffect(() => {
-    if (!toastMessage) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setToastMessage(null);
-    }, TOAST_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [toastMessage]);
 
   const handleCopyAddress = async () => {
     try {
       await navigator.clipboard.writeText(venue.address);
-      setToastMessage('주소를 복사했어요');
+      toast.show({ id: 'copy-address', content: '주소를 복사했어요' });
     } catch {
-      setToastMessage('주소 복사에 실패했어요');
+      toast.show({ id: 'copy-address', content: '주소 복사에 실패했어요' });
     }
   };
 
@@ -76,7 +63,6 @@ const Header: FC<Props> = (props) => {
           </button>
         ) : null}
       </div>
-      {toastMessage ? <Toast message={toastMessage} /> : null}
     </header>
   );
 };
