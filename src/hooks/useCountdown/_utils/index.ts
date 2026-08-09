@@ -1,11 +1,6 @@
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
+import { dayjs } from '../../../lib/dayjs';
 import { TIME_ZONE_IDS } from '../_constants';
 import type { Countdown, CountdownTimeZone } from '../_types';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 export const getCountdown = (
   targetDate: Date | string,

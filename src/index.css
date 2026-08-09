@@ -33,6 +33,9 @@
   --color-line-soft: #ebe6dc; /* 아주 옅은 보더 */
   --color-stamp: #3d8bc4; /* 보딩패스 스탬프·배지용 */
 
+  /* Calendar */
+  --color-sunday: #d64545; /* 일요일 — 달력 관례 레드 */
+
   /* Selection */
   --color-selection-fg: #fffdf9;
   --color-selection-bg: var(--color-sky-deep);

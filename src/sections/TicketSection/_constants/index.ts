@@ -1,19 +1,23 @@
+import { dayjs } from '../../../lib/dayjs';
+import { WEDDING_INFO } from '../../../constants';
+
+const ceremony = dayjs.tz(WEDDING_INFO.ceremony);
+
 export const TICKET = {
   title: 'BOARDING PASS',
   from: {
-    code: 'JE',
-    name: 'JIEUN',
+    code: WEDDING_INFO.bride.code,
+    name: WEDDING_INFO.bride.name.en,
   },
   to: {
-    code: 'JJ',
-    name: 'JAEJUN',
+    code: WEDDING_INFO.groom.code,
+    name: WEDDING_INFO.groom.name.en,
   },
   passenger: 'INVITED GUEST',
   flight: 'WEDDING',
-  date: '2026.12.06',
-  day: 'SUNDAY',
-  venue: 'THE MERRIDEN',
+  venue: WEDDING_INFO.venue.name,
   seat: 'WITH US',
-  gate: '8F',
-  terminal: 'VISION',
+  gate: WEDDING_INFO.venue.floor,
+  terminal: WEDDING_INFO.venue.building,
+  stubCode: `${WEDDING_INFO.groom.code}-${ceremony.format('YYYY-MMDD')}`,
 } as const;

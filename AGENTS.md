@@ -12,7 +12,7 @@
 
 1. **Primary design** — the first `<main>` that composes `src/sections/*` (e.g. `BannerSection`, `TicketSection`).
    - This is the active product UI. New screens, layout, and visual design belong here.
-2. **Reference archive** — the legacy block under `weddingPage` (`Hero`, `CountdownTimer`, `Venue`, `LineMotif`, and related styles).
+2. **Reference archive** — the legacy block under `weddingPage` (`Venue`, `LineMotif`, and related styles).
    - Keep it for wedding facts, assets, map links, transport copy, and reusable logic only.
    - Do not extend or polish its visual design. When those features move into the primary design, reuse the data and logic, then restyle inside `src/sections`.
 
