@@ -1,5 +1,6 @@
 .icon {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   flex: 0 0 auto;
+  color: inherit;
 }

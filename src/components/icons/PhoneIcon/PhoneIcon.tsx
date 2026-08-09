@@ -1,28 +1,22 @@
-import type { ComponentProps, FC } from 'react';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { FC } from 'react';
 import styles from './PhoneIcon.module.css';
 
-interface Props extends ComponentProps<'svg'> {}
+interface Props {
+  className?: string;
+}
 
 const PhoneIcon: FC<Props> = (props) => {
-  const { className, ...rest } = props;
+  const { className } = props;
 
   return (
-    <svg
+    <FontAwesomeIcon
+      icon={faPhone}
       className={[styles.icon, className].filter(Boolean).join(' ')}
-      viewBox="0 0 24 24"
-      aria-hidden="true"
+      aria-hidden
       focusable="false"
-      {...rest}
-    >
-      <path
-        d="M6.5 4.5h3.2l1.3 3.2-1.7 1.7a11.5 11.5 0 0 0 5.3 5.3l1.7-1.7 3.2 1.3v3.2a1.5 1.5 0 0 1-1.5 1.5A14.5 14.5 0 0 1 5 6a1.5 1.5 0 0 1 1.5-1.5z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    />
   );
 };
 

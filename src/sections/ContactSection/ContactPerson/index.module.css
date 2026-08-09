@@ -1,0 +1,38 @@
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  margin: 0;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.role {
+  color: var(--color-ink-muted);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.personName {
+  color: var(--color-sky-deep);
+  font-family: var(--display-font);
+  font-size: clamp(1.6rem, 3.8vw, 1.9rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.actions {
+  margin: 0;
+}
