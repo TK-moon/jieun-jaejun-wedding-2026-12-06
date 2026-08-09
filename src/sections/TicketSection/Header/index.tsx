@@ -1,7 +1,10 @@
-import type { FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { CalendarIcon } from '../../../components/icons/CalendarIcon/CalendarIcon';
-import { dayjs } from '../../../lib/dayjs';
+import { CopyIcon } from '../../../components/icons/CopyIcon/CopyIcon';
+import { Toast } from '../../../components/Toast/Toast';
 import { WEDDING_INFO } from '../../../constants';
+import { is_clipboard_available } from '../../../lib/clipboard';
+import { dayjs } from '../../../lib/dayjs';
 import { downloadWeddingIcs, getCeremonyDateTimeKo } from '../_utils';
 import styles from './index.module.css';
 
@@ -9,11 +12,38 @@ interface Props {
   titleId: string;
 }
 
+const TOAST_DURATION_MS = 2000;
+
 const Header: FC<Props> = (props) => {
   const { titleId } = props;
   const { venue } = WEDDING_INFO;
   const ceremony = dayjs.tz(WEDDING_INFO.ceremony);
   const { date, weekday, time } = getCeremonyDateTimeKo(WEDDING_INFO.ceremony);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const canCopy = is_clipboard_available();
+
+  useEffect(() => {
+    if (!toastMessage) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToastMessage(null);
+    }, TOAST_DURATION_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [toastMessage]);
+
+  const handleCopyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(venue.address);
+      setToastMessage('주소를 복사했어요');
+    } catch {
+      setToastMessage('주소 복사에 실패했어요');
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -33,7 +63,20 @@ const Header: FC<Props> = (props) => {
         <CalendarIcon />
         <span>캘린더에 추가</span>
       </button>
-      <address className={styles.address}>{venue.address}</address>
+      <div className={styles.addressRow}>
+        <address className={styles.address}>{venue.address}</address>
+        {canCopy ? (
+          <button
+            className={styles.copyAddress}
+            type="button"
+            onClick={handleCopyAddress}
+            aria-label="주소 복사"
+          >
+            <CopyIcon />
+          </button>
+        ) : null}
+      </div>
+      {toastMessage ? <Toast message={toastMessage} /> : null}
     </header>
   );
 };

@@ -98,8 +98,15 @@
   border-radius: 2px;
 }
 
-.address {
+.addressRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin: 10px 0 0;
+}
+
+.address {
+  margin: 0;
   color: var(--color-ink-muted);
   font-size: 1.22rem;
   font-style: normal;
@@ -110,9 +117,34 @@
   word-break: keep-all;
 }
 
+.copyAddress {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.copyAddress:hover,
+.copyAddress:focus-visible {
+  color: var(--color-sky-deep);
+}
+
+.copyAddress:focus-visible {
+  outline: 2px solid var(--color-sky-deep);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .calendarAdd,
-  .calendarAdd span {
+  .calendarAdd span,
+  .copyAddress {
     transition: none;
   }
 }
