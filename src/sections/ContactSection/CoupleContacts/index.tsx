@@ -16,13 +16,19 @@ const CoupleContacts: FC<Props> = () => {
       </h3>
       <dl className={styles.grid}>
         <div className={styles.person}>
-          <dt className={styles.role}>신랑</dt>
+          <dt className={styles.name}>
+            <span className={styles.relation}>신랑</span>
+            <span className={styles.personName}>{groom.name.ko}</span>
+          </dt>
           <dd className={styles.actions}>
             <ContactActions name={groom.name.ko} phone={groom.phone} />
           </dd>
         </div>
         <div className={styles.person}>
-          <dt className={styles.role}>신부</dt>
+          <dt className={styles.name}>
+            <span className={styles.relation}>신부</span>
+            <span className={styles.personName}>{bride.name.ko}</span>
+          </dt>
           <dd className={styles.actions}>
             <ContactActions name={bride.name.ko} phone={bride.phone} />
           </dd>

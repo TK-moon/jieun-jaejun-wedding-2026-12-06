@@ -11,7 +11,7 @@ const ContactSection: FC<Props> = () => {
 
   return (
     <section className={styles.container} aria-labelledby={titleId}>
-      <SectionTitle label="연락처" title="연락하기" titleId={titleId} />
+      <SectionTitle title="마음 전하실 곳" titleId={titleId} />
       <div className={styles.frame}>
         <CoupleContacts />
         <HostContacts />
