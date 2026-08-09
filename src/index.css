@@ -1,5 +1,7 @@
 :root {
-  --display-font: 'Cormorant Garamond', 'Noto Serif KR', serif;
+  --display-font:
+    'Cormorant Garamond', 'Cormorant Garamond Fallback: Times New Roman',
+    'Cormorant Garamond Fallback: Georgia', 'Noto Serif KR', serif;
   --body-font:
     Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Segoe UI', sans-serif;
