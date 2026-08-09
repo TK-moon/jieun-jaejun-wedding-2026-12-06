@@ -98,12 +98,6 @@
   border-radius: 2px;
 }
 
-.calendarIcon {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-}
-
 .address {
   margin: 10px 0 0;
   color: var(--color-ink-muted);

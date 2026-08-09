@@ -21,6 +21,7 @@
 - Put page sections for the primary design under `src/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
 - Nested section components under `src/sections/<SectionName>/<ComponentName>/` also keep styles beside their `index.tsx` as `index.module.css`. Do not share a parent section stylesheet across children.
 - Put shared or reusable units under `src/components/<ComponentName>/`.
+- Put shared icons under `src/components/icons/<IconName>/` with `<IconName>.tsx` and `<IconName>.module.css`.
 - Keep the component implementation in `<ComponentName>.tsx` and its component-scoped style in `<ComponentName>.module.css`.
 - Co-locate component-specific supporting code in underscored directories:
   - `_constants/index.ts` for static values, labels, and configuration.

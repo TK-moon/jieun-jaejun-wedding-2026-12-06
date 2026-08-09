@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { ChevronIcon } from '../ChevronIcon/ChevronIcon';
+import { ChevronIcon } from '../icons/ChevronIcon/ChevronIcon';
 import styles from './Disclosure.module.css';
 
 interface Props {
