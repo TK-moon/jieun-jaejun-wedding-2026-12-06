@@ -11,10 +11,7 @@ const isSameToast = (left: ToastItem, right: ToastItem): boolean => {
   return left.content === right.content && left.durationMs === right.durationMs;
 };
 
-const upsertToast = (
-  toasts: Map<string, ToastItem>,
-  toast: ToastItem,
-): Map<string, ToastItem> => {
+const upsertToast = (toasts: Map<string, ToastItem>, toast: ToastItem): Map<string, ToastItem> => {
   const existing = toasts.get(toast.id);
   if (existing && isSameToast(existing, toast)) {
     return toasts;

@@ -1,0 +1,17 @@
+.messages {
+  display: flex;
+  margin: 0;
+  flex-direction: column;
+  gap: 0.7em;
+  color: var(--color-ink);
+  font-family: var(--display-font);
+  font-size: 1.45rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.messages p {
+  margin: 0;
+}

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { CalendarIcon } from '../../../components/icons/CalendarIcon/CalendarIcon';
 import { CopyIcon } from '../../../components/icons/CopyIcon/CopyIcon';
+import { SectionTitle } from '../../../components/SectionTitle/SectionTitle';
 import { WEDDING_INFO } from '../../../constants';
 import { useToast } from '../../../hooks/useToast';
 import { is_clipboard_available } from '../../../lib/clipboard';
@@ -33,11 +34,7 @@ const Header: FC<Props> = (props) => {
   };
 
   return (
-    <header className={styles.header}>
-      <p className={styles.eyebrow}>일시 · 장소</p>
-      <h2 className={styles.name} id={titleId}>
-        {venue.name}
-      </h2>
+    <SectionTitle label="일시 · 장소" title={venue.name} titleId={titleId}>
       <p className={styles.hall}>
         {venue.hall} · {venue.floor}
       </p>
@@ -63,7 +60,7 @@ const Header: FC<Props> = (props) => {
           </button>
         ) : null}
       </div>
-    </header>
+    </SectionTitle>
   );
 };
 
