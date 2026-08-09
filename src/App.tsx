@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import { LineMotif } from './components/LineMotif/LineMotif';
 import { Venue } from './components/Venue/Venue';
 import styles from './App.module.css';
 import { BannerSection } from './sections/BannerSection';
@@ -21,7 +20,6 @@ const App: FC<Props> = () => {
         Do not evolve this visual design; restyle features inside primary sections.
       */}
       <div className={styles.weddingPage}>
-        <LineMotif />
         <Venue />
       </div>
     </>
