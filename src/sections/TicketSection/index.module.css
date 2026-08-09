@@ -3,7 +3,12 @@
   width: 100%;
   justify-content: center;
   padding: var(--layout-section-padding-block) var(--layout-inline-padding);
-  background-color: var(--color-canvas);
+  background: linear-gradient(
+    to bottom,
+    var(--color-canvas),
+    var(--color-sky-wash),
+    var(--color-canvas)
+  );
 }
 
 .ticket_frame {

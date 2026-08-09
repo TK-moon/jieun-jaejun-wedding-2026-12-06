@@ -1,0 +1,16 @@
+.icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--color-sky);
+  transform: rotate(0deg);
+  transition:
+    transform 280ms ease,
+    color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon {
+    transition: none;
+  }
+}

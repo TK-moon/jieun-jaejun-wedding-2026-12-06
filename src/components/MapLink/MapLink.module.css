@@ -3,42 +3,58 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 132px;
-  padding: 10px 14px;
-  border: 1px solid #d2d2ce;
-  color: #333331;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-paper-raised);
+  color: var(--color-ink);
   font-size: 1.25rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-decoration: none;
+  box-shadow: 0 4px 14px rgb(28 36 48 / 4%);
   transition:
     border-color 180ms ease,
+    background-color 180ms ease,
     color 180ms ease,
+    box-shadow 180ms ease,
     transform 180ms ease;
 }
 
 .link:hover {
-  border-color: #7f7f7a;
-  color: #171716;
+  border-color: var(--color-sky-soft);
+  background: var(--color-sky-wash);
+  color: var(--color-sky-deep);
+  box-shadow: 0 8px 20px rgb(47 111 163 / 10%);
   transform: translateY(-2px);
 }
 
 .link:focus-visible {
-  outline: 2px solid #222;
-  outline-offset: 4px;
+  outline: 2px solid var(--color-sky-deep);
+  outline-offset: 3px;
+}
+
+.link:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgb(28 36 48 / 5%);
 }
 
 .icon {
-  width: 21px;
-  height: 21px;
+  width: 22px;
+  height: 22px;
   flex: 0 0 auto;
   object-fit: contain;
+  border-radius: 4px;
 }
 
-@media (max-width: 640px) {
+@media (prefers-reduced-motion: reduce) {
   .link {
-    min-width: 122px;
-    padding: 9px 12px;
-    font-size: 1.18rem;
+    transition: none;
+  }
+
+  .link:hover,
+  .link:active {
+    transform: none;
   }
 }

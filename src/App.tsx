@@ -1,28 +1,17 @@
 import type { FC } from 'react';
-import { Venue } from './components/Venue/Venue';
-import styles from './App.module.css';
 import { BannerSection } from './sections/BannerSection';
 import { TicketSection } from './sections/TicketSection';
+import { VenueSection } from './sections/VenueSection';
 
 interface Props {}
 
 const App: FC<Props> = () => {
   return (
-    <>
-      {/* Primary design — new UI lives in src/sections */}
-      <main>
-        <BannerSection />
-        <TicketSection />
-      </main>
-
-      {/*
-        Reference archive — keep for wedding info, assets, and logic only.
-        Do not evolve this visual design; restyle features inside primary sections.
-      */}
-      <div className={styles.weddingPage}>
-        <Venue />
-      </div>
-    </>
+    <main>
+      <BannerSection />
+      <TicketSection />
+      <VenueSection />
+    </main>
   );
 };
 
