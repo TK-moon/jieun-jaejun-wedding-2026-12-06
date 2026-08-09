@@ -3,7 +3,16 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 8px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.route.is_visible {
   animation: route-in 0.8s 0.15s ease-out both;
+}
+
+.route.is_visible .path_line {
+  animation: path-draw 0.9s 0.35s ease-out both;
 }
 
 .endpoint {
@@ -48,7 +57,8 @@
   height: 0;
   border-top: 1.5px dashed var(--color-sky-soft);
   transform-origin: center;
-  animation: path-draw 0.9s 0.35s ease-out both;
+  opacity: 0;
+  transform: scaleX(0);
 }
 
 .plane {
@@ -85,6 +95,12 @@
 @media (prefers-reduced-motion: reduce) {
   .route,
   .path_line {
+    opacity: 1;
+    transform: none;
     animation: none;
+  }
+
+  .plane {
+    transform: rotate(90deg);
   }
 }

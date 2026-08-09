@@ -2,11 +2,15 @@ import type { FC } from 'react';
 import { TICKET } from '../_constants';
 import styles from './index.module.css';
 
-interface Props {}
+interface Props {
+  isVisible: boolean;
+}
 
-const Route: FC<Props> = () => {
+const Route: FC<Props> = (props) => {
+  const { isVisible } = props;
+
   return (
-    <div className={styles.route}>
+    <div className={[styles.route, isVisible ? styles.is_visible : null].filter(Boolean).join(' ')}>
       <div className={styles.endpoint}>
         <p className={styles.code}>{TICKET.from.code}</p>
         <p className={styles.endpoint_name}>{TICKET.from.name}</p>

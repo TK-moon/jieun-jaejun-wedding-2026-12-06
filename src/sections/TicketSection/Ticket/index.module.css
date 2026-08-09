@@ -8,6 +8,11 @@
     0 -6px 16px rgb(47 111 163 / 10%),
     0 18px 40px rgb(47 111 163 / 12%),
     0 2px 8px rgb(28 36 48 / 6%);
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+}
+
+.ticket_frame.is_visible {
   animation: ticket-rise 0.7s ease-out both;
 }
 
@@ -38,6 +43,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ticket_frame {
+    opacity: 1;
+    transform: none;
     animation: none;
   }
 }

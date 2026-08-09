@@ -46,7 +46,6 @@
 .date {
   grid-area: date;
   writing-mode: vertical-rl;
-  transform: rotate(180deg);
   color: var(--color-ink-muted);
   font-size: clamp(1.09rem, 2.4vw, 1.31rem);
   letter-spacing: 0.22em;
