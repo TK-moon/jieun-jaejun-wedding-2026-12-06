@@ -1,0 +1,92 @@
+.section {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.title {
+  margin: 0;
+  color: var(--color-sky);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 8px;
+}
+
+.side + .side {
+  border-left: 1px solid var(--color-line);
+}
+
+.sideTitle {
+  margin: 0;
+  color: var(--color-sky-deep);
+  font-family: var(--display-font);
+  font-size: clamp(1.45rem, 3.4vw, 1.7rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.list {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35em;
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.relation {
+  color: var(--color-ink-muted);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.personName {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.actions {
+  margin: 0;
+}

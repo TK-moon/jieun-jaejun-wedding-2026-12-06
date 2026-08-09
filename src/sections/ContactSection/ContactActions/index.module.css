@@ -1,0 +1,27 @@
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-sky);
+  text-decoration: none;
+  border-radius: 0;
+  transition: color 0.15s ease;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--color-sky-deep);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-sky-soft);
+  outline-offset: 2px;
+}

@@ -11,14 +11,14 @@ const Family: FC<Props> = () => {
     <ul className={styles.family}>
       <li className={styles.family_row}>
         <span className={styles.parents}>
-          {groom.parents.father} · {groom.parents.mother}
+          {groom.parents.father.name} · {groom.parents.mother.name}
         </span>
         <span className={styles.relation}>의 {groom.order}</span>
         <span className={styles.child}>{groom.name.ko}</span>
       </li>
       <li className={styles.family_row}>
         <span className={styles.parents}>
-          {bride.parents.father} · {bride.parents.mother}
+          {bride.parents.father.name} · {bride.parents.mother.name}
         </span>
         <span className={styles.relation}>의 {bride.order}</span>
         <span className={styles.child}>{bride.name.ko}</span>

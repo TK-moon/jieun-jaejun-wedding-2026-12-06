@@ -1,0 +1,50 @@
+.section {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.title {
+  margin: 0;
+  color: var(--color-sky);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 8px;
+}
+
+.person + .person {
+  border-left: 1px solid var(--color-line);
+}
+
+.role {
+  margin: 0;
+  color: var(--color-sky-deep);
+  font-family: var(--display-font);
+  font-size: clamp(1.7rem, 4vw, 2rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.actions {
+  margin: 0;
+}

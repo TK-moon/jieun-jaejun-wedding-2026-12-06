@@ -7,3 +7,11 @@
   padding: var(--layout-section-padding-block) var(--layout-inline-padding);
   background-color: var(--color-canvas);
 }
+
+.frame {
+  display: flex;
+  width: var(--layout-frame-width);
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
