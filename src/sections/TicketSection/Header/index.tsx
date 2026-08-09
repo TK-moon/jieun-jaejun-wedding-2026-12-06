@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { dayjs } from '../../../lib/dayjs';
 import { WEDDING_INFO } from '../../../constants';
 import { downloadWeddingIcs, getCeremonyDateTimeKo } from '../_utils';
-import styles from '../index.module.css';
+import styles from './index.module.css';
 
 interface Props {
   titleId: string;

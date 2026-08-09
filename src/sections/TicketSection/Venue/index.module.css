@@ -1,0 +1,11 @@
+.venue {
+  margin: 0;
+  padding-top: 4px;
+  color: var(--color-sky-deep);
+  font-family: var(--display-font);
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-indent: 0.2em;
+}

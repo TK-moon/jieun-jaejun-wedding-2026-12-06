@@ -1,0 +1,36 @@
+.schedule {
+  display: flex;
+  justify-content: center;
+}
+
+.schedule_date {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px 10px;
+}
+
+.schedule_date_value {
+  color: var(--color-sky-deep);
+  font-family: var(--body-font);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+.schedule_date_day {
+  color: var(--color-sunday);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.schedule_date_time {
+  color: var(--color-stamp);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}

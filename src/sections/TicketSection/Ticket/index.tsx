@@ -7,7 +7,7 @@ import { Schedule } from '../Schedule';
 import { Stub } from '../Stub';
 import { Title } from '../Title';
 import { Venue } from '../Venue';
-import styles from '../index.module.css';
+import styles from './index.module.css';
 
 interface Props {}
 

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { TICKET } from '../_constants';
-import styles from '../index.module.css';
+import styles from './index.module.css';
 
 interface Props {}
 

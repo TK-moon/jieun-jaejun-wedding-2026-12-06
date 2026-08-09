@@ -1,0 +1,33 @@
+.barcode {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2px;
+  width: min(100%, 220px);
+  height: 44px;
+  animation: barcode-in 0.6s 0.45s ease-out both;
+}
+
+.bar {
+  display: block;
+  height: 100%;
+  background: var(--color-ink);
+}
+
+@keyframes barcode-in {
+  from {
+    opacity: 0;
+    transform: scaleY(0.7);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barcode {
+    animation: none;
+  }
+}

@@ -1,0 +1,124 @@
+.header {
+  display: flex;
+  width: var(--layout-frame-width);
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--color-sky);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.name {
+  margin: 0;
+  color: var(--color-sky-deep);
+  font-family: var(--display-font);
+  font-size: clamp(2.2rem, 5.2vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+.hall {
+  margin: 6px 0 0;
+  color: var(--color-ink-muted);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.datetime {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35em;
+  margin: 16px 0 0;
+  color: var(--color-ink);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.date {
+  color: var(--color-ink);
+}
+
+.weekday {
+  color: var(--color-sunday);
+}
+
+.time {
+  color: var(--color-sky-deep);
+}
+
+.calendarAdd {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-muted);
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.calendarAdd span {
+  border-bottom: 1px solid transparent;
+  transition: border-color 180ms ease;
+}
+
+.calendarAdd:hover,
+.calendarAdd:focus-visible {
+  color: var(--color-sky-deep);
+}
+
+.calendarAdd:hover span,
+.calendarAdd:focus-visible span {
+  border-bottom-color: currentColor;
+}
+
+.calendarAdd:focus-visible {
+  outline: 2px solid var(--color-sky-deep);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.calendarIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.address {
+  margin: 10px 0 0;
+  color: var(--color-ink-muted);
+  font-size: 1.22rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendarAdd,
+  .calendarAdd span {
+    transition: none;
+  }
+}

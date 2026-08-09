@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { dayjs } from '../../../lib/dayjs';
 import { WEDDING_INFO } from '../../../constants';
-import styles from '../index.module.css';
+import styles from './index.module.css';
 
 interface Props {}
 

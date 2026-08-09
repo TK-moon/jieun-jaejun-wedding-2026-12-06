@@ -1,0 +1,90 @@
+.route {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  animation: route-in 0.8s 0.15s ease-out both;
+}
+
+.endpoint {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.endpoint:last-child {
+  text-align: right;
+}
+
+.code {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--body-font);
+  font-size: clamp(2.8rem, 8vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.endpoint_name {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+
+.flight_path {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 72px;
+  color: var(--color-sky);
+}
+
+.path_line {
+  display: block;
+  flex: 1;
+  height: 0;
+  border-top: 1.5px dashed var(--color-sky-soft);
+  transform-origin: center;
+  animation: path-draw 0.9s 0.35s ease-out both;
+}
+
+.plane {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  transform: rotate(90deg);
+}
+
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes path-draw {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route,
+  .path_line {
+    animation: none;
+  }
+}

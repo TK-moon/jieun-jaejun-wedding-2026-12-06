@@ -1,0 +1,14 @@
+.mapLinks {
+  display: flex;
+  width: var(--layout-frame-width);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 12px;
+}
+
+.mapLinksDivider {
+  color: var(--color-ink-subtle);
+  font-size: 1.28rem;
+  line-height: 1;
+}
