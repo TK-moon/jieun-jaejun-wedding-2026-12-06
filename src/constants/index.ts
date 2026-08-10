@@ -37,7 +37,6 @@ export const WEDDING_INFO = {
       bank: '국민은행',
       number: '219402-04-284765',
       holder: '전재준',
-      kakaoPayUrl: 'https://qr.kakaopay.com/',
     },
   },
   bride: {
@@ -73,7 +72,6 @@ export const WEDDING_INFO = {
       bank: '신한은행',
       number: '110-458-922561',
       holder: '김지은',
-      kakaoPayUrl: 'https://qr.kakaopay.com/',
     },
   },
   ceremony: dayjs.tz('2026-12-06 14:00', 'YYYY-MM-DD HH:mm', DEFAULT_TIME_ZONE).toDate(),

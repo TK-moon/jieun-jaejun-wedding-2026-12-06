@@ -154,48 +154,6 @@
   border-radius: 2px;
 }
 
-.kakaoPayBlock {
-  display: grid;
-  gap: 10px;
-  justify-items: center;
-  width: 100%;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-line-soft);
-}
-
-.kakaoPayHint {
-  margin: 0;
-  color: var(--color-ink-subtle);
-  font-size: 1.15rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-
-.kakaoPayLink {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  line-height: 0;
-  transition: opacity 150ms ease;
-}
-
-.kakaoPayLink:hover,
-.kakaoPayLink:focus-visible {
-  opacity: 0.88;
-}
-
-.kakaoPayLink:focus-visible {
-  outline: 2px solid var(--color-sky-deep);
-  outline-offset: 3px;
-}
-
-.kakaoPayIcon {
-  display: block;
-  width: 68px;
-  height: 28px;
-}
-
 .srOnly {
   position: absolute;
   width: 1px;
@@ -211,8 +169,7 @@
 @media (prefers-reduced-motion: reduce) {
   .link,
   .copyAction,
-  .copyAction span,
-  .kakaoPayLink {
+  .copyAction span {
     transition: none;
   }
 }

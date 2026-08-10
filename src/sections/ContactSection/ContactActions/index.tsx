@@ -1,7 +1,4 @@
 import { useState, type FC } from 'react';
-import kakaoPayLarge from '../../../assets/kakao-pay-large.png';
-import kakaoPayMedium from '../../../assets/kakao-pay-medium.png';
-import kakaoPaySmall from '../../../assets/kakao-pay-small.png';
 import { CopyIcon } from '../../../components/icons/CopyIcon/CopyIcon';
 import { Modal } from '../../../components/Modal/Modal';
 import { useToast } from '../../../hooks/useToast';
@@ -89,30 +86,6 @@ const ContactActions: FC<Props> = (props) => {
               <CopyIcon />
               <span>계좌번호 복사</span>
             </button>
-          ) : null}
-
-          {account.kakaoPayUrl ? (
-            <div className={styles.kakaoPayBlock}>
-              <p className={styles.kakaoPayHint}>또는 카카오페이로</p>
-              <a
-                className={styles.kakaoPayLink}
-                href={account.kakaoPayUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${name}에게 카카오페이로 송금`}
-              >
-                <img
-                  className={styles.kakaoPayIcon}
-                  src={kakaoPayMedium}
-                  srcSet={`${kakaoPaySmall} 97w, ${kakaoPayMedium} 121w, ${kakaoPayLarge} 241w`}
-                  sizes="68px"
-                  width={68}
-                  height={28}
-                  alt=""
-                  decoding="async"
-                />
-              </a>
-            </div>
           ) : null}
         </div>
       </Modal>
