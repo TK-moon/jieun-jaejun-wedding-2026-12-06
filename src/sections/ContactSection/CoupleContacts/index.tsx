@@ -17,13 +17,13 @@ const CoupleContacts: FC<Props> = () => {
       <dl className={styles.grid}>
         <ContactPerson
           role="신랑"
-          name={groom.name.ko}
+          name={groom.name.full}
           phone={groom.phone}
           account={groom.account}
         />
         <ContactPerson
           role="신부"
-          name={bride.name.ko}
+          name={bride.name.full}
           phone={bride.phone}
           account={bride.account}
         />
