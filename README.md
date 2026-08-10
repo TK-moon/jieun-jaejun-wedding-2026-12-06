@@ -13,13 +13,13 @@ npm install
 npm run dev
 ```
 
-| 스크립트 | 설명 |
-| --- | --- |
-| `npm run dev` | 개발 서버 |
-| `npm run build` | 타입 체크 + 프로덕션 빌드 |
-| `npm run preview` | 프로덕션 빌드 미리보기 |
-| `npm run lint` / `format` | ESLint / Prettier |
-| `npm run check` | format 검사 + lint + build |
+| 스크립트                  | 설명                       |
+| ------------------------- | -------------------------- |
+| `npm run dev`             | 개발 서버                  |
+| `npm run build`           | 타입 체크 + 프로덕션 빌드  |
+| `npm run preview`         | 프로덕션 빌드 미리보기     |
+| `npm run lint` / `format` | ESLint / Prettier          |
+| `npm run check`           | format 검사 + lint + build |
 
 ## 기술 스택
 
@@ -64,12 +64,12 @@ src/
 
 ### 토큰 (`src/index.css`)
 
-| 용도 | 변수 |
-| --- | --- |
-| 면 | `--color-canvas`, `--color-paper`, `--color-paper-raised`, `--color-sky-wash` |
-| 텍스트 | `--color-ink`, `--color-ink-muted`, `--color-ink-subtle` |
-| 포인트 | `--color-sky`, `--color-sky-deep`, `--color-sky-soft` |
-| 구분선 | `--color-line`, `--color-line-soft` |
+| 용도     | 변수                                                                                |
+| -------- | ----------------------------------------------------------------------------------- |
+| 면       | `--color-canvas`, `--color-paper`, `--color-paper-raised`, `--color-sky-wash`       |
+| 텍스트   | `--color-ink`, `--color-ink-muted`, `--color-ink-subtle`                            |
+| 포인트   | `--color-sky`, `--color-sky-deep`, `--color-sky-soft`                               |
+| 구분선   | `--color-line`, `--color-line-soft`                                                 |
 | 레이아웃 | `--layout-frame-width`, `--layout-inline-padding`, `--layout-section-padding-block` |
 
 섹션 본문 폭은 `--layout-frame-width`를 공통으로 쓰고, 섹션 CSS에 별도 max-width를 두지 않습니다.
