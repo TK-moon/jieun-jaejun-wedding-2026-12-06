@@ -41,75 +41,178 @@
   user-select: none;
 }
 
-.account {
-  display: grid;
-  gap: 14px;
-  margin: 0;
+.accountPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-.accountRow {
+.holder {
   display: grid;
-  gap: 4px;
+  gap: 6px;
+  margin: 4px 0 0;
+  justify-items: center;
 }
 
-.accountLabel {
+.holderLabel {
   margin: 0;
   color: var(--color-ink-subtle);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
-.accountValue {
+.holderName {
   margin: 0;
-  color: var(--color-ink);
-  font-size: 1.5rem;
+  color: var(--color-sky-deep);
+  font-family: var(--display-font);
+  font-size: clamp(2.2rem, 5vw, 2.6rem);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.accountDivider {
+  width: 28px;
+  height: 1px;
+  margin: 18px 0 16px;
+  background: var(--color-line);
+}
+
+.transfer {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  justify-items: center;
+}
+
+.bankRow,
+.numberRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+}
+
+.bank {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   line-height: 1.4;
 }
 
-.accountNumber {
+.number {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+
+.copyAction {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 0;
-  color: var(--color-ink);
-  font-size: 1.5rem;
+  margin: 14px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-muted);
+  font-family: var(--body-font);
+  font-size: 1.25rem;
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.4;
-}
-
-.copy {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--color-sky);
   cursor: pointer;
   transition: color 150ms ease;
 }
 
-.copy:hover,
-.copy:focus-visible {
+.copyAction span {
+  border-bottom: 1px solid var(--color-line);
+  transition: border-color 150ms ease;
+}
+
+.copyAction:hover,
+.copyAction:focus-visible {
   color: var(--color-sky-deep);
 }
 
-.copy:focus-visible {
+.copyAction:hover span,
+.copyAction:focus-visible span {
+  border-bottom-color: currentColor;
+}
+
+.copyAction:focus-visible {
   outline: 2px solid var(--color-sky-deep);
-  outline-offset: 2px;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.kakaoPayBlock {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.kakaoPayHint {
+  margin: 0;
+  color: var(--color-ink-subtle);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.kakaoPayLink {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  line-height: 0;
+  transition: opacity 150ms ease;
+}
+
+.kakaoPayLink:hover,
+.kakaoPayLink:focus-visible {
+  opacity: 0.88;
+}
+
+.kakaoPayLink:focus-visible {
+  outline: 2px solid var(--color-sky-deep);
+  outline-offset: 3px;
+}
+
+.kakaoPayIcon {
+  display: block;
+  width: 68px;
+  height: 28px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .link,
-  .copy {
+  .copyAction,
+  .copyAction span,
+  .kakaoPayLink {
     transition: none;
   }
 }

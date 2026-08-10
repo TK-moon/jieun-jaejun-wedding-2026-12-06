@@ -1,4 +1,7 @@
 import { useState, type FC } from 'react';
+import kakaoPayLarge from '../../../assets/kakao-pay-large.png';
+import kakaoPayMedium from '../../../assets/kakao-pay-medium.png';
+import kakaoPaySmall from '../../../assets/kakao-pay-small.png';
 import { CopyIcon } from '../../../components/icons/CopyIcon/CopyIcon';
 import { Modal } from '../../../components/Modal/Modal';
 import { useToast } from '../../../hooks/useToast';
@@ -29,7 +32,7 @@ const ContactActions: FC<Props> = (props) => {
 
   const handleCopyAccount = async () => {
     try {
-      await navigator.clipboard.writeText(account.number);
+      await navigator.clipboard.writeText(`${account.bank} ${account.number}`);
       toast.show({ id: 'copy-account', content: '계좌번호를 복사했어요' });
     } catch {
       toast.show({ id: 'copy-account', content: '계좌번호 복사에 실패했어요' });
@@ -61,33 +64,57 @@ const ContactActions: FC<Props> = (props) => {
         </button>
       </div>
 
-      <Modal open={isAccountOpen} onClose={handleCloseAccount} title={`${name} 계좌`}>
-        <dl className={styles.account}>
-          <div className={styles.accountRow}>
-            <dt className={styles.accountLabel}>예금주</dt>
-            <dd className={styles.accountValue}>{account.holder}</dd>
-          </div>
-          <div className={styles.accountRow}>
-            <dt className={styles.accountLabel}>은행</dt>
-            <dd className={styles.accountValue}>{account.bank}</dd>
-          </div>
-          <div className={styles.accountRow}>
-            <dt className={styles.accountLabel}>계좌번호</dt>
-            <dd className={styles.accountNumber}>
-              <span>{account.number}</span>
-              {canCopy ? (
-                <button
-                  type="button"
-                  className={styles.copy}
-                  onClick={handleCopyAccount}
-                  aria-label="계좌번호 복사"
-                >
-                  <CopyIcon />
-                </button>
-              ) : null}
-            </dd>
-          </div>
-        </dl>
+      <Modal open={isAccountOpen} onClose={handleCloseAccount} title="계좌 안내">
+        <div className={styles.accountPanel}>
+          <dl className={styles.holder}>
+            <dt className={styles.holderLabel}>예금주</dt>
+            <dd className={styles.holderName}>{account.holder}</dd>
+          </dl>
+
+          <div className={styles.accountDivider} aria-hidden="true" />
+
+          <dl className={styles.transfer}>
+            <div className={styles.bankRow}>
+              <dt className={styles.srOnly}>은행</dt>
+              <dd className={styles.bank}>{account.bank}</dd>
+            </div>
+            <div className={styles.numberRow}>
+              <dt className={styles.srOnly}>계좌번호</dt>
+              <dd className={styles.number}>{account.number}</dd>
+            </div>
+          </dl>
+
+          {canCopy ? (
+            <button type="button" className={styles.copyAction} onClick={handleCopyAccount}>
+              <CopyIcon />
+              <span>계좌번호 복사</span>
+            </button>
+          ) : null}
+
+          {account.kakaoPayUrl ? (
+            <div className={styles.kakaoPayBlock}>
+              <p className={styles.kakaoPayHint}>또는 카카오페이로</p>
+              <a
+                className={styles.kakaoPayLink}
+                href={account.kakaoPayUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${name}에게 카카오페이로 송금`}
+              >
+                <img
+                  className={styles.kakaoPayIcon}
+                  src={kakaoPayMedium}
+                  srcSet={`${kakaoPaySmall} 97w, ${kakaoPayMedium} 121w, ${kakaoPayLarge} 241w`}
+                  sizes="68px"
+                  width={68}
+                  height={28}
+                  alt=""
+                  decoding="async"
+                />
+              </a>
+            </div>
+          ) : null}
+        </div>
       </Modal>
     </>
   );
