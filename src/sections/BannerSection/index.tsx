@@ -70,7 +70,7 @@ const BannerSection: FC<Props> = () => {
             ease: EASE,
           }}
         >
-          메시지
+          두 사람의 새로운 여정
         </motion.p>
       </div>
     </section>
