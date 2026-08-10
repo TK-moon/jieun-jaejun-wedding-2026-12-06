@@ -26,12 +26,14 @@ const HostContacts: FC<Props> = () => {
               role="아버지"
               name={groom.parents.father.name}
               phone={groom.parents.father.phone}
+              account={groom.parents.father.account}
               contactLabel={`아버지 ${groom.parents.father.name}`}
             />
             <ContactPerson
               role="어머니"
               name={groom.parents.mother.name}
               phone={groom.parents.mother.phone}
+              account={groom.parents.mother.account}
               contactLabel={`어머니 ${groom.parents.mother.name}`}
             />
           </dl>
@@ -45,12 +47,14 @@ const HostContacts: FC<Props> = () => {
               role="아버지"
               name={bride.parents.father.name}
               phone={bride.parents.father.phone}
+              account={bride.parents.father.account}
               contactLabel={`아버지 ${bride.parents.father.name}`}
             />
             <ContactPerson
               role="어머니"
               name={bride.parents.mother.name}
               phone={bride.parents.mother.phone}
+              account={bride.parents.mother.account}
               contactLabel={`어머니 ${bride.parents.mother.name}`}
             />
           </dl>

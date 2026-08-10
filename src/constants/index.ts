@@ -1,6 +1,7 @@
 import { DEFAULT_TIME_ZONE, dayjs } from '../lib/dayjs';
 
 const PLACEHOLDER_PHONE = '010-0000-0000';
+const PLACEHOLDER_ACCOUNT_NUMBER = '000-0000-000000';
 
 export const WEDDING_INFO = {
   groom: {
@@ -16,10 +17,20 @@ export const WEDDING_INFO = {
       father: {
         name: '전윤구',
         phone: PLACEHOLDER_PHONE,
+        account: {
+          bank: '○○은행',
+          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          holder: '전윤구',
+        },
       },
       mother: {
         name: '이경아',
         phone: PLACEHOLDER_PHONE,
+        account: {
+          bank: '○○은행',
+          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          holder: '이경아',
+        },
       },
     },
     account: {
@@ -41,10 +52,20 @@ export const WEDDING_INFO = {
       father: {
         name: '김병회',
         phone: PLACEHOLDER_PHONE,
+        account: {
+          bank: '○○은행',
+          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          holder: '김병회',
+        },
       },
       mother: {
         name: '강승아',
         phone: PLACEHOLDER_PHONE,
+        account: {
+          bank: '○○은행',
+          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          holder: '강승아',
+        },
       },
     },
     account: {

@@ -15,8 +15,18 @@ const CoupleContacts: FC<Props> = () => {
         신랑, 신부에게 연락하기
       </h3>
       <dl className={styles.grid}>
-        <ContactPerson role="신랑" name={groom.name.ko} phone={groom.phone} />
-        <ContactPerson role="신부" name={bride.name.ko} phone={bride.phone} />
+        <ContactPerson
+          role="신랑"
+          name={groom.name.ko}
+          phone={groom.phone}
+          account={groom.account}
+        />
+        <ContactPerson
+          role="신부"
+          name={bride.name.ko}
+          phone={bride.phone}
+          account={bride.account}
+        />
       </dl>
     </section>
   );
