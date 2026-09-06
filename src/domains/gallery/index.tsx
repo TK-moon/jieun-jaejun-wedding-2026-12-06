@@ -43,8 +43,8 @@ const GalleryMain: FC<Props> = () => {
                 className={styles.image}
                 src={photo.src}
                 alt={photo.alt}
-                width={4672}
-                height={7008}
+                width={1200}
+                height={1800}
                 loading="lazy"
                 decoding="async"
               />

@@ -1,7 +1,9 @@
-import { useId, type FC } from 'react';
-import { Link } from 'react-router';
+import { useCallback, useId, useRef, useState, type FC } from 'react';
+import { useReducedMotion } from 'motion/react';
 import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
-import { ROUTES } from '@/constants/routes';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { Cover } from './Cover';
+import { Photo } from './Photo';
 import { GALLERY_PREVIEW_PHOTOS } from './_constants';
 import styles from './index.module.css';
 
@@ -9,32 +11,60 @@ interface Props {}
 
 const GallerySection: FC<Props> = () => {
   const titleId = useId();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [hasIntersected, setHasIntersected] = useState(false);
+  const [readyPhotoIds, setReadyPhotoIds] = useState<Set<string>>(() => new Set());
+  const shouldReduceMotion = useReducedMotion();
+
+  const { isSupported } = useIntersectionObserver(
+    sectionRef,
+    (entry) => {
+      if (entry.isIntersecting) {
+        setHasIntersected(true);
+      }
+    },
+    { threshold: 0.2, rootMargin: '0px 0px -10% 0px' },
+  );
+
+  const isSectionVisible = !isSupported || hasIntersected;
+  const arePhotosReady = readyPhotoIds.size === GALLERY_PREVIEW_PHOTOS.length;
+
+  const handlePhotoReady = useCallback((photoId: string) => {
+    setReadyPhotoIds((currentIds) => {
+      if (currentIds.has(photoId)) {
+        return currentIds;
+      }
+
+      const nextIds = new Set(currentIds);
+      nextIds.add(photoId);
+      return nextIds;
+    });
+  }, []);
 
   return (
-    <section className={styles.container} aria-labelledby={titleId}>
+    <section ref={sectionRef} className={styles.container} aria-labelledby={titleId}>
       <SectionTitle label="갤러리" title="우리의 순간" titleId={titleId} />
       <div className={styles.frame}>
         <ol className={styles.grid}>
-          {GALLERY_PREVIEW_PHOTOS.map((photo) => (
+          {GALLERY_PREVIEW_PHOTOS.map((photo, index) => (
             <li className={styles.item} key={photo.id}>
-              <img
-                className={styles.image}
+              <Photo
+                id={photo.id}
                 src={photo.src}
                 alt={photo.alt}
-                width={4672}
-                height={7008}
-                loading="lazy"
-                decoding="async"
+                index={index}
+                isSectionVisible={isSectionVisible}
+                shouldReduceMotion={shouldReduceMotion}
+                onReady={handlePhotoReady}
               />
             </li>
           ))}
           <li className={styles.item}>
-            <Link className={styles.gallery_link} to={ROUTES.gallery}>
-              <span>전체 사진 보기</span>
-              <span className={styles.arrow} aria-hidden="true">
-                ↗
-              </span>
-            </Link>
+            <Cover
+              index={GALLERY_PREVIEW_PHOTOS.length}
+              isSectionVisible={isSectionVisible && arePhotosReady}
+              shouldReduceMotion={shouldReduceMotion}
+            />
           </li>
         </ol>
       </div>

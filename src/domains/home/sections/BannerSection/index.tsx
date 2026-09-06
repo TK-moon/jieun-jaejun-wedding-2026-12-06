@@ -41,6 +41,11 @@ const BannerSection: FC<Props> = () => {
           src={mainImage}
           alt="Banner"
           className={styles.main_image}
+          width={1200}
+          height={1800}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{
