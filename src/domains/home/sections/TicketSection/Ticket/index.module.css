@@ -1,6 +1,6 @@
 .ticket_frame {
   position: relative;
-  width: 100%;
+  width: var(--layout-frame-width);
   overflow: hidden;
   border-radius: 18px;
   background: var(--color-paper-raised);
@@ -14,12 +14,6 @@
 
 .ticket_frame.is_visible {
   animation: ticket-rise 0.7s ease-out both;
-}
-
-@media (--tablet), (--desktop) {
-  .ticket_frame {
-    width: var(--layout-frame-width);
-  }
 }
 
 .body {

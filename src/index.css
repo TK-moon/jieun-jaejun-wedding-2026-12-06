@@ -41,24 +41,12 @@
   --color-selection-bg: var(--color-sky-deep);
 
   /* —— Layout ——
-   * 섹션 본문 프레임(`.frame`, `.ticket_frame` 등)은
-   * `--layout-frame-width` + `--layout-inline-padding`을 공통으로 사용한다.
+   * 모바일: 부모의 좌우 `--layout-inline-padding` 안에서 100%.
+   * PC: `--layout-frame-width` 상한 560px.
    */
   --layout-inline-padding: 16px;
   --layout-section-padding-block: clamp(48px, 8vw, 80px);
-  --layout-frame-width: min(calc(100vw - 2 * var(--layout-inline-padding)), 360px);
-}
-
-@media (min-width: 641px) {
-  :root {
-    --layout-frame-width: min(calc(100vw - 2 * var(--layout-inline-padding)), 520px);
-  }
-}
-
-@media (min-width: 1025px) {
-  :root {
-    --layout-frame-width: min(calc(100vw - 2 * var(--layout-inline-padding)), 560px);
-  }
+  --layout-frame-width: min(100%, 560px);
 }
 
 html {

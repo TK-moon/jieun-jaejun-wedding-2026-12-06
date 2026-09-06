@@ -4,14 +4,18 @@
   min-height: 100svh;
   flex-direction: column;
   align-items: center;
-  gap: 34px;
-  padding: var(--layout-section-padding-block) var(--layout-inline-padding);
+  gap: 20px;
+  padding: max(8px, env(safe-area-inset-top)) 0 var(--layout-section-padding-block);
   background-color: var(--color-canvas);
 }
 
 .navigation,
 .frame {
   width: var(--layout-frame-width);
+}
+
+.navigation {
+  padding-inline: var(--layout-inline-padding);
 }
 
 .back_link {
@@ -23,6 +27,10 @@
   font-family: var(--body-font);
   font-size: 1.4rem;
   text-decoration: none;
+}
+
+.back_icon {
+  transform: rotate(180deg);
 }
 
 .back_link:hover {
@@ -37,8 +45,9 @@
 
 .grid {
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;

@@ -1,9 +1,10 @@
 import { useId, type FC, type MouseEventHandler } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
-import { ROUTES } from '../../constants/routes';
+import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon/ArrowRightIcon';
+import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
+import { ROUTES } from '@/constants/routes';
+import { GALLERY_PHOTOS } from './_constants';
 import styles from './index.module.css';
-import { GALLERY_PHOTOS } from '../home/sections/GallerySection/_constants';
 
 interface Props {}
 
@@ -30,11 +31,11 @@ const GalleryMain: FC<Props> = () => {
     <section className={styles.container} aria-labelledby={titleId}>
       <nav className={styles.navigation} aria-label="갤러리 페이지 이동">
         <Link className={styles.back_link} to={ROUTES.invitation} onClick={handleBackClick}>
-          <span aria-hidden="true">←</span>
+          <ArrowRightIcon className={styles.back_icon} />
           뒤로가기
         </Link>
       </nav>
-      <SectionTitle label="갤러리" title="우리의 사진첩" titleId={titleId} />
+      <SectionTitle label="갤러리" title="우리의 순간" titleId={titleId} />
       <div className={styles.frame}>
         <ol className={styles.grid}>
           {GALLERY_PHOTOS.map((photo) => (
