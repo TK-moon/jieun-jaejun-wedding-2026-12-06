@@ -16,7 +16,7 @@ const Countdown: FC<Props> = () => {
           <div className={styles.countdown_segment} key={key}>
             <div className={styles.countdown_item}>
               <dt>{label}</dt>
-              <dd>{String(countdown[key]).padStart(key === 'days' ? 3 : 2, '0')}</dd>
+              <dd>{String(countdown[key]).padStart(2, '0')}</dd>
             </div>
             {index < UNITS_MAP.length - 1 ? (
               <span className={styles.countdown_divider} aria-hidden="true">
