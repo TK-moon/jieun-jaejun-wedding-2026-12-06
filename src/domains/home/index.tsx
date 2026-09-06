@@ -12,8 +12,8 @@ const HomeMain: FC<Props> = () => {
     <>
       <BannerSection />
       <GreetingSection />
-      <GallerySection />
       <TicketSection />
+      <GallerySection />
       <ContactSection />
     </>
   );
