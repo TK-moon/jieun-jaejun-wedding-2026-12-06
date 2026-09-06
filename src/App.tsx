@@ -5,6 +5,7 @@ import { useOpenKakaoExternalBrowser } from './hooks/useOpenKakaoExternalBrowser
 import { BannerSection } from './sections/BannerSection';
 import { ContactSection } from './sections/ContactSection';
 import { FooterSection } from './sections/FooterSection';
+import { GallerySection } from './sections/GallerySection';
 import { GreetingSection } from './sections/GreetingSection';
 import { TicketSection } from './sections/TicketSection';
 
@@ -18,6 +19,7 @@ const App: FC<Props> = () => {
       <main>
         <BannerSection />
         <GreetingSection />
+        <GallerySection />
         <TicketSection />
         <ContactSection />
       </main>
