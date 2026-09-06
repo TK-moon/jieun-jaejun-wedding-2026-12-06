@@ -62,6 +62,7 @@
   object-position: center;
   border: 1px solid var(--color-line);
   border-radius: 9999px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
 }
 
 .venue {

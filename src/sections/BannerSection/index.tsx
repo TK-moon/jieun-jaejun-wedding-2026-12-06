@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { dayjs } from '../../lib/dayjs';
 import { WEDDING_INFO } from '../../constants';
 import styles from './index.module.css';
+import mainImage from './main.jpg';
 
 interface Props {}
 
@@ -37,7 +38,7 @@ const BannerSection: FC<Props> = () => {
           {ceremony.format('YYYY. MM. DD.')} {ceremony.format('dddd').toUpperCase()}
         </motion.p>
         <motion.img
-          src=""
+          src={mainImage}
           alt="Banner"
           className={styles.main_image}
           initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.97 }}
