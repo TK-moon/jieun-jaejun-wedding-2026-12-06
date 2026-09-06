@@ -50,8 +50,14 @@ src/
 
 청첩장은 공개 URL이면 연락처·계좌가 **사실상 공개 정보**입니다. 아래는 노출을 줄이고 안전하게 쓰기 위한 처리입니다.
 
-- **검색·크롤러 차단**: `index.html` `noindex`/`nofollow` 및 주요 검색·AI 봇 meta, `public/robots.txt`. URL을 아는 접근까지 막지는 않습니다.
-- **Referrer**: `referrer=no-referrer`로 외부 이동 시 레퍼러 유출을 줄입니다.
+- **검색 제외**: `index.html`의 `noindex`/`nofollow`/`nosnippet`/`noimageindex`. Googlebot·Bingbot·Yeti는 HTML을 읽어 이 지시문을 확인할 수 있게 허용합니다. 실제 색인 제거 여부는 검색엔진에서 별도로 확인해야 합니다.
+- **AI 수집 억제**: 현재 프로젝트 Pages의 유효한 정책은 도메인 루트 `https://tk-moon.github.io/robots.txt`입니다. 원본은 별도 저장소의 [`robots.txt`](https://github.com/TK-moon/tk-moon.github.io/blob/main/robots.txt)에서 관리·배포합니다. 청첩장 경로만 대상으로 AI 봇·기타 크롤러를 차단합니다. 이 프로젝트를 배포해도 루트 정책은 자동 갱신되지 않습니다.
+- **하위 경로 robots.txt**: `public/robots.txt`는 향후 독립 도메인의 루트에 배포할 때 사용하는 정책입니다. 현재 `/jieun-jaejun-wedding-2026-12-06/robots.txt`는 표준 크롤러의 정책 위치가 아닙니다.
+- **차단 한계**: robots.txt는 접근 제어가 아닙니다. 규칙을 무시하는 수집기나 사용자가 요청한 AI 접근까지 보장하지 않으며, `noai`/`noimageai`는 보조 신호입니다. 공개 저장소·Git 기록·JavaScript에 포함된 계좌는 계속 직접 접근할 수 있습니다.
+- **호스팅 제약**: GitHub Free에서 기존 Pages 링크를 유지하므로 저장소는 공개 상태입니다. 원본 비공개와 실제 접근 통제가 필요하면 비공개 저장소를 지원하는 호스팅 및 서버 인증을 별도로 구성해야 합니다.
+- **CSP**: 프로덕션 빌드에 CSP 메타를 삽입해 스크립트·통신을 같은 출처로 제한하고, 외부 리소스는 기존 Google Fonts만 허용합니다. 인라인 스타일은 React·모션에 필요해 허용합니다. `frame-ancestors`는 메타로 적용할 수 없으며 프레임 삽입 차단까지 구현한 것은 아닙니다.
+- **소스맵·환경 파일**: 프로덕션 소스맵 생성을 명시적으로 끄고 `.env`·`.env.*`를 Git에서 제외합니다. 프런트엔드 환경 변수에 넣은 값도 번들에 포함될 수 있으므로 비밀 저장소로 사용하지 않습니다.
+- **Referrer**: 외부 폰트 요청보다 먼저 `referrer=no-referrer`를 선언해 리소스 요청과 외부 이동 시 레퍼러 유출을 줄입니다.
 - **외부 링크**: 지도 등은 `rel="noreferrer"` / `noopener`로 엽니다.
 - **클립보드**: `window.isSecureContext` + Clipboard API가 있을 때만 복사 UI를 제공합니다.
 - **카카오톡 인앱**: 외부 브라우저로 유도해 클립보드·지도·전화 동작을 안정화합니다.
