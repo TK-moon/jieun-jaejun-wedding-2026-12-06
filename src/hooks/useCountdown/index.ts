@@ -4,17 +4,29 @@ import { getCountdown } from './_utils';
 
 const useCountdown = (params: Params, options?: Options): Countdown => {
   const { targetDate } = params;
+
   const timeZone = options?.timeZone ?? 'local';
   const targetKey = targetDate instanceof Date ? targetDate.getTime() : targetDate;
+
   const [countdown, setCountdown] = useState(() => getCountdown(targetDate, timeZone));
 
   useEffect(() => {
     const resolvedTarget = typeof targetKey === 'number' ? new Date(targetKey) : targetKey;
-    const tick = () => setCountdown(getCountdown(resolvedTarget, timeZone));
+    const tick = () => {
+      const next = getCountdown(resolvedTarget, timeZone);
+      setCountdown(next);
+      return next.isComplete;
+    };
 
-    tick();
+    if (tick()) {
+      return;
+    }
 
-    const timer = window.setInterval(tick, 1_000);
+    const timer = window.setInterval(() => {
+      if (tick()) {
+        window.clearInterval(timer);
+      }
+    }, 1_000);
 
     return () => window.clearInterval(timer);
   }, [targetKey, timeZone]);
@@ -23,6 +35,6 @@ const useCountdown = (params: Params, options?: Options): Countdown => {
 };
 
 export { useCountdown };
-export type { Countdown, CountdownTimeZone, Options, Params } from './_types';
+export type { Countdown, CountdownTimeZone, CountdownUnits, Options, Params } from './_types';
 export { UNITS_MAP } from './_constants';
 export { getCountdown } from './_utils';

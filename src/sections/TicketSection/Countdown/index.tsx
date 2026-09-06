@@ -7,10 +7,16 @@ interface Props {}
 
 const Countdown: FC<Props> = () => {
   const countdown = useCountdown({ targetDate: WEDDING_INFO.ceremony }, { timeZone: 'KST' });
+  const { isComplete } = countdown;
 
   return (
-    <div className={styles.countdown} role="timer" aria-live="off" aria-label="Boarding countdown">
-      <p className={styles.countdown_caption}>Boarding In</p>
+    <div
+      className={styles.countdown}
+      role="timer"
+      aria-live="off"
+      aria-label={isComplete ? 'Boarding complete' : 'Boarding countdown'}
+    >
+      <p className={styles.countdown_caption}>{isComplete ? 'Boarded' : 'Boarding In'}</p>
       <dl className={styles.countdown_row}>
         {UNITS_MAP.map(({ key, label }, index) => (
           <div className={styles.countdown_segment} key={key}>

@@ -15,6 +15,7 @@ export const getCountdown = (
     hours: Math.floor((totalSeconds % 86_400) / 3_600),
     minutes: Math.floor((totalSeconds % 3_600) / 60),
     seconds: totalSeconds % 60,
+    isComplete: totalSeconds === 0,
   };
 };
 
