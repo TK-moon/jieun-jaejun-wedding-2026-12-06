@@ -47,7 +47,6 @@ const HostContacts: FC<Props> = () => {
               role="아버지"
               name={bride.parents.father.name}
               phone={bride.parents.father.phone}
-              account={bride.parents.father.account}
               contactLabel={`아버지 ${bride.parents.father.name}`}
             />
             <ContactPerson

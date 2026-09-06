@@ -1,7 +1,6 @@
 import { DEFAULT_TIME_ZONE, dayjs } from '../lib/dayjs';
 
 const PLACEHOLDER_PHONE = '010-0000-0000';
-const PLACEHOLDER_ACCOUNT_NUMBER = '000-0000-000000';
 
 export const WEDDING_INFO = {
   groom: {
@@ -18,8 +17,8 @@ export const WEDDING_INFO = {
         name: '전윤구',
         phone: PLACEHOLDER_PHONE,
         account: {
-          bank: '○○은행',
-          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          bank: '농협',
+          number: '351-0290-5432-43',
           holder: '전윤구',
         },
       },
@@ -27,8 +26,8 @@ export const WEDDING_INFO = {
         name: '이경아',
         phone: PLACEHOLDER_PHONE,
         account: {
-          bank: '○○은행',
-          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          bank: '국민은행',
+          number: '611-24-0270705',
           holder: '이경아',
         },
       },
@@ -52,18 +51,13 @@ export const WEDDING_INFO = {
       father: {
         name: '김병회',
         phone: PLACEHOLDER_PHONE,
-        account: {
-          bank: '○○은행',
-          number: PLACEHOLDER_ACCOUNT_NUMBER,
-          holder: '김병회',
-        },
       },
       mother: {
         name: '강승아',
         phone: PLACEHOLDER_PHONE,
         account: {
-          bank: '○○은행',
-          number: PLACEHOLDER_ACCOUNT_NUMBER,
+          bank: '우리은행',
+          number: '1002-028-993506',
           holder: '강승아',
         },
       },

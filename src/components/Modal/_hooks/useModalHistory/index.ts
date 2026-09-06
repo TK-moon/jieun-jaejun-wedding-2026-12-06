@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react';
+import { useEffect, useEffectEvent, useId } from 'react';
 import { isModalHistoryState, MODAL_HISTORY_KEY } from '../../_utils';
 
 interface Params {
@@ -9,6 +9,7 @@ interface Params {
 const useModalHistory = (params: Params) => {
   const { open, onClose } = params;
   const modalId = useId();
+  const closeModal = useEffectEvent(onClose);
 
   useEffect(() => {
     if (!open) {
@@ -20,7 +21,7 @@ const useModalHistory = (params: Params) => {
 
     const handlePopState = () => {
       hasHistoryEntry = false;
-      onClose();
+      closeModal();
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -33,7 +34,7 @@ const useModalHistory = (params: Params) => {
         window.history.back();
       }
     };
-  }, [open, onClose, modalId]);
+  }, [open, modalId]);
 };
 
 export { useModalHistory };

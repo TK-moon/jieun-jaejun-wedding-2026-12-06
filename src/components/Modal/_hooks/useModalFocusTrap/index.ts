@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react';
+import { useEffect, useEffectEvent, type RefObject } from 'react';
 import { focusInitialElement, trapTabKey } from '../../_utils';
 
 interface Params {
@@ -9,6 +9,7 @@ interface Params {
 
 const useModalFocusTrap = (params: Params) => {
   const { open, onClose, dialogRef } = params;
+  const closeModal = useEffectEvent(onClose);
 
   useEffect(() => {
     if (!open) {
@@ -19,7 +20,7 @@ const useModalFocusTrap = (params: Params) => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose();
+        closeModal();
         return;
       }
 
@@ -43,7 +44,7 @@ const useModalFocusTrap = (params: Params) => {
       document.removeEventListener('keydown', handleKeyDown);
       previouslyFocused?.focus?.();
     };
-  }, [open, onClose, dialogRef]);
+  }, [open, dialogRef]);
 };
 
 export { useModalFocusTrap };

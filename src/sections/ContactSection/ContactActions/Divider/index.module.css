@@ -1,0 +1,6 @@
+.separator {
+  color: var(--color-ink-subtle);
+  font-size: 1.2rem;
+  line-height: 1;
+  user-select: none;
+}

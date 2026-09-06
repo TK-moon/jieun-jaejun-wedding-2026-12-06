@@ -1,4 +1,4 @@
-const is_clipboard_available = (): boolean => {
+const isClipboardAvailable = (): boolean => {
   return (
     typeof navigator !== 'undefined' &&
     typeof window !== 'undefined' &&
@@ -7,4 +7,4 @@ const is_clipboard_available = (): boolean => {
   );
 };
 
-export { is_clipboard_available };
+export { isClipboardAvailable };

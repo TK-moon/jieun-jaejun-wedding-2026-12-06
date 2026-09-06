@@ -4,7 +4,7 @@ import { CopyIcon } from '../../../components/icons/CopyIcon/CopyIcon';
 import { SectionTitle } from '../../../components/SectionTitle/SectionTitle';
 import { WEDDING_INFO } from '../../../constants';
 import { useToast } from '../../../hooks/useToast';
-import { is_clipboard_available } from '../../../lib/clipboard';
+import { isClipboardAvailable } from '../../../lib/clipboard';
 import { dayjs } from '../../../lib/dayjs';
 import { downloadWeddingIcs, getCeremonyDateTimeKo } from '../_utils';
 import styles from './index.module.css';
@@ -22,7 +22,7 @@ const Header: FC<Props> = (props) => {
   const ceremony = dayjs.tz(WEDDING_INFO.ceremony);
   const { date, weekday, time } = getCeremonyDateTimeKo(WEDDING_INFO.ceremony);
 
-  const canCopy = is_clipboard_available();
+  const canCopy = isClipboardAvailable();
 
   const handleCopyAddress = async () => {
     try {

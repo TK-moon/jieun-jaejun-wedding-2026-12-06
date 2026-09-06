@@ -7,7 +7,7 @@ interface Props {
   role: string;
   name: string;
   phone: string;
-  account: Account;
+  account?: Account;
   contactLabel?: string;
 }
 
