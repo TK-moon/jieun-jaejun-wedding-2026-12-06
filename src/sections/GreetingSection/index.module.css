@@ -3,7 +3,7 @@
   width: 100%;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 34px;
   padding: var(--layout-section-padding-block) var(--layout-inline-padding);
   background-color: var(--color-canvas);
 }
@@ -13,6 +13,6 @@
   width: var(--layout-frame-width);
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 48px;
   text-align: center;
 }
