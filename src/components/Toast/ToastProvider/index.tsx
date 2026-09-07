@@ -1,7 +1,7 @@
 import { createContext, useState, type FC, type PropsWithChildren } from 'react';
-import { useTimeout } from '../../hooks/useTimeout';
-import type { ShowToastOptions, ToastApi, ToastItem } from './_types';
-import { createToastItem, removeToast, upsertToast } from './_utils';
+import { useTimeout } from '../../../hooks/useTimeout';
+import type { ShowToastOptions, ToastApi, ToastItem } from '../_types';
+import { createToastItem, removeToast, upsertToast } from '../_utils';
 
 interface ToastContextValue extends ToastApi {
   toasts: ToastItem[];

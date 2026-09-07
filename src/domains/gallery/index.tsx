@@ -1,10 +1,10 @@
 import { useId, useState, type FC, type MouseEventHandler } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon/ArrowRightIcon';
-import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
+import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon';
+import { SectionTitle } from '@/components/SectionTitle';
 import { ROUTES } from '@/constants/routes';
 import { GALLERY_PHOTOS } from './_constants';
-import { GalleryImageModal } from './GalleryImageModal/GalleryImageModal';
+import { GalleryImageModal } from './GalleryImageModal';
 import styles from './index.module.css';
 
 interface Props {}

@@ -1,6 +1,6 @@
 import { useId, useRef, type FC, type PropsWithChildren, type ReactNode } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Portal } from '../Portal/Portal';
+import { Portal } from '../Portal';
 import { getModalMotionVariants } from './_constants';
 import { useModalFocusTrap } from './_hooks/useModalFocusTrap';
 import { useModalHistory } from './_hooks/useModalHistory';

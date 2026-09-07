@@ -1,9 +1,9 @@
 import { useRef, type FC } from 'react';
 import { AnimatePresence } from 'motion/react';
-import { Portal } from '@/components/Portal/Portal';
+import { Portal } from '@/components/Portal';
 import type { GalleryPhoto } from '../_types';
 import { useGalleryModal } from './_hooks/useGalleryModal';
-import { Viewer } from './Viewer/Viewer';
+import { Viewer } from './Viewer';
 import styles from './GalleryImageModal.module.css';
 
 interface Props {

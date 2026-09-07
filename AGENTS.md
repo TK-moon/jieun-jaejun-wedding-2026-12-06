@@ -21,8 +21,9 @@
 - Put page sections for the primary design under `src/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
 - Nested section components under `src/sections/<SectionName>/<ComponentName>/` also keep styles beside their `index.tsx` as `index.module.css`. Do not share a parent section stylesheet across children.
 - Put shared or reusable units under `src/components/<ComponentName>/`.
-- Put shared icons under `src/components/icons/<IconName>/` with `<IconName>.tsx` and `<IconName>.module.css`.
-- Keep the component implementation in `<ComponentName>.tsx` and its component-scoped style in `<ComponentName>.module.css`.
+- Put shared icons under `src/components/icons/<IconName>/` with `index.tsx` and `<IconName>.module.css`.
+- Put each component implementation in `<ComponentName>/index.tsx`; keep the component name and named export as `<ComponentName>`. Nested components follow the same rule. The root app entry files `src/App.tsx` and `src/main.tsx` retain their conventional names.
+- Keep component-scoped styles beside the implementation in a CSS Module; existing `<ComponentName>.module.css` filenames may remain.
 - Co-locate component-specific supporting code in underscored directories:
   - `_constants/index.ts` for static values, labels, and configuration.
   - `_types/index.ts` for shared TypeScript interfaces and types.
@@ -38,7 +39,7 @@
 
 ### `SectionTitle`
 
-- Shared section header in `src/components/SectionTitle/SectionTitle.tsx`.
+- Shared section header in `src/components/SectionTitle/index.tsx`.
 - `title` is required. `label` is optional — omit it when the section should show only the main heading (e.g. ContactSection).
 - When `label` is present, render it above the title; when absent, do not reserve empty space for it.
 

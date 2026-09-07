@@ -1,6 +1,6 @@
 import { useCallback, useId, useRef, useState, type FC } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
+import { SectionTitle } from '@/components/SectionTitle';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { Cover } from './Cover';
 import { Item } from './Item';

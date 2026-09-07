@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import { CalendarIcon } from '@/components/icons/CalendarIcon/CalendarIcon';
-import { CopyIcon } from '@/components/icons/CopyIcon/CopyIcon';
-import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
+import { CalendarIcon } from '@/components/icons/CalendarIcon';
+import { CopyIcon } from '@/components/icons/CopyIcon';
+import { SectionTitle } from '@/components/SectionTitle';
 import { WEDDING_INFO } from '@/constants';
 import { useToast } from '@/hooks/useToast';
 import { isClipboardAvailable } from '@/lib/clipboard';

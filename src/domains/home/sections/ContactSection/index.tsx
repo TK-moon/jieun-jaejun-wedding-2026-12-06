@@ -1,5 +1,5 @@
 import { useId, type FC } from 'react';
-import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
+import { SectionTitle } from '@/components/SectionTitle';
 import { CoupleContacts } from './CoupleContacts';
 import { HostContacts } from './HostContacts';
 import styles from './index.module.css';

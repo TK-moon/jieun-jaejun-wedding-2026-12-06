@@ -1,6 +1,6 @@
 import { useState, type FC, type ReactElement } from 'react';
-import { CopyIcon } from '@/components/icons/CopyIcon/CopyIcon';
-import { Modal } from '@/components/Modal/Modal';
+import { CopyIcon } from '@/components/icons/CopyIcon';
+import { Modal } from '@/components/Modal';
 import { useToast } from '@/hooks/useToast';
 import { isClipboardAvailable } from '@/lib/clipboard';
 import type { Account } from '../_types';

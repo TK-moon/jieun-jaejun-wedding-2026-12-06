@@ -1,6 +1,6 @@
 import { useLayoutEffect, type FC } from 'react';
 import { Route, Routes, useLocation } from 'react-router';
-import { Toast } from './components/Toast/Toast';
+import { Toast } from './components/Toast';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { ROUTES } from './constants/routes';
 import { GalleryMain } from './domains/gallery';

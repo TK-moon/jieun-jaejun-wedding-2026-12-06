@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Link } from 'react-router';
-import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon/ArrowRightIcon';
+import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon';
 import { ROUTES } from '@/constants/routes';
 import styles from './index.module.css';
 

@@ -1,12 +1,12 @@
 import { useRef, useState, type FC, type KeyboardEvent } from 'react';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
-import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon/ArrowRightIcon';
-import { CloseIcon } from '@/components/icons/CloseIcon/CloseIcon';
+import { ArrowRightIcon } from '@/components/icons/ArrowRightIcon';
+import { CloseIcon } from '@/components/icons/CloseIcon';
 import { MOTION_EASE } from '@/constants/motion';
 import type { GalleryPhoto } from '../../_types';
 import { FADE_DURATION } from '../_constants';
 import { useGallerySwipe } from '../_hooks/useGallerySwipe';
-import { Photo } from '../Photo/Photo';
+import { Photo } from '../Photo';
 import styles from './Viewer.module.css';
 
 interface Props {

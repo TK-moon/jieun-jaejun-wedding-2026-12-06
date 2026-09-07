@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { MapLink } from '@/components/MapLink/MapLink';
+import { MapLink } from '@/components/MapLink';
 import { WEDDING_INFO } from '@/constants';
 import styles from './index.module.css';
 
