@@ -1,0 +1,14 @@
+.item {
+  min-width: 0;
+  aspect-ratio: 2 / 3;
+}
+
+.item:nth-child(even) {
+  transform: translateY(50%);
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 10px 0 rgb(0 0 0 / 10%);
+}

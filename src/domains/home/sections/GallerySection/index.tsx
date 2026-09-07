@@ -3,6 +3,7 @@ import { useReducedMotion } from 'motion/react';
 import { SectionTitle } from '@/components/SectionTitle/SectionTitle';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { Cover } from './Cover';
+import { Item } from './Item';
 import { Photo } from './Photo';
 import { GALLERY_PREVIEW_PHOTOS } from './_constants';
 import styles from './index.module.css';
@@ -29,6 +30,9 @@ const GallerySection: FC<Props> = () => {
   const isSectionVisible = !isSupported || hasIntersected;
   const arePhotosReady = readyPhotoIds.size === GALLERY_PREVIEW_PHOTOS.length;
 
+  const canAnimateItem = (isReady: boolean) =>
+    Boolean(shouldReduceMotion) || (isSectionVisible && isReady);
+
   const handlePhotoReady = useCallback((photoId: string) => {
     setReadyPhotoIds((currentIds) => {
       if (currentIds.has(photoId)) {
@@ -47,25 +51,22 @@ const GallerySection: FC<Props> = () => {
       <div className={styles.frame}>
         <ol className={styles.grid}>
           {GALLERY_PREVIEW_PHOTOS.map((photo, index) => (
-            <li className={styles.item} key={photo.id}>
-              <Photo
-                id={photo.id}
-                src={photo.src}
-                alt={photo.alt}
-                index={index}
-                isSectionVisible={isSectionVisible}
-                shouldReduceMotion={shouldReduceMotion}
-                onReady={handlePhotoReady}
-              />
-            </li>
-          ))}
-          <li className={styles.item}>
-            <Cover
-              index={GALLERY_PREVIEW_PHOTOS.length}
-              isSectionVisible={isSectionVisible && arePhotosReady}
+            <Item
+              key={photo.id}
+              index={index}
+              canAnimate={canAnimateItem(readyPhotoIds.has(photo.id))}
               shouldReduceMotion={shouldReduceMotion}
-            />
-          </li>
+            >
+              <Photo id={photo.id} src={photo.src} alt={photo.alt} onReady={handlePhotoReady} />
+            </Item>
+          ))}
+          <Item
+            index={GALLERY_PREVIEW_PHOTOS.length}
+            canAnimate={canAnimateItem(arePhotosReady)}
+            shouldReduceMotion={shouldReduceMotion}
+          >
+            <Cover />
+          </Item>
         </ol>
       </div>
     </section>

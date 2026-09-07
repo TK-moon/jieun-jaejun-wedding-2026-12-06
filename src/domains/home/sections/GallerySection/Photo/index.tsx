@@ -1,39 +1,22 @@
-import { useState, type FC } from 'react';
-import { motion } from 'motion/react';
-import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
+import type { FC } from 'react';
 import styles from './index.module.css';
 
 interface Props {
   id: string;
   src: string;
   alt: string;
-  index: number;
-  isSectionVisible: boolean;
-  shouldReduceMotion: boolean | null;
   onReady?: (photoId: string) => void;
 }
 
 const Photo: FC<Props> = (props) => {
-  const { id, src, alt, index, isSectionVisible, shouldReduceMotion, onReady } = props;
-  const [isReady, setIsReady] = useState(false);
-  const canAnimate = Boolean(shouldReduceMotion) || (isSectionVisible && isReady);
+  const { id, src, alt, onReady } = props;
 
   const handleReady = () => {
-    setIsReady(true);
     onReady?.(id);
   };
 
   return (
-    <motion.div
-      className={styles.frame}
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-      animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{
-        delay: shouldReduceMotion || !canAnimate ? 0 : (index + 1) * 0.1,
-        duration: shouldReduceMotion ? 0 : MOTION_DURATION,
-        ease: MOTION_EASE,
-      }}
-    >
+    <div className={styles.frame}>
       <img
         className={styles.image}
         src={src}
@@ -45,7 +28,7 @@ const Photo: FC<Props> = (props) => {
         onLoad={handleReady}
         onError={handleReady}
       />
-    </motion.div>
+    </div>
   );
 };
 
