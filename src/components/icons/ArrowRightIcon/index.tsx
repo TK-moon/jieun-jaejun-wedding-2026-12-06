@@ -1,7 +1,7 @@
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { FC } from 'react';
-import styles from './ArrowRightIcon.module.css';
+import styles from './index.module.css';
 
 interface Props {
   className?: string;

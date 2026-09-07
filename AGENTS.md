@@ -20,10 +20,10 @@
 
 - Put page sections for the primary design under `src/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
 - Nested section components under `src/sections/<SectionName>/<ComponentName>/` also keep styles beside their `index.tsx` as `index.module.css`. Do not share a parent section stylesheet across children.
-- Put shared or reusable units under `src/components/<ComponentName>/`.
-- Put shared icons under `src/components/icons/<IconName>/` with `index.tsx` and `<IconName>.module.css`.
+- Put shared or reusable units under `src/components/<ComponentName>/` with `index.tsx` and `index.module.css`.
+- Put shared icons under `src/components/icons/<IconName>/` with `index.tsx` and `index.module.css`.
 - Put each component implementation in `<ComponentName>/index.tsx`; keep the component name and named export as `<ComponentName>`. Nested components follow the same rule. The root app entry files `src/App.tsx` and `src/main.tsx` retain their conventional names.
-- Keep component-scoped styles beside the implementation in a CSS Module; existing `<ComponentName>.module.css` filenames may remain.
+- Keep component-scoped styles beside the implementation as `index.module.css`. Do not use `<ComponentName>.module.css`.
 - Co-locate component-specific supporting code in underscored directories:
   - `_constants/index.ts` for static values, labels, and configuration.
   - `_types/index.ts` for shared TypeScript interfaces and types.
@@ -80,7 +80,7 @@
 
 ## Styling
 
-- Use CSS Modules for all component and feature styles: `*.module.css`.
+- Use CSS Modules for all component and feature styles. Co-locate them as `index.module.css` next to the component `index.tsx`.
 - Use `src/index.css` only for global foundations: root variables, browser resets, base elements, and global accessibility preferences.
 - Do not use global element selectors or global class names in component styles unless targeting a child element owned by the component.
 - Keep responsive and interaction styles next to the component they affect.

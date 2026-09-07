@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState, type FC } from 'react';
 import type { GalleryPhoto } from '../../_types';
 import { useIdleImageLoad } from '../_hooks/useIdleImageLoad';
-import styles from './Photo.module.css';
+import styles from './index.module.css';
 
 interface Props {
   photo: GalleryPhoto;

@@ -2,7 +2,7 @@ import { useContext, type FC } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
 import { ToastContext } from './ToastProvider';
-import styles from './Toast.module.css';
+import styles from './index.module.css';
 
 interface Props {}
 

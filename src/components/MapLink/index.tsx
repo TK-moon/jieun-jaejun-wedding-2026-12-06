@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import kakaoMapIcon from '../../assets/kakao-map.ico';
 import naverMapIcon from '../../assets/naver-map.ico';
-import styles from './MapLink.module.css';
+import styles from './index.module.css';
 
 interface Props {
   href: string;

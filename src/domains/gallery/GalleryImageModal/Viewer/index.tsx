@@ -7,7 +7,7 @@ import { Photo } from '../Photo';
 import { CloseButton } from './CloseButton';
 import { NextButton } from './NextButton';
 import { PreviousButton } from './PreviousButton';
-import styles from './Viewer.module.css';
+import styles from './index.module.css';
 
 interface Props {
   photos: GalleryPhoto[];

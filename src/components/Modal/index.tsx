@@ -5,7 +5,7 @@ import { getModalMotionVariants } from './_constants';
 import { useModalFocusTrap } from './_hooks/useModalFocusTrap';
 import { useModalHistory } from './_hooks/useModalHistory';
 import { useModalScrollLock } from './_hooks/useModalScrollLock';
-import styles from './Modal.module.css';
+import styles from './index.module.css';
 
 interface Props extends PropsWithChildren {
   open: boolean;

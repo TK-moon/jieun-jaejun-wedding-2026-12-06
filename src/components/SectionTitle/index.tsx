@@ -1,5 +1,5 @@
 import type { FC, PropsWithChildren } from 'react';
-import styles from './SectionTitle.module.css';
+import styles from './index.module.css';
 
 interface Props extends PropsWithChildren {
   label?: string;

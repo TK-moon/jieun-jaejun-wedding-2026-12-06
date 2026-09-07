@@ -1,7 +1,7 @@
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { FC } from 'react';
-import styles from './CopyIcon.module.css';
+import styles from './index.module.css';
 
 interface Props {
   className?: string;

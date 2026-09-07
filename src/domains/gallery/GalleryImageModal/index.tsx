@@ -5,7 +5,7 @@ import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
 import type { GalleryPhoto } from '../_types';
 import { useGalleryModal } from './_hooks/useGalleryModal';
 import { Viewer } from './Viewer';
-import styles from './GalleryImageModal.module.css';
+import styles from './index.module.css';
 
 interface Props {
   photos: GalleryPhoto[];

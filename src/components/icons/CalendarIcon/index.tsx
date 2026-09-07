@@ -1,7 +1,7 @@
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { FC } from 'react';
-import styles from './CalendarIcon.module.css';
+import styles from './index.module.css';
 
 interface Props {
   className?: string;
