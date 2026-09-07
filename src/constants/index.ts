@@ -1,5 +1,9 @@
 import { DEFAULT_TIME_ZONE, dayjs } from '../lib/dayjs';
 
+/**
+ * @TODO 임시 전화번호
+ * 실제 전화번호로 변경 필요
+ */
 const PLACEHOLDER_PHONE = '010-0000-0000';
 
 export const WEDDING_INFO = {
@@ -11,7 +15,7 @@ export const WEDDING_INFO = {
     },
     code: 'JJ',
     order: '차남',
-    phone: PLACEHOLDER_PHONE,
+    phone: '010-84975954',
     parents: {
       father: {
         name: '전윤구',
@@ -46,15 +50,15 @@ export const WEDDING_INFO = {
     },
     code: 'JE',
     order: '장녀',
-    phone: PLACEHOLDER_PHONE,
+    phone: '010-85287547',
     parents: {
       father: {
         name: '김병회',
-        phone: PLACEHOLDER_PHONE,
+        phone: '010-90337547',
       },
       mother: {
         name: '강승아',
-        phone: PLACEHOLDER_PHONE,
+        phone: '010-97767547',
         account: {
           bank: '우리은행',
           number: '1002-028-993506',
