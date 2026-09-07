@@ -1,9 +1,13 @@
 import type { FC } from 'react';
+import { Picture } from '@/components/Picture';
 import styles from './index.module.css';
 
 interface Props {
   id: string;
-  src: string;
+  src: {
+    webp: string;
+    jpg: string;
+  };
   alt: string;
   onReady?: (photoId: string) => void;
 }
@@ -17,9 +21,10 @@ const Photo: FC<Props> = (props) => {
 
   return (
     <div className={styles.frame}>
-      <img
+      <Picture
         className={styles.image}
-        src={src}
+        webpSrc={src.webp}
+        jpgSrc={src.jpg}
         alt={alt}
         width={1200}
         height={1800}

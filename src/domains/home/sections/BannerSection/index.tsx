@@ -1,9 +1,11 @@
 import type { FC } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { dayjs } from '@/lib/dayjs';
+import { Picture } from '@/components/Picture';
 import { WEDDING_INFO } from '@/constants';
+import { dayjs } from '@/lib/dayjs';
 import styles from './index.module.css';
-import mainImage from './main.jpg';
+import mainImageJpg from './main.jpg';
+import mainImageWebp from './main.webp';
 
 interface Props {}
 
@@ -37,15 +39,8 @@ const BannerSection: FC<Props> = () => {
         >
           {ceremony.format('YYYY. MM. DD.')} {ceremony.format('dddd').toUpperCase()}
         </motion.p>
-        <motion.img
-          src={mainImage}
-          alt="Banner"
+        <motion.div
           className={styles.main_image}
-          width={1200}
-          height={1800}
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
           initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{
@@ -53,7 +48,18 @@ const BannerSection: FC<Props> = () => {
             duration: duration ?? 0.55,
             ease: EASE,
           }}
-        />
+        >
+          <Picture
+            webpSrc={mainImageWebp}
+            jpgSrc={mainImageJpg}
+            alt="Banner"
+            width={1200}
+            height={1800}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </motion.div>
         <motion.p
           className={styles.venue}
           initial={shouldReduceMotion ? false : { opacity: 0, x: 12 }}

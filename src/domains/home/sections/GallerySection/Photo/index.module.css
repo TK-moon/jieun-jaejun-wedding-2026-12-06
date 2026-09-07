@@ -4,24 +4,21 @@
   overflow: hidden;
 }
 
-.image {
-  display: block;
-  width: 100%;
-  height: 100%;
+.image img {
   object-fit: cover;
   transition: var(--transition);
 }
 
-.frame:hover .image {
+.frame:hover .image img {
   transform: scale(1.04);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .image {
+  .image img {
     transition: none;
   }
 
-  .frame:hover .image {
+  .frame:hover .image img {
     transform: none;
   }
 }
