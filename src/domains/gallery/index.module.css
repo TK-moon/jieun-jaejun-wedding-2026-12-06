@@ -33,11 +33,6 @@
   transform: rotate(180deg);
 }
 
-.back_link:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
 .back_link:focus-visible {
   outline: 2px solid var(--color-sky-deep);
   outline-offset: 4px;
