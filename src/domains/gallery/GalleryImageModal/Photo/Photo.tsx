@@ -78,7 +78,7 @@ const Photo: FC<Props> = (props) => {
       />
       {status === 'loading' ? (
         <p className={styles.status} role="status">
-          원본 사진을 불러오는 중…
+          사진을 불러오는 중…
         </p>
       ) : null}
       {status === 'error' ? (

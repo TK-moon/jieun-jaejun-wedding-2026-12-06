@@ -24,7 +24,7 @@ const GalleryImageModal: FC<Props> = (props) => {
       <dialog
         ref={dialogRef}
         className={styles.dialog}
-        aria-label="갤러리 원본 사진"
+        aria-label="갤러리 사진 크게 보기"
         onCancel={(event) => {
           event.preventDefault();
           onClose();
