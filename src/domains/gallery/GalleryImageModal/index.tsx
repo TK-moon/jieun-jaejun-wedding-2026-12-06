@@ -16,8 +16,10 @@ interface Props {
 
 const GalleryImageModal: FC<Props> = (props) => {
   const { photos, selectedIndex, onIndexChange, onClose } = props;
+
   const dialogRef = useRef<HTMLDialogElement>(null);
   const open = selectedIndex !== null && Boolean(photos[selectedIndex]);
+
   const { finishClose } = useGalleryModal({ open, onClose, dialogRef });
   const shouldReduceMotion = useReducedMotion();
 
@@ -41,10 +43,7 @@ const GalleryImageModal: FC<Props> = (props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{
-                duration: shouldReduceMotion ? 0 : MOTION_DURATION,
-                ease: MOTION_EASE,
-              }}
+              transition={{ duration: shouldReduceMotion ? 0 : MOTION_DURATION, ease: MOTION_EASE }}
             >
               <Viewer
                 photos={photos}

@@ -21,8 +21,10 @@ const Viewer: FC<Props> = (props) => {
   const viewportRef = useRef<HTMLDivElement>(null);
   const enteredRef = useRef(false);
   const [preloadEnabled, setPreloadEnabled] = useState(false);
+
   const isPresent = useIsPresent();
   const reduceMotion = Boolean(useReducedMotion());
+
   const { x, changePhoto, handlePanStart, handlePan, handlePanEnd, canPreload } = useGallerySwipe({
     selectedIndex,
     photoCount: photos.length,
@@ -31,6 +33,7 @@ const Viewer: FC<Props> = (props) => {
     enabled: isPresent,
     reduceMotion,
   });
+
   const firstIndex = Math.max(0, selectedIndex - (preloadEnabled ? 1 : 0));
   const lastIndex = Math.min(photos.length - 1, selectedIndex + (preloadEnabled ? 1 : 0));
 
