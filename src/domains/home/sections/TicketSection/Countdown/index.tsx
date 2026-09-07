@@ -17,13 +17,13 @@ const Countdown: FC<Props> = () => {
       aria-label={isComplete ? 'Boarding complete' : 'Boarding countdown'}
     >
       <p className={styles.countdown_caption}>{isComplete ? 'Boarded' : 'Boarding In'}</p>
-      <dl className={styles.countdown_row}>
+      <div className={styles.countdown_row}>
         {UNITS_MAP.map(({ key, label }, index) => (
           <div className={styles.countdown_segment} key={key}>
-            <div className={styles.countdown_item}>
+            <dl className={styles.countdown_item}>
               <dt>{label}</dt>
               <dd>{String(countdown[key]).padStart(2, '0')}</dd>
-            </div>
+            </dl>
             {index < UNITS_MAP.length - 1 ? (
               <span className={styles.countdown_divider} aria-hidden="true">
                 :
@@ -31,7 +31,7 @@ const Countdown: FC<Props> = () => {
             ) : null}
           </div>
         ))}
-      </dl>
+      </div>
     </div>
   );
 };

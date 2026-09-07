@@ -8,7 +8,7 @@ interface CeremonyDateTimeKo {
   time: string;
 }
 
-const getCeremonyDateTimeKo = (date: Date): CeremonyDateTimeKo => {
+export const getCeremonyDateTimeKo = (date: Date): CeremonyDateTimeKo => {
   const ceremony = dayjs.tz(date);
   const hour = ceremony.hour();
   const period = hour < 12 ? '오전' : '오후';
@@ -21,11 +21,10 @@ const getCeremonyDateTimeKo = (date: Date): CeremonyDateTimeKo => {
   };
 };
 
-const formatCeremonyDateTimeKo = (date: Date): string => {
+export const formatCeremonyDateTimeKo = (date: Date): string => {
   const { date: dateLabel, weekday, time } = getCeremonyDateTimeKo(date);
 
   return `${dateLabel} ${weekday} ${time}`;
 };
 
-export { formatCeremonyDateTimeKo, getCeremonyDateTimeKo };
 export { buildWeddingIcs, downloadWeddingIcs } from './calendar';
