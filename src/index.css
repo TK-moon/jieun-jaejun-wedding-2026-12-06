@@ -47,6 +47,9 @@
   --layout-inline-padding: 16px;
   --layout-section-padding-block: clamp(48px, 8vw, 80px);
   --layout-frame-width: min(100%, 560px);
+
+  /* —— Motion —— */
+  --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 html {

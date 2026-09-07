@@ -22,7 +22,7 @@
   letter-spacing: 0.02em;
   line-height: 1.4;
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: var(--transition);
 }
 
 .email:hover,

@@ -13,10 +13,7 @@
   font-weight: 500;
   letter-spacing: -0.01em;
   text-decoration: none;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease;
+  transition: var(--transition);
 }
 
 .button:hover {
@@ -40,7 +37,7 @@
   letter-spacing: -0.01em;
   line-height: 1.4;
   text-decoration: none;
-  transition: color 180ms ease;
+  transition: var(--transition);
 }
 
 .text:hover,
@@ -56,7 +53,7 @@
 
 .text span {
   border-bottom: 1px solid transparent;
-  transition: border-color 180ms ease;
+  transition: var(--transition);
 }
 
 .text:hover span,

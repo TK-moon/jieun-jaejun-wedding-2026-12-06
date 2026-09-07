@@ -65,7 +65,7 @@
   letter-spacing: 0.04em;
   line-height: 1;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: var(--transition);
 }
 
 .close:hover,

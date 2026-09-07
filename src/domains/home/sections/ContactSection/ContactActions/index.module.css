@@ -21,7 +21,7 @@
   line-height: 1;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: var(--transition);
 }
 
 .link:hover,
@@ -123,12 +123,12 @@
   letter-spacing: -0.01em;
   line-height: 1.4;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: var(--transition);
 }
 
 .copyAction span {
   border-bottom: 1px solid var(--color-line);
-  transition: border-color 150ms ease;
+  transition: var(--transition);
 }
 
 .copyAction:hover,
