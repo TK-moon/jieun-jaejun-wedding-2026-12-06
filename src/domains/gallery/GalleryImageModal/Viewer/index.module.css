@@ -5,6 +5,7 @@
   background: var(--color-ink);
 }
 
+.swipe_area,
 .track,
 .slide {
   position: absolute;
@@ -13,16 +14,20 @@
   height: 100%;
 }
 
-.track {
+.swipe_area {
   left: 0;
   touch-action: pan-y pinch-zoom;
   cursor: grab;
   user-select: none;
-  will-change: transform;
 }
 
-.track:active {
+.swipe_area:active {
   cursor: grabbing;
+}
+
+.track {
+  left: 0;
+  will-change: transform;
 }
 
 .slide {

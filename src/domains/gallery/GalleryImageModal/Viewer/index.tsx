@@ -25,17 +25,24 @@ const Viewer: FC<Props> = (props) => {
   const isPresent = useIsPresent();
   const reduceMotion = Boolean(useReducedMotion());
 
-  const { x, changePhoto, handlePanStart, handlePan, handlePanEnd, canPreload } = useGallerySwipe({
-    selectedIndex,
-    photoCount: photos.length,
-    onIndexChange,
-    viewportRef,
-    enabled: isPresent,
-    reduceMotion,
-  });
+  const { x, originIndex, changePhoto, handlePanStart, handlePan, handlePanEnd, canPreload } =
+    useGallerySwipe({
+      selectedIndex,
+      photoCount: photos.length,
+      onIndexChange,
+      viewportRef,
+      enabled: isPresent,
+      reduceMotion,
+    });
 
-  const firstIndex = Math.max(0, selectedIndex - (preloadEnabled ? 1 : 0));
-  const lastIndex = Math.min(photos.length - 1, selectedIndex + (preloadEnabled ? 1 : 0));
+  const firstIndex = Math.max(
+    0,
+    Math.floor(Math.min(originIndex, selectedIndex)) - (preloadEnabled ? 1 : 0),
+  );
+  const lastIndex = Math.min(
+    photos.length - 1,
+    Math.ceil(Math.max(originIndex, selectedIndex)) + (preloadEnabled ? 1 : 0),
+  );
 
   useEffect(() => {
     if (reduceMotion) {
@@ -80,38 +87,39 @@ const Viewer: FC<Props> = (props) => {
     <div ref={viewportRef} className={styles.viewer} inert={!isPresent} onKeyDown={handleKeyDown}>
       <CloseButton onClose={onClose} />
       <motion.div
-        className={styles.track}
-        style={{ x }}
+        className={styles.swipe_area}
         onPanStart={handlePanStart}
         onPan={handlePan}
         onPanEnd={handlePanEnd}
       >
-        {photos.slice(firstIndex, lastIndex + 1).map((photo, offset) => {
-          const index = firstIndex + offset;
-          const active = index === selectedIndex;
+        <motion.div className={styles.track} style={{ x }}>
+          {photos.slice(firstIndex, lastIndex + 1).map((photo, offset) => {
+            const index = firstIndex + offset;
+            const active = index === selectedIndex;
 
-          return (
-            <div
-              key={photo.id}
-              className={styles.slide}
-              style={{ left: index * 100 + '%' }}
-              aria-hidden={!active}
-              inert={!active}
-            >
-              <Photo
-                photo={photo}
-                active={active}
-                preloadEnabled={isPresent}
-                canPreload={() => enteredRef.current && canPreload()}
-                onReady={() => {
-                  if (isPresent) {
-                    setPreloadEnabled(true);
-                  }
-                }}
-              />
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={photo.id}
+                className={styles.slide}
+                style={{ left: index * 100 + '%' }}
+                aria-hidden={!active}
+                inert={!active}
+              >
+                <Photo
+                  photo={photo}
+                  active={active}
+                  preloadEnabled={isPresent}
+                  canPreload={() => enteredRef.current && canPreload()}
+                  onReady={() => {
+                    if (isPresent) {
+                      setPreloadEnabled(true);
+                    }
+                  }}
+                />
+              </div>
+            );
+          })}
+        </motion.div>
       </motion.div>
       <PreviousButton disabled={selectedIndex === 0} onClick={() => changePhoto(-1)} />
       <NextButton disabled={selectedIndex === photos.length - 1} onClick={() => changePhoto(1)} />
