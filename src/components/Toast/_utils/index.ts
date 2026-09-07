@@ -2,9 +2,9 @@ import { DEFAULT_TOAST_DURATION_MS } from '../_constants';
 import type { ShowToastOptions, ToastItem } from '../_types';
 
 const createToastItem = (options: ShowToastOptions): ToastItem => {
-  const { id, content, durationMs = DEFAULT_TOAST_DURATION_MS } = options;
+  const { id, content, icon, durationMs = DEFAULT_TOAST_DURATION_MS } = options;
 
-  return { id, content, durationMs };
+  return { id, content, icon, durationMs };
 };
 
 const isSameToast = (left: ToastItem, right: ToastItem): boolean => {

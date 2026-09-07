@@ -1,5 +1,6 @@
 import { useState, type FC, type ReactElement } from 'react';
 import { CopyIcon } from '@/components/icons/CopyIcon';
+import { SuccessIcon } from '@/components/icons/SuccessIcon';
 import { Modal } from '@/components/Modal';
 import { useToast } from '@/hooks/useToast';
 import { isClipboardAvailable } from '@/lib/clipboard';
@@ -37,9 +38,17 @@ const ContactActions: FC<Props> = (props) => {
     try {
       await navigator.clipboard.writeText(`${account.bank} ${account.number}`);
       handleCloseAccount();
-      toast.show({ id: 'copy-account', content: '계좌번호를 복사했어요' });
+      toast.show({
+        id: 'copy-account',
+        icon: <SuccessIcon color="var(--color-success)" />,
+        content: '계좌번호를 복사했어요',
+      });
     } catch {
-      toast.show({ id: 'copy-account', content: '계좌번호 복사에 실패했어요' });
+      toast.show({
+        id: 'copy-account',
+        icon: <CopyIcon color="var(--color-failed)" />,
+        content: '계좌번호 복사에 실패했어요',
+      });
     }
   };
 

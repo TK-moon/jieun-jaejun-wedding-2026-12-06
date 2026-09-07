@@ -14,7 +14,7 @@ const Toast: FC<Props> = () => {
     throw new Error('Toast must be used within ToastProvider');
   }
 
-  const { toasts } = context;
+  const { toasts, dismiss } = context;
 
   return (
     <div className={styles.viewport} aria-live="polite">
@@ -31,7 +31,9 @@ const Toast: FC<Props> = () => {
               duration: shouldReduceMotion ? 0 : MOTION_DURATION,
               ease: MOTION_EASE,
             }}
+            onClick={() => dismiss(toast.id)}
           >
+            {toast.icon ? <span className={styles.icon}>{toast.icon}</span> : null}
             {toast.content}
           </motion.div>
         ))}

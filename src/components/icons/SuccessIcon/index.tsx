@@ -1,4 +1,4 @@
-import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { FC } from 'react';
 import styles from './index.module.css';
@@ -8,12 +8,12 @@ interface Props {
   color?: string;
 }
 
-const CopyIcon: FC<Props> = (props) => {
+const SuccessIcon: FC<Props> = (props) => {
   const { className, color } = props;
 
   return (
     <FontAwesomeIcon
-      icon={faCopy}
+      icon={faCheck}
       className={[styles.icon, className].filter(Boolean).join(' ')}
       style={color ? { color } : undefined}
       aria-hidden
@@ -22,4 +22,4 @@ const CopyIcon: FC<Props> = (props) => {
   );
 };
 
-export { CopyIcon };
+export { SuccessIcon };

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { CalendarIcon } from '@/components/icons/CalendarIcon';
 import { CopyIcon } from '@/components/icons/CopyIcon';
+import { SuccessIcon } from '@/components/icons/SuccessIcon';
 import { SectionTitle } from '@/components/SectionTitle';
 import { WEDDING_INFO } from '@/constants';
 import { useToast } from '@/hooks/useToast';
@@ -27,9 +28,17 @@ const Header: FC<Props> = (props) => {
   const handleCopyAddress = async () => {
     try {
       await navigator.clipboard.writeText(venue.address);
-      toast.show({ id: 'copy-address', content: '주소를 복사했어요' });
+      toast.show({
+        id: 'copy-address',
+        content: '주소를 복사했어요',
+        icon: <SuccessIcon color="var(--color-success)" />,
+      });
     } catch {
-      toast.show({ id: 'copy-address', content: '주소 복사에 실패했어요' });
+      toast.show({
+        id: 'copy-address',
+        content: '주소 복사에 실패했어요',
+        icon: <CopyIcon color="var(--color-failed)" />,
+      });
     }
   };
 

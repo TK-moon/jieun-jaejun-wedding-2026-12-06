@@ -1,12 +1,16 @@
+import type { ReactNode } from 'react';
+
 interface ShowToastOptions {
   id: string;
   content: string;
+  icon?: ReactNode;
   durationMs?: number;
 }
 
 interface ToastItem {
   id: string;
   content: string;
+  icon?: ReactNode;
   durationMs: number;
 }
 
