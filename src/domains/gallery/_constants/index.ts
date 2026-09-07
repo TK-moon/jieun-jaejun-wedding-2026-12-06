@@ -1,11 +1,7 @@
 import type { GalleryPhoto } from '../_types';
+import imageDimensions from '../_images/resized/dimensions.json';
 
-const originalWebpModules = import.meta.glob<string>('../_images/origin/*.webp', {
-  eager: true,
-  import: 'default',
-});
-
-const originalJpgModules = import.meta.glob<string>('../_images/resized/2880/*.jpg', {
+const resizedJpgModules = import.meta.glob<string>('../_images/resized/*/*.jpg', {
   eager: true,
   import: 'default',
 });
@@ -22,10 +18,7 @@ const thumbnailJpgModules = import.meta.glob<string>('../_images/thumbnail/*.jpg
 
 const toJpgPath = (webpPath: string) => webpPath.replace(/\.webp$/, '.jpg');
 
-const toThumbnailPath = (originPath: string) => originPath.replace('/origin/', '/thumbnail/');
-
-const toOriginalJpgPath = (originWebpPath: string) =>
-  toJpgPath(originWebpPath.replace('/origin/', '/resized/2880/'));
+const IMAGE_SIZES = [960, 1920, 2880];
 
 const requireImageSrc = (modules: Record<string, string>, path: string) => {
   const src = modules[path];
@@ -37,20 +30,28 @@ const requireImageSrc = (modules: Record<string, string>, path: string) => {
   return src;
 };
 
-const GALLERY_PHOTOS: GalleryPhoto[] = Object.entries(originalWebpModules)
-  .toSorted(([leftPath], [rightPath]) => leftPath.localeCompare(rightPath, 'en', { numeric: true }))
-  .map(([path, originalWebpSrc], index) => {
-    const thumbnailWebpPath = toThumbnailPath(path);
+const GALLERY_PHOTOS: GalleryPhoto[] = Object.entries(imageDimensions)
+  .toSorted(([left], [right]) => left.localeCompare(right, 'en', { numeric: true }))
+  .map(([filename, { width, height }], index) => {
+    const thumbnailPath = `../_images/thumbnail/${filename}.webp`;
+    const imageSrc = (size: number) =>
+      requireImageSrc(resizedJpgModules, `../_images/resized/${size}/${filename}.jpg`);
 
     return {
       id: `gallery-photo-${index + 1}`,
       thumbnailSrc: {
-        webp: requireImageSrc(thumbnailWebpModules, thumbnailWebpPath),
-        jpg: requireImageSrc(thumbnailJpgModules, toJpgPath(thumbnailWebpPath)),
+        webp: requireImageSrc(thumbnailWebpModules, thumbnailPath),
+        jpg: requireImageSrc(thumbnailJpgModules, toJpgPath(thumbnailPath)),
       },
-      originalSrc: {
-        webp: originalWebpSrc,
-        jpg: requireImageSrc(originalJpgModules, toOriginalJpgPath(path)),
+      displaySrc: {
+        src: imageSrc(2880),
+        srcSet: IMAGE_SIZES.map(
+          (size) => `${imageSrc(size)} ${Math.round((width * size) / 2880)}w`,
+        ).join(', '),
+        // Match object-fit: contain, including landscape viewports and high-density screens.
+        sizes: `(min-aspect-ratio: ${width}/${height}) ${(100 * width) / height}vh, 100vw`,
+        width,
+        height,
       },
       alt: `우리의 사진 ${index + 1}`,
     };

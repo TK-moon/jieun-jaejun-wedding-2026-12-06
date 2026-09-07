@@ -48,7 +48,7 @@ const Photo: FC<Props> = (props) => {
     return () => {
       cancelled = true;
     };
-  }, [photo.originalSrc.webp, photo.originalSrc.jpg, attempt, shouldLoad]);
+  }, [photo.displaySrc.src, attempt, shouldLoad]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -67,12 +67,15 @@ const Photo: FC<Props> = (props) => {
           draggable={false}
         />
       </div>
-      <Picture
-        imageRef={imageRef}
+      <img
+        ref={imageRef}
         key={attempt}
         className={`${styles.image} ${status === 'loaded' ? styles.loaded : ''}`}
-        webpSrc={shouldLoad ? photo.originalSrc.webp : undefined}
-        jpgSrc={shouldLoad ? photo.originalSrc.jpg : undefined}
+        src={shouldLoad ? photo.displaySrc.src : undefined}
+        srcSet={shouldLoad ? photo.displaySrc.srcSet : undefined}
+        sizes={photo.displaySrc.sizes}
+        width={photo.displaySrc.width}
+        height={photo.displaySrc.height}
         alt={photo.alt}
         decoding="async"
         loading="eager"

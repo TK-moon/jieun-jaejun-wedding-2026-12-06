@@ -1,7 +1,13 @@
 import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { animate, useMotionValue, type PanInfo } from 'motion/react';
 import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
-import { FLICK_MIN_DISTANCE, SWIPE_DISTANCE, SWIPE_VELOCITY } from '../../_constants';
+import {
+  EDGE_RESISTANCE,
+  FLICK_MIN_DISTANCE,
+  SWIPE_DISTANCE,
+  SWIPE_VELOCITY,
+} from '../../_constants';
+import { applyEdgeResistance, clamp } from './_utils';
 
 interface Params {
   selectedIndex: number;
@@ -16,11 +22,8 @@ const useGallerySwipe = (params: Params) => {
   const { selectedIndex, photoCount, onIndexChange, viewportRef, enabled, reduceMotion } = params;
   const x = useMotionValue(0);
   const widthRef = useRef(0);
-  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
-  const isMovingRef = useRef(false);
-  const isDraggingRef = useRef(false);
   const targetIndexRef = useRef(selectedIndex);
-  const dragStartXRef = useRef(0);
+  const dragStartXRef = useRef<number | null>(null);
   const [originIndex, setOriginIndex] = useState(selectedIndex);
 
   useLayoutEffect(() => {
@@ -31,9 +34,7 @@ const useGallerySwipe = (params: Params) => {
     }
 
     const resize = () => {
-      animationRef.current?.stop();
-      isMovingRef.current = false;
-      isDraggingRef.current = false;
+      dragStartXRef.current = null;
       widthRef.current = viewport.clientWidth;
       x.jump(-targetIndexRef.current * widthRef.current);
     };
@@ -44,17 +45,16 @@ const useGallerySwipe = (params: Params) => {
 
     return () => {
       observer.disconnect();
-      animationRef.current?.stop();
-      isMovingRef.current = false;
-      isDraggingRef.current = false;
+      x.stop();
+      dragStartXRef.current = null;
     };
   }, [enabled, viewportRef, x]);
 
   const stopAtCurrentPosition = () => {
-    animationRef.current?.stop();
-    isMovingRef.current = false;
+    x.stop();
+    dragStartXRef.current = null;
     // Retain the visible slides even when rapid input moves the target far ahead.
-    setOriginIndex(Math.max(0, Math.min(photoCount - 1, -x.get() / widthRef.current)));
+    setOriginIndex(clamp(-x.get() / widthRef.current, 0, photoCount - 1));
   };
 
   const settle = (nextIndex: number) => {
@@ -65,15 +65,10 @@ const useGallerySwipe = (params: Params) => {
     stopAtCurrentPosition();
     targetIndexRef.current = nextIndex;
     onIndexChange(nextIndex);
-    isMovingRef.current = true;
-    animationRef.current = animate(x, -nextIndex * widthRef.current, {
+    animate(x, -nextIndex * widthRef.current, {
       duration: reduceMotion ? 0 : MOTION_DURATION,
       ease: MOTION_EASE,
-      onComplete: () => {
-        isMovingRef.current = false;
-
-        setOriginIndex(nextIndex);
-      },
+      onComplete: () => setOriginIndex(nextIndex),
     });
   };
 
@@ -91,40 +86,39 @@ const useGallerySwipe = (params: Params) => {
     }
 
     stopAtCurrentPosition();
-    dragStartXRef.current = x.get();
-    isDraggingRef.current = true;
+    // Undo edge resistance once so a new drag can continue an interrupted rebound.
+    dragStartXRef.current = applyEdgeResistance(
+      x.get(),
+      -(photoCount - 1) * widthRef.current,
+      1 / EDGE_RESISTANCE,
+    );
   };
 
   const handlePan = (_event: PointerEvent, info: PanInfo) => {
-    if (!isDraggingRef.current) {
+    if (dragStartXRef.current === null) {
       return;
     }
 
-    const minX = -(photoCount - 1) * widthRef.current;
-    const startX = dragStartXRef.current;
-    // Undo edge resistance before applying a new drag so interrupted rebounds stay continuous.
-    const originX =
-      startX > 0 ? startX / 0.12 : startX < minX ? minX + (startX - minX) / 0.12 : startX;
-    const offset = Math.max(-widthRef.current, Math.min(widthRef.current, info.offset.x));
-    const nextX = originX + offset;
-    x.set(nextX > 0 ? nextX * 0.12 : nextX < minX ? minX + (nextX - minX) * 0.12 : nextX);
+    const offset = clamp(info.offset.x, -widthRef.current, widthRef.current);
+    x.set(
+      applyEdgeResistance(dragStartXRef.current + offset, -(photoCount - 1) * widthRef.current),
+    );
   };
 
   const handlePanEnd = (_event: PointerEvent, info: PanInfo) => {
-    if (!isDraggingRef.current) {
+    if (dragStartXRef.current === null) {
       return;
     }
 
-    isDraggingRef.current = false;
     const distance = Math.abs(info.offset.x);
     const isHorizontal = distance > Math.abs(info.offset.y);
     const isSwipe = distance >= SWIPE_DISTANCE;
     const isFlick = distance >= FLICK_MIN_DISTANCE && Math.abs(info.velocity.x) >= SWIPE_VELOCITY;
     const step = isHorizontal && (isSwipe || isFlick) ? (info.offset.x < 0 ? 1 : -1) : 0;
-    settle(Math.max(0, Math.min(photoCount - 1, targetIndexRef.current + step)));
+    settle(clamp(targetIndexRef.current + step, 0, photoCount - 1));
   };
 
-  const canPreload = () => !isMovingRef.current && !isDraggingRef.current;
+  const canPreload = () => !x.isAnimating() && dragStartXRef.current === null;
 
   return { x, originIndex, changePhoto, handlePanStart, handlePan, handlePanEnd, canPreload };
 };

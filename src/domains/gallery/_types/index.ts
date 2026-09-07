@@ -6,6 +6,12 @@ export interface GalleryImageSource {
 export interface GalleryPhoto {
   id: string;
   thumbnailSrc: GalleryImageSource;
-  originalSrc: GalleryImageSource;
+  displaySrc: {
+    src: string;
+    srcSet: string;
+    sizes: string;
+    width: number;
+    height: number;
+  };
   alt: string;
 }
