@@ -32,7 +32,9 @@ npm run dev
 
 GitHub Pages와 [배포 워크플로](./.github/workflows/deploy-pages.yml)를 사용합니다. `main` 브랜치에 push하거나 `main`을 선택해 워크플로를 수동 실행하면, `npm ci` → 포맷 검사 → lint → build를 거쳐 `dist/`를 배포합니다. 검사나 빌드가 실패하면 배포하지 않습니다.
 
-프로젝트 하위 경로에서 리소스를 읽도록 `vite.config.ts`의 `base`는 `./`로 설정되어 있습니다.
+`vite.config.ts`의 `base`는 개발 서버에서 `/`, 프로덕션 빌드와 미리보기에서 `/jieun-jaejun-wedding-2026-12-06/`입니다. `BrowserRouter`의 `basename`도 `import.meta.env.BASE_URL`을 사용해 리소스 경로와 페이지 경로를 일치시킵니다. `npm run preview`에서는 `http://localhost:4173/jieun-jaejun-wedding-2026-12-06/`로 확인합니다.
+
+빌드 시 `dist/gallery/index.html`도 생성하므로 GitHub Pages에서 `/jieun-jaejun-wedding-2026-12-06/gallery/`를 직접 열거나 새로고침할 수 있습니다.
 
 ## 기술 스택
 
