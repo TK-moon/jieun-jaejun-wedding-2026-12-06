@@ -1,3 +1,21 @@
+@property --gallery-cover-spine-edge {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #ebe6dc;
+}
+
+@property --gallery-cover-page-face {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #fffdf9;
+}
+
+@property --gallery-cover-page-sheen {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: rgb(255 253 249 / 55%);
+}
+
 .cover {
   position: relative;
   display: flex;
@@ -25,16 +43,21 @@
 }
 
 .spine {
+  --gallery-cover-spine-edge: var(--color-line-soft);
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 8px;
-  background: linear-gradient(90deg, var(--color-line-soft) 0, transparent 100%);
+  background: linear-gradient(90deg, var(--gallery-cover-spine-edge) 0, transparent 100%);
   border-right: 1px solid var(--color-line-soft);
+  transition: var(--transition);
+  transition-property: --gallery-cover-spine-edge;
 }
 
 .pages {
+  --gallery-cover-page-face: var(--color-paper-raised);
+  --gallery-cover-page-sheen: color-mix(in srgb, var(--color-paper-raised) 55%, transparent);
   position: absolute;
   top: 0;
   right: 0;
@@ -42,11 +65,13 @@
   width: 8px;
   background: repeating-linear-gradient(
     90deg,
-    var(--color-paper-raised) 0 1.5px,
+    var(--gallery-cover-page-face) 0 1.5px,
     var(--color-line) 1.5px 2.5px
   );
   border-left: 1px solid var(--color-line-soft);
-  box-shadow: inset 1px 0 0 rgb(255 253 249 / 55%);
+  box-shadow: inset 1px 0 0 var(--gallery-cover-page-sheen);
+  transition: var(--transition);
+  transition-property: --gallery-cover-page-face, --gallery-cover-page-sheen;
 }
 
 .kicker {
@@ -98,6 +123,15 @@
   border-color: var(--color-sky);
 }
 
+.cover:hover .spine {
+  --gallery-cover-spine-edge: var(--color-sky-soft);
+}
+
+.cover:hover .pages {
+  --gallery-cover-page-face: var(--color-sky-wash);
+  --gallery-cover-page-sheen: color-mix(in srgb, var(--color-sky-wash) 55%, transparent);
+}
+
 .cover:hover .arrow {
   color: var(--color-sky-deep);
   transform: translateX(3px);
@@ -111,6 +145,8 @@
 @media (prefers-reduced-motion: reduce) {
   .cover,
   .cover::before,
+  .spine,
+  .pages,
   .arrow {
     transition: none;
   }
