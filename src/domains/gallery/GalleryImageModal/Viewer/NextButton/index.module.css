@@ -1,0 +1,20 @@
+.next {
+  top: 50%;
+  right: max(12px, env(safe-area-inset-right));
+  transform: translateY(-50%);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .next {
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .next:focus-visible {
+    width: 44px;
+    height: 44px;
+    clip-path: none;
+  }
+}

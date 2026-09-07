@@ -1,12 +1,7 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { animate, useMotionValue, type PanInfo } from 'motion/react';
-import { MOTION_EASE } from '@/constants/motion';
-import {
-  FLICK_MIN_DISTANCE,
-  SLIDE_DURATION,
-  SWIPE_DISTANCE,
-  SWIPE_VELOCITY,
-} from '../../_constants';
+import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
+import { FLICK_MIN_DISTANCE, SWIPE_DISTANCE, SWIPE_VELOCITY } from '../../_constants';
 
 interface Params {
   selectedIndex: number;
@@ -28,7 +23,7 @@ const useGallerySwipe = (params: Params) => {
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
 
-    if (!viewport) {
+    if (!viewport || !enabled) {
       return;
     }
 
@@ -50,15 +45,7 @@ const useGallerySwipe = (params: Params) => {
       isMovingRef.current = false;
       isDraggingRef.current = false;
     };
-  }, [selectedIndex, viewportRef, x]);
-
-  useLayoutEffect(() => {
-    if (!enabled) {
-      animationRef.current?.stop();
-      isMovingRef.current = false;
-      isDraggingRef.current = false;
-    }
-  }, [enabled]);
+  }, [enabled, selectedIndex, viewportRef, x]);
 
   const settle = (nextIndex: number) => {
     if (!enabled || isMovingRef.current) {
@@ -67,7 +54,7 @@ const useGallerySwipe = (params: Params) => {
 
     isMovingRef.current = true;
     animationRef.current = animate(x, -nextIndex * widthRef.current, {
-      duration: reduceMotion ? 0 : SLIDE_DURATION,
+      duration: reduceMotion ? 0 : MOTION_DURATION,
       ease: MOTION_EASE,
       onComplete: () => {
         isMovingRef.current = false;

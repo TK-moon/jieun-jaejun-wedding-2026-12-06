@@ -17,3 +17,15 @@
 .dialog::backdrop {
   background: transparent;
 }
+
+.shell {
+  position: absolute;
+  inset: 0;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell {
+    will-change: auto;
+  }
+}
