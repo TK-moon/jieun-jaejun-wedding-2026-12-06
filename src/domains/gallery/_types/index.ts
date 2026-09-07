@@ -1,8 +1,11 @@
-interface GalleryPhoto {
-  id: string;
-  thumbnailSrc: string;
-  originalSrc: string;
-  alt: string;
+export interface GalleryImageSource {
+  webp: string;
+  jpg: string;
 }
 
-export type { GalleryPhoto };
+export interface GalleryPhoto {
+  id: string;
+  thumbnailSrc: GalleryImageSource;
+  originalSrc: GalleryImageSource;
+  alt: string;
+}

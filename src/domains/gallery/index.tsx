@@ -5,6 +5,7 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { ROUTES } from '@/constants/routes';
 import { GALLERY_PHOTOS } from './_constants';
 import { GalleryImageModal } from './GalleryImageModal';
+import { Picture } from './Picture';
 import styles from './index.module.css';
 
 interface Props {}
@@ -49,9 +50,10 @@ const GalleryMain: FC<Props> = () => {
                 aria-haspopup="dialog"
                 onClick={() => setSelectedIndex(index)}
               >
-                <img
+                <Picture
                   className={styles.image}
-                  src={photo.thumbnailSrc}
+                  webpSrc={photo.thumbnailSrc.webp}
+                  jpgSrc={photo.thumbnailSrc.jpg}
                   alt={photo.alt}
                   width={1200}
                   height={1800}

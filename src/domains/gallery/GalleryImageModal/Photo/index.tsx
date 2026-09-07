@@ -1,5 +1,6 @@
 import { useEffect, useEffectEvent, useRef, useState, type FC } from 'react';
 import type { GalleryPhoto } from '../../_types';
+import { Picture } from '../../Picture';
 import { useIdleImageLoad } from '../_hooks/useIdleImageLoad';
 import styles from './index.module.css';
 
@@ -47,7 +48,7 @@ const Photo: FC<Props> = (props) => {
     return () => {
       cancelled = true;
     };
-  }, [photo.originalSrc, attempt, shouldLoad]);
+  }, [photo.originalSrc.webp, photo.originalSrc.jpg, attempt, shouldLoad]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -57,19 +58,21 @@ const Photo: FC<Props> = (props) => {
   return (
     <div className={styles.container} aria-busy={status === 'loading'}>
       <div className={styles.backdrop} aria-hidden>
-        <img
+        <Picture
           className={styles.background}
-          src={photo.thumbnailSrc}
+          webpSrc={photo.thumbnailSrc.webp}
+          jpgSrc={photo.thumbnailSrc.jpg}
           alt=""
           decoding="async"
           draggable={false}
         />
       </div>
-      <img
-        ref={imageRef}
+      <Picture
+        imageRef={imageRef}
         key={attempt}
         className={`${styles.image} ${status === 'loaded' ? styles.loaded : ''}`}
-        src={shouldLoad ? photo.originalSrc : undefined}
+        webpSrc={shouldLoad ? photo.originalSrc.webp : undefined}
+        jpgSrc={shouldLoad ? photo.originalSrc.jpg : undefined}
         alt={photo.alt}
         decoding="async"
         loading="eager"
