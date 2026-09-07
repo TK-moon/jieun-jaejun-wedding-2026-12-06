@@ -1,0 +1,19 @@
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--color-paper-raised);
+  overscroll-behavior: contain;
+}
+
+.dialog::backdrop {
+  background: transparent;
+}

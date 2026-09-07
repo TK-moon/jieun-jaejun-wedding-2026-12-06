@@ -18,12 +18,15 @@ const contentSecurityPolicy = [
 ].join('; ');
 
 // https://vite.dev/config/
-export default defineConfig(({ command, isPreview }) => ({
+export default defineConfig(({ command, isPreview, mode }) => ({
   base: command === 'build' || isPreview ? '/jieun-jaejun-wedding-2026-12-06/' : '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+  },
+  css: {
+    devSourcemap: true,
   },
   plugins: [
     react(),
@@ -62,6 +65,6 @@ export default defineConfig(({ command, isPreview }) => ({
     },
   ],
   build: {
-    sourcemap: false,
+    sourcemap: mode === 'development',
   },
 }));

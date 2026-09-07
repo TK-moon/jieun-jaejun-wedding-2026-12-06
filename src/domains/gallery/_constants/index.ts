@@ -1,13 +1,21 @@
-const galleryImageModules = import.meta.glob<string>('../_images/*.jpg', {
+import type { GalleryPhoto } from '../_types';
+
+const galleryOriginalModules = import.meta.glob<string>('../_images/origin/*.jpg', {
   eager: true,
   import: 'default',
 });
 
-const GALLERY_PHOTOS = Object.entries(galleryImageModules)
+const galleryThumbnailModules = import.meta.glob<string>('../_images/thumbnail/*.jpg', {
+  eager: true,
+  import: 'default',
+});
+
+const GALLERY_PHOTOS: GalleryPhoto[] = Object.entries(galleryOriginalModules)
   .toSorted(([leftPath], [rightPath]) => leftPath.localeCompare(rightPath, 'en', { numeric: true }))
-  .map(([, src], index) => ({
+  .map(([path, originalSrc], index) => ({
     id: `gallery-photo-${index + 1}`,
-    src,
+    thumbnailSrc: galleryThumbnailModules[path.replace('/origin/', '/thumbnail/')],
+    originalSrc,
     alt: `우리의 사진 ${index + 1}`,
   }));
 
