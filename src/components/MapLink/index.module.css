@@ -51,16 +51,6 @@
   border-radius: 2px;
 }
 
-.text span {
-  border-bottom: 1px solid transparent;
-  transition: var(--transition);
-}
-
-.text:hover span,
-.text:focus-visible span {
-  border-bottom-color: currentColor;
-}
-
 .icon {
   width: 16px;
   height: 16px;
@@ -75,8 +65,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .button,
-  .text,
-  .text span {
+  .text {
     transition: none;
   }
 }

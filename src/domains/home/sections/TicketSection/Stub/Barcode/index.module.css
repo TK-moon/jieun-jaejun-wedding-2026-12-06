@@ -1,6 +1,5 @@
 .barcode {
   display: flex;
-  align-items: stretch;
   justify-content: center;
   gap: 2px;
   width: min(100%, 220px);

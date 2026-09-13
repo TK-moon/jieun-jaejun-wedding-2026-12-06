@@ -12,3 +12,7 @@
   height: 100%;
   box-shadow: 0 0 10px 0 rgb(0 0 0 / 10%);
 }
+
+.card:has(a) {
+  box-shadow: none;
+}

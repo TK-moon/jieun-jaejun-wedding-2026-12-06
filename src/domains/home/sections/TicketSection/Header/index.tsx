@@ -56,19 +56,21 @@ const Header: FC<Props> = (props) => {
         <CalendarIcon />
         <span>캘린더에 추가</span>
       </button>
-      <div className={styles.addressRow}>
-        <address className={styles.address}>{venue.address}</address>
-        {canCopy ? (
+      {canCopy ? (
+        <address className={styles.addressRow}>
           <button
             className={styles.copyAddress}
             type="button"
             onClick={handleCopyAddress}
-            aria-label="주소 복사"
+            aria-label={`${venue.address} 복사`}
           >
+            <span className={styles.address}>{venue.address}</span>
             <CopyIcon />
           </button>
-        ) : null}
-      </div>
+        </address>
+      ) : (
+        <address className={`${styles.addressRow} ${styles.address}`}>{venue.address}</address>
+      )}
     </SectionTitle>
   );
 };

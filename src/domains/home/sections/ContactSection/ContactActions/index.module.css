@@ -126,19 +126,9 @@
   transition: var(--transition);
 }
 
-.copyAction span {
-  border-bottom: 1px solid var(--color-line);
-  transition: var(--transition);
-}
-
 .copyAction:hover,
 .copyAction:focus-visible {
   color: var(--color-sky-deep);
-}
-
-.copyAction:hover span,
-.copyAction:focus-visible span {
-  border-bottom-color: currentColor;
 }
 
 .copyAction:focus-visible {
@@ -161,8 +151,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .link,
-  .copyAction,
-  .copyAction span {
+  .copyAction {
     transition: none;
   }
 }
