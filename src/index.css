@@ -53,7 +53,9 @@
   --layout-frame-width: min(100%, 560px);
 
   /* —— Motion —— */
-  --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration: 0.4s;
+  --transition: all var(--duration) var(--ease);
 }
 
 html {
@@ -85,6 +87,13 @@ a {
 ::selection {
   color: var(--color-selection-fg);
   background: var(--color-selection-bg);
+}
+
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--duration);
+  animation-timing-function: var(--ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
