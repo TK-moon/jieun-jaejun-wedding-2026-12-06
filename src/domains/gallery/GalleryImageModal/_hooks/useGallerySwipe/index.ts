@@ -15,11 +15,12 @@ interface Params {
   onIndexChange: (index: number) => void;
   viewportRef: RefObject<HTMLDivElement | null>;
   enabled: boolean;
-  reduceMotion: boolean;
+  shouldReduceMotion: boolean;
 }
 
 const useGallerySwipe = (params: Params) => {
-  const { selectedIndex, photoCount, onIndexChange, viewportRef, enabled, reduceMotion } = params;
+  const { selectedIndex, photoCount, onIndexChange, viewportRef, enabled, shouldReduceMotion } =
+    params;
   const x = useMotionValue(0);
   const widthRef = useRef(0);
   const targetIndexRef = useRef(selectedIndex);
@@ -66,7 +67,7 @@ const useGallerySwipe = (params: Params) => {
     targetIndexRef.current = nextIndex;
     onIndexChange(nextIndex);
     animate(x, -nextIndex * widthRef.current, {
-      duration: reduceMotion ? 0 : MOTION_DURATION,
+      duration: shouldReduceMotion ? 0 : MOTION_DURATION,
       ease: MOTION_EASE,
       onComplete: () => setOriginIndex(nextIndex),
     });

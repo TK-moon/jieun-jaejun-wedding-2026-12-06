@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FC, type KeyboardEvent } from 'react';
-import { motion, useIsPresent, useReducedMotion } from 'motion/react';
-import { MOTION_DURATION } from '@/constants/motion';
+import { motion, useIsPresent } from 'motion/react';
+import { useMotionPreference } from '@/hooks/useMotionPreference';
 import type { GalleryPhoto } from '../../_types';
 import { useGallerySwipe } from '../_hooks/useGallerySwipe';
 import { Photo } from '../Photo';
@@ -23,7 +23,7 @@ const Viewer: FC<Props> = (props) => {
   const [preloadEnabled, setPreloadEnabled] = useState(false);
 
   const isPresent = useIsPresent();
-  const reduceMotion = Boolean(useReducedMotion());
+  const { shouldReduceMotion, duration } = useMotionPreference();
 
   const { x, originIndex, changePhoto, handlePanStart, handlePan, handlePanEnd, canPreload } =
     useGallerySwipe({
@@ -32,7 +32,7 @@ const Viewer: FC<Props> = (props) => {
       onIndexChange,
       viewportRef,
       enabled: isPresent,
-      reduceMotion,
+      shouldReduceMotion,
     });
 
   const firstIndex = Math.max(
@@ -45,19 +45,19 @@ const Viewer: FC<Props> = (props) => {
   );
 
   useEffect(() => {
-    if (reduceMotion) {
+    if (shouldReduceMotion) {
       enteredRef.current = true;
       return;
     }
 
     const timeoutId = window.setTimeout(() => {
       enteredRef.current = true;
-    }, MOTION_DURATION * 1000);
+    }, duration * 1000);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [reduceMotion]);
+  }, [duration, shouldReduceMotion]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {

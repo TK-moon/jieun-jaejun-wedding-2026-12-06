@@ -1,7 +1,8 @@
 import type { FC } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
 import { Picture } from '@/components/Picture';
 import { WEDDING_INFO } from '@/constants';
+import { useMotionPreference } from '@/hooks/useMotionPreference';
 import { dayjs } from '@/lib/dayjs';
 import { BANNER_MOTION } from './_constants';
 import styles from './index.module.css';
@@ -12,7 +13,7 @@ interface Props {}
 
 const BannerSection: FC<Props> = () => {
   const ceremony = dayjs.tz(WEDDING_INFO.ceremony);
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion } = useMotionPreference();
   const initial = shouldReduceMotion ? false : 'initial';
 
   return (

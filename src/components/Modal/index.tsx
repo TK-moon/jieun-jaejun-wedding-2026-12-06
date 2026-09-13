@@ -1,5 +1,6 @@
 import { useId, useRef, type FC, type PropsWithChildren, type ReactNode } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useMotionPreference } from '@/hooks/useMotionPreference';
 import { Portal } from '../Portal';
 import { getModalMotionVariants } from './_constants';
 import { useModalFocusTrap } from './_hooks/useModalFocusTrap';
@@ -18,7 +19,7 @@ const Modal: FC<Props> = (props) => {
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion } = useMotionPreference();
 
   const { rootVariants, backdropVariants, dialogVariants } =
     getModalMotionVariants(shouldReduceMotion);

@@ -1,6 +1,7 @@
 import { useContext, type FC } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
+import { AnimatePresence, motion } from 'motion/react';
+import { MOTION_EASE } from '@/constants/motion';
+import { useMotionPreference } from '@/hooks/useMotionPreference';
 import { ToastContext } from './ToastProvider';
 import styles from './index.module.css';
 
@@ -8,7 +9,7 @@ interface Props {}
 
 const Toast: FC<Props> = () => {
   const context = useContext(ToastContext);
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion, duration } = useMotionPreference();
 
   if (!context) {
     throw new Error('Toast must be used within ToastProvider');
@@ -27,10 +28,7 @@ const Toast: FC<Props> = () => {
             initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
-            transition={{
-              duration: shouldReduceMotion ? 0 : MOTION_DURATION,
-              ease: MOTION_EASE,
-            }}
+            transition={{ duration, ease: MOTION_EASE }}
             onClick={() => dismiss(toast.id)}
           >
             {toast.icon ? <span className={styles.icon}>{toast.icon}</span> : null}

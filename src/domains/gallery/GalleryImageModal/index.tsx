@@ -1,7 +1,8 @@
 import { useRef, type FC } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Portal } from '@/components/Portal';
-import { MOTION_DURATION, MOTION_EASE } from '@/constants/motion';
+import { MOTION_EASE } from '@/constants/motion';
+import { useMotionPreference } from '@/hooks/useMotionPreference';
 import type { GalleryPhoto } from '../_types';
 import { useGalleryModal } from './_hooks/useGalleryModal';
 import { Viewer } from './Viewer';
@@ -21,7 +22,7 @@ const GalleryImageModal: FC<Props> = (props) => {
   const open = selectedIndex !== null && Boolean(photos[selectedIndex]);
 
   const { finishClose } = useGalleryModal({ open, onClose, dialogRef });
-  const shouldReduceMotion = useReducedMotion();
+  const { duration } = useMotionPreference();
 
   return (
     <Portal>
@@ -43,7 +44,7 @@ const GalleryImageModal: FC<Props> = (props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : MOTION_DURATION, ease: MOTION_EASE }}
+              transition={{ duration, ease: MOTION_EASE }}
             >
               <Viewer
                 photos={photos}
