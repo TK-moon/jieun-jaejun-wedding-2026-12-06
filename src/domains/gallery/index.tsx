@@ -33,7 +33,12 @@ const GalleryMain: FC<Props> = () => {
   return (
     <section className={styles.container} aria-labelledby={titleId}>
       <nav className={styles.navigation} aria-label="갤러리 페이지 이동">
-        <Link className={styles.back_link} to={ROUTES.invitation} onClick={handleBackClick}>
+        <Link
+          className={styles.back_link}
+          to={ROUTES.invitation}
+          viewTransition
+          onClick={handleBackClick}
+        >
           <ArrowRightIcon className={styles.back_icon} />
           뒤로가기
         </Link>

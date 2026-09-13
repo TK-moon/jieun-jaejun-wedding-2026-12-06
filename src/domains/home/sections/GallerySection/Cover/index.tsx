@@ -8,7 +8,7 @@ interface Props {}
 
 const Cover: FC<Props> = () => {
   return (
-    <Link className={styles.cover} to={ROUTES.gallery} aria-label="전체 사진 보기">
+    <Link className={styles.cover} to={ROUTES.gallery} viewTransition aria-label="전체 사진 보기">
       <span className={styles.spine} aria-hidden="true" />
       <span className={styles.pages} aria-hidden="true" />
       <span className={styles.kicker}>더 많은 순간</span>
