@@ -1,5 +1,6 @@
 import { useReducedMotion } from 'motion/react';
 import { useRef, useState } from 'react';
+import { useViewTransitionState } from 'react-router';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 interface Params {
@@ -16,8 +17,10 @@ const useRevealMotion = (params: Params = {}) => {
 
   const ref = useRef<HTMLLIElement>(null);
   const [hasIntersected, setHasIntersected] = useState(false);
+  const [hasRevealed, setHasRevealed] = useState(false);
 
   const shouldReduceMotion = useReducedMotion();
+  const isViewTransitioning = useViewTransitionState('.');
 
   const { isSupported } = useIntersectionObserver(
     ref,
@@ -30,10 +33,15 @@ const useRevealMotion = (params: Params = {}) => {
   );
 
   const isVisible = !isSupported || hasIntersected;
+  const canReveal = isReady && (shouldReduceMotion || (isVisible && !isViewTransitioning));
+
+  if (canReveal && !hasRevealed) {
+    setHasRevealed(true);
+  }
 
   return {
     ref,
-    canAnimate: isReady && (shouldReduceMotion || isVisible),
+    canAnimate: hasRevealed || canReveal,
     skipInitial: shouldReduceMotion && isReady,
   };
 };
