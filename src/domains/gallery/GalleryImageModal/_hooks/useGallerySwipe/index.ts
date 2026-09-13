@@ -15,7 +15,7 @@ interface Params {
   onIndexChange: (index: number) => void;
   viewportRef: RefObject<HTMLDivElement | null>;
   enabled: boolean;
-  shouldReduceMotion: boolean;
+  shouldReduceMotion: boolean | null;
 }
 
 const useGallerySwipe = (params: Params) => {

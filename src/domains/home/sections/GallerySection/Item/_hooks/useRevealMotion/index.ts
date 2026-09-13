@@ -1,6 +1,6 @@
+import { useReducedMotion } from 'motion/react';
 import { useRef, useState } from 'react';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { useMotionPreference } from '@/hooks/useMotionPreference';
 
 interface Params {
   isReady?: boolean;
@@ -17,7 +17,7 @@ const useRevealMotion = (params: Params = {}) => {
   const ref = useRef<HTMLLIElement>(null);
   const [hasIntersected, setHasIntersected] = useState(false);
 
-  const { shouldReduceMotion, duration } = useMotionPreference();
+  const shouldReduceMotion = useReducedMotion();
 
   const { isSupported } = useIntersectionObserver(
     ref,
@@ -33,10 +33,8 @@ const useRevealMotion = (params: Params = {}) => {
 
   return {
     ref,
-    shouldReduceMotion,
     canAnimate: isReady && (shouldReduceMotion || isVisible),
     skipInitial: shouldReduceMotion && isReady,
-    duration,
   };
 };
 

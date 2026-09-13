@@ -3,21 +3,16 @@ import { Picture } from '@/components/Picture';
 import styles from './index.module.css';
 
 interface Props {
-  id: string;
   src: {
     webp: string;
     jpg: string;
   };
   alt: string;
-  onReady?: (photoId: string) => void;
+  onReady?: () => void;
 }
 
 const Photo: FC<Props> = (props) => {
-  const { id, src, alt, onReady } = props;
-
-  const handleReady = () => {
-    onReady?.(id);
-  };
+  const { src, alt, onReady } = props;
 
   return (
     <div className={styles.frame}>
@@ -30,8 +25,8 @@ const Photo: FC<Props> = (props) => {
         height={1800}
         loading="lazy"
         decoding="async"
-        onLoad={handleReady}
-        onError={handleReady}
+        onLoad={onReady}
+        onError={onReady}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import type { Variants } from 'motion/react';
 import { MOTION_DURATION, MOTION_EASE, MOTION_FADE_UP } from '@/constants/motion';
 
-const getModalMotionVariants = (shouldReduceMotion: boolean) => {
+const getModalMotionVariants = (shouldReduceMotion: boolean | null) => {
   const duration = shouldReduceMotion ? 0 : MOTION_DURATION;
 
   const rootVariants: Variants = {
