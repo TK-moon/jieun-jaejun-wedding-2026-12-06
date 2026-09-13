@@ -23,21 +23,18 @@ const Item: FC<Props> = (props) => {
   const photo = asPhoto(children);
 
   const [isReady, setIsReady] = useState(!photo);
-  const { ref, canAnimate, skipInitial } = useRevealMotion({
-    isReady,
-  });
+  const { ref, canAnimate, skipInitial } = useRevealMotion({ isReady });
 
   return (
-    <li ref={ref} className={styles.item}>
-      <motion.div
-        className={styles.card}
-        initial={skipInitial ? false : MOTION_FADE_UP.hidden}
-        animate={canAnimate ? MOTION_FADE_UP.visible : MOTION_FADE_UP.hidden}
-        transition={{ delay: index * 0.1, duration: 1, ease: MOTION_EASE }}
-      >
-        {photo ? cloneElement(photo, { onReady: () => setIsReady(true) }) : children}
-      </motion.div>
-    </li>
+    <motion.li
+      ref={ref}
+      className={styles.item}
+      initial={skipInitial ? false : MOTION_FADE_UP.hidden}
+      animate={canAnimate ? MOTION_FADE_UP.visible : MOTION_FADE_UP.hidden}
+      transition={{ delay: index * 0.1, duration: 1, ease: MOTION_EASE }}
+    >
+      {photo ? cloneElement(photo, { onReady: () => setIsReady(true) }) : children}
+    </motion.li>
   );
 };
 
