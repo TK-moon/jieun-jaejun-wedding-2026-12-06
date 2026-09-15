@@ -1,4 +1,6 @@
 .book {
+  position: relative;
+  isolation: isolate;
   display: flex;
   width: var(--layout-frame-width);
   flex-direction: column;
@@ -14,6 +16,11 @@
 
 .book.is_visible {
   animation: card-in 0.7s ease-out both;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
 }
 
 .leaf {

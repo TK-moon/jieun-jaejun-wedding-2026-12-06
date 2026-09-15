@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:tunnel": "npx --yes cloudflared tunnel --url http://127.0.0.1:5173",
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",

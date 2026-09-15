@@ -1,14 +1,15 @@
-import { useRef, type FC } from 'react';
+import type { FC, RefObject } from 'react';
 import { Hologram } from '../Hologram';
-import { useHologramMotion } from './_hooks/useHologramMotion';
+import type { Status } from './_hooks/useHologramMotion';
 import styles from './index.module.css';
 
-interface Props {}
+interface Props {
+  chipRef: RefObject<HTMLDivElement | null>;
+  hologramRef: RefObject<HTMLSpanElement | null>;
+  status: Status;
+}
 
-const Chip: FC<Props> = () => {
-  const chipRef = useRef<HTMLDivElement>(null);
-  const hologramRef = useRef<HTMLSpanElement>(null);
-  const { status } = useHologramMotion(chipRef, hologramRef);
+const Chip: FC<Props> = ({ chipRef, hologramRef, status }) => {
   const description =
     status === 'active'
       ? '휴대폰을 기울이면 카메라의 빛이 달라져요.'

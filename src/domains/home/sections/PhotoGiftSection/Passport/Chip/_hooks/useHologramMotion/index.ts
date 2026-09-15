@@ -25,13 +25,15 @@ const clamp = (value: number) => Math.max(-1, Math.min(1, value));
 const useHologramMotion = (
   chipRef: RefObject<HTMLDivElement | null>,
   hologramRef: RefObject<HTMLSpanElement | null>,
+  activationButtonRef: RefObject<HTMLButtonElement | null>,
 ) => {
   const [status, setStatus] = useState<Status>('idle');
 
   useEffect(() => {
     const chip = chipRef.current;
     const foil = hologramRef.current;
-    if (!chip || !foil) return;
+    const activationButton = activationButtonRef.current;
+    if (!chip || !foil || !activationButton) return;
 
     const createPart = (part: 'background' | HologramDetail, direction: 1 | -1) => {
       const element = foil.querySelector<HTMLElement>(`[data-hologram-part="${part}"]`);
@@ -155,7 +157,7 @@ const useHologramMotion = (
       clearTimeout(timeout);
     };
     const stopGesture = () => {
-      window.removeEventListener('click', onGesture, true);
+      activationButton.removeEventListener('click', onGesture, true);
       gestureListening = false;
     };
     const onGesture = () => {
@@ -209,7 +211,7 @@ const useHologramMotion = (
         !permissionGranted &&
         !receivedMotion;
       if (shouldCaptureGesture && !gestureListening) {
-        window.addEventListener('click', onGesture, true);
+        activationButton.addEventListener('click', onGesture, true);
         gestureListening = true;
       } else if (!shouldCaptureGesture && gestureListening) {
         stopGesture();
@@ -269,9 +271,11 @@ const useHologramMotion = (
       cancelAnimationFrame(frame);
       clearTimeout(timeout);
     };
-  }, [chipRef, hologramRef]);
+  }, [chipRef, hologramRef, activationButtonRef]);
 
   return { status };
 };
 
 export { useHologramMotion };
+
+export type { Status };

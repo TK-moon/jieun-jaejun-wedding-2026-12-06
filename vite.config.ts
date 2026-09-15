@@ -28,6 +28,9 @@ export default defineConfig(({ command, isPreview, mode }) => ({
   css: {
     devSourcemap: true,
   },
+  server: {
+    allowedHosts: ['.trycloudflare.com'],
+  },
   plugins: [
     react(),
     {

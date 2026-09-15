@@ -1,0 +1,59 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--color-paper) 28%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 550ms ease,
+    visibility 0s;
+}
+
+.revealed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 550ms ease,
+    visibility 0s 550ms;
+}
+
+.button {
+  min-height: 48px;
+  padding: 14px 24px;
+  border: 1px solid color-mix(in srgb, var(--color-sky) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-paper-raised) 88%, transparent);
+  color: var(--color-sky-deep);
+  font-family: var(--body-font);
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.5;
+  word-break: keep-all;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+@media (hover: hover) {
+  .button:hover {
+    background: var(--color-paper-raised);
+  }
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-sky);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .button {
+    transition: none;
+  }
+}
