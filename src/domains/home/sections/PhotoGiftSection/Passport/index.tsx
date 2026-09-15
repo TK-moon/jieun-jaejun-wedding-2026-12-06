@@ -3,7 +3,6 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { PHOTO_GIFT } from '../_constants';
 import { Bearer } from './Bearer';
 import { Chip } from './Chip';
-import { useHologramMotion } from './Chip/_hooks/useHologramMotion';
 import { SensorPermissionOverlay } from './SensorPermissionOverlay';
 import { useMotionPermission } from './_hooks/useMotionPermission';
 import { Header } from './Header';
@@ -19,18 +18,18 @@ interface Props {}
 
 const Passport: FC<Props> = () => {
   const bookRef = useRef<HTMLElement>(null);
-  const chipRef = useRef<HTMLDivElement>(null);
-  const hologramRef = useRef<HTMLSpanElement>(null);
   const contentId = useId();
+
   const { permission, hasGrantedBefore, requestPermission } = useMotionPermission();
-  const { status } = useHologramMotion(chipRef, hologramRef, permission);
+
   const showPermissionOverlay =
     permission === 'prompt' || permission === 'requesting' || permission === 'denied';
-  const requestSensorAccess = () => {
-    void requestPermission().then((granted) => {
-      if (granted) bookRef.current?.focus({ preventScroll: true });
-    });
+
+  const requestSensorAccess = async () => {
+    const granted = await requestPermission();
+    if (granted) bookRef.current?.focus({ preventScroll: true });
   };
+
   const [hasIntersected, setHasIntersected] = useState(false);
 
   const { isSupported } = useIntersectionObserver(
@@ -92,7 +91,7 @@ const Passport: FC<Props> = () => {
           <div className={styles.page}>
             <div className={styles.mast}>
               <Header />
-              <Chip chipRef={chipRef} hologramRef={hologramRef} status={status} />
+              <Chip permission={permission} />
             </div>
             <div className={styles.body}>
               <Portrait variant="mono" />

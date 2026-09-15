@@ -1,235 +1,110 @@
 import { useEffect, useState, type RefObject } from 'react';
-import type { MotionPermissionStatus } from '../../../_hooks/useMotionPermission/_utils';
-import {
-  createHologramRenderer,
-  createDetailRenderer,
-  type HologramDetail,
-} from '../../../Hologram/_utils';
-
-import {
-  getScreenGravity,
-  createTiltCalibration,
-  followTiltCalibration,
-  getTiltInput,
-  type GravityVector,
-  type TiltCalibration,
-} from './_utils';
-
-type Status = 'idle' | 'pointer' | 'active' | 'fallback' | 'reduced';
-
-const clamp = (value: number) => Math.max(-1, Math.min(1, value));
-
-const SENSOR_SMOOTHING_MS = 24;
-const RENDER_SMOOTHING_MS = 22;
-const POSTURE_FOLLOW_MS = 450;
+import type { MotionValue } from 'motion/react';
+import type { AccelerometerInput } from '../../../_hooks/useAccelerometer/_types';
+import { createHologramPainter } from '../../../Hologram/_utils';
+import type { MotionEnvironment } from '../useMotionEnvironment';
+import { REST_FRAME, getPointerInput, getNextFrame, type MotionInput } from './_utils/motion';
+import { updateTilt, type TiltState } from './_utils/tilt';
 
 const useHologramMotion = (
-  chipRef: RefObject<HTMLDivElement | null>,
   hologramRef: RefObject<HTMLSpanElement | null>,
-  permission: MotionPermissionStatus,
+  accelerometerInput: MotionValue<AccelerometerInput | null>,
+  environment: MotionValue<MotionEnvironment>,
 ) => {
-  const [status, setStatus] = useState<Status>('idle');
+  const [mode, setMode] = useState<'pointer' | 'reduced' | null>(null);
 
   useEffect(() => {
-    const chip = chipRef.current;
-    const foil = hologramRef.current;
-    if (!chip || !foil) return;
+    const hologram = hologramRef.current;
+    if (!hologram) return;
 
-    const createPart = (part: 'background' | HologramDetail, direction: 1 | -1) => {
-      const element = foil.querySelector<HTMLElement>(`[data-hologram-part="${part}"]`);
-      const surface = element?.querySelector<HTMLCanvasElement>('[data-hologram-layer="surface"]');
-      const reflection = element?.querySelector<HTMLCanvasElement>(
-        '[data-hologram-layer="reflection"]',
-      );
-      if (!surface || !reflection) return;
-      const renderFoil = createHologramRenderer(surface, reflection);
-      const renderDetail =
-        part === 'background' ? undefined : createDetailRenderer(reflection, part);
-      return (x: number, y: number, angle: number) => {
-        const reflectionX = x * direction;
-        const reflectionY = y * direction;
-        renderFoil?.(x, y, reflectionX, reflectionY);
-        // Reversing both input axes rotates the reflection direction by 180 degrees.
-        const reflectionAngle = angle + (direction === -1 ? 180 : 0);
-        renderDetail?.(reflectionX, reflectionY, reflectionAngle);
-      };
-    };
-    // Reverse X and Y only for the ring and flash reflection layers.
-    const renderBackground = createPart('background', 1);
-    const renderLensRing = createPart('lens-ring', -1);
-    const renderLens = createPart('lens', 1);
-    const renderFlash = createPart('flash', -1);
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const desktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const canUseSensor = permission === 'granted' || permission === 'not-required';
+    const paint = createHologramPainter(hologram);
     let pointerListening = false;
-    let visible = false;
-    let listening = false;
-    let receivedMotion = false;
-    let frame = 0;
-    let reflectionAngle = 0;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    let baseline: TiltCalibration | undefined;
-    let filteredGravity: GravityVector | undefined;
+    let tilt: TiltState | undefined;
     let lastMotionTime = 0;
-    let lastFrameTime = 0;
-    const current = { x: 0, y: 0 };
-    const target = { x: 0, y: 0 };
-    const canAnimate = () => visible && !document.hidden && !reducedMotion.matches;
 
-    const rotationDelta = () => {
-      // Keep the last direction near the centre, where atan2 becomes unstable.
-      if (Math.hypot(target.x, target.y) < 0.06) return 0;
-      const angle = (Math.atan2(target.y, target.x) * 180) / Math.PI + 135;
-      return ((((angle - reflectionAngle) % 360) + 540) % 360) - 180;
-    };
-    const paint = () => {
-      renderBackground?.(current.x, current.y, reflectionAngle);
-      renderLensRing?.(current.x, current.y, reflectionAngle);
-      renderLens?.(current.x, current.y, reflectionAngle);
-      renderFlash?.(current.x, current.y, reflectionAngle);
-    };
+    let frame = 0;
+    let lastFrameTime = 0;
+    let current = REST_FRAME;
+    let target: MotionInput = REST_FRAME;
+    const canAnimate = () => environment.get().canAnimate;
+
     const animate = (now: number) => {
       frame = 0;
       if (!canAnimate()) return;
-      // A short, time-based blend keeps the response consistent across refresh rates.
-      const blend = 1 - Math.exp(-Math.max(0, now - lastFrameTime) / RENDER_SMOOTHING_MS);
+      current = getNextFrame(current, target, now - lastFrameTime);
       lastFrameTime = now;
-      current.x += (target.x - current.x) * blend;
-      current.y += (target.y - current.y) * blend;
-      reflectionAngle += rotationDelta() * blend;
-      paint();
-      if (
-        Math.abs(target.x - current.x) + Math.abs(target.y - current.y) > 0.002 ||
-        Math.abs(rotationDelta()) > 0.1
-      ) {
+      paint(current.x, current.y, current.angle);
+      if (current.needsFrame) {
         frame = requestAnimationFrame(animate);
       }
     };
-    const move = (x: number, y: number) => {
+
+    const move = (input: MotionInput) => {
       if (!canAnimate()) return;
-      target.x = clamp(x);
-      target.y = clamp(y);
+      target = input;
       if (!frame) {
         lastFrameTime = performance.now();
         frame = requestAnimationFrame(animate);
       }
     };
-    const onMotion = (event: DeviceMotionEvent) => {
-      const rawGravity = event.accelerationIncludingGravity;
-      if (!rawGravity) return;
-      const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
-      const gravity = getScreenGravity(rawGravity, event.acceleration, screenAngle);
-      if (!gravity) return;
-      if (!receivedMotion) {
-        receivedMotion = true;
-        clearTimeout(timeout);
-        setStatus('active');
-      }
-      const now = performance.now();
-      const elapsed = Math.max(0, Math.min(100, now - lastMotionTime));
-      if (!baseline || baseline.screenAngle !== screenAngle) {
-        filteredGravity = gravity;
-        baseline = createTiltCalibration(gravity, screenAngle);
-      } else if (filteredGravity) {
-        // Time-based filtering feels the same on 30/60/120 Hz sensor streams.
-        const blend = 1 - Math.exp(-Math.max(0, now - lastMotionTime) / SENSOR_SMOOTHING_MS);
-        filteredGravity = {
-          x: filteredGravity.x + (gravity.x - filteredGravity.x) * blend,
-          y: filteredGravity.y + (gravity.y - filteredGravity.y) * blend,
-          z: filteredGravity.z + (gravity.z - filteredGravity.z) * blend,
-        };
-      }
-      lastMotionTime = now;
-      const input = getTiltInput(filteredGravity ?? gravity, baseline);
-      move(input.x, input.y);
-      // Re-centre the neutral posture independently of the fast visual response.
-      // A new seated/lying position must not leave subsequent movement saturated.
-      baseline = followTiltCalibration(
-        filteredGravity ?? gravity,
-        baseline,
-        1 - Math.exp(-elapsed / POSTURE_FOLLOW_MS),
-      );
+
+    const reset = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      current = REST_FRAME;
+      target = REST_FRAME;
+      paint(current.x, current.y, current.angle);
     };
+
+    const onSensorInput = (input: AccelerometerInput | null) => {
+      if (!input) {
+        tilt = undefined;
+        if (!environment.get().desktopPointer) reset();
+        return;
+      }
+      if (!canAnimate() || environment.get().desktopPointer) return;
+
+      tilt = updateTilt(tilt, input.gravity, input.screenAngle, input.time - lastMotionTime);
+      lastMotionTime = input.time;
+      move(tilt.input);
+    };
+
     const onPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return;
-      move(
-        (event.clientX / window.innerWidth) * 2 - 1,
-        (event.clientY / window.innerHeight) * 2 - 1,
-      );
+      move(getPointerInput(event.clientX, event.clientY, window.innerWidth, window.innerHeight));
     };
-    const stopMotion = () => {
-      window.removeEventListener('devicemotion', onMotion);
-      listening = false;
-      receivedMotion = false;
-      clearTimeout(timeout);
-    };
+
     const sync = () => {
-      const shouldTrackPointer = desktopPointer.matches && canAnimate();
+      const { canAnimate, desktopPointer, reducedMotion } = environment.get();
+      const shouldTrackPointer = canAnimate && desktopPointer;
       if (shouldTrackPointer && !pointerListening) {
         window.addEventListener('pointermove', onPointer, { passive: true });
-        pointerListening = true;
       } else if (!shouldTrackPointer && pointerListening) {
         window.removeEventListener('pointermove', onPointer);
-        pointerListening = false;
       }
-      const shouldListen = !desktopPointer.matches && canUseSensor && canAnimate();
-      if (shouldListen && !listening) {
-        baseline = undefined;
-        receivedMotion = false;
-        window.addEventListener('devicemotion', onMotion, { passive: true });
-        listening = true;
-        timeout = setTimeout(() => {
-          if (!receivedMotion) {
-            setStatus('fallback');
-          }
-        }, 1800);
-      } else if (!shouldListen && listening) {
-        stopMotion();
+      pointerListening = shouldTrackPointer;
+
+      if (!canAnimate) {
+        reset();
       }
-      if (!canAnimate()) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-        current.x = current.y = target.x = target.y = 0;
-        reflectionAngle = 0;
-        paint();
-      }
-      if (reducedMotion.matches) setStatus('reduced');
-      else if (desktopPointer.matches) setStatus('pointer');
-      else if (!canUseSensor) setStatus('fallback');
-      else if (receivedMotion) setStatus('active');
-      else setStatus('idle');
+
+      setMode(reducedMotion ? 'reduced' : desktopPointer ? 'pointer' : null);
     };
 
-    const observer =
-      typeof IntersectionObserver === 'undefined'
-        ? undefined
-        : new IntersectionObserver(([entry]) => {
-            visible = entry.isIntersecting;
-            sync();
-          });
-    if (observer) observer.observe(chip.closest('section') ?? chip);
-    else visible = true;
-    desktopPointer.addEventListener('change', sync);
-    document.addEventListener('visibilitychange', sync);
-    reducedMotion.addEventListener('change', sync);
+    const unsubscribeEnvironment = environment.on('change', sync);
+    const unsubscribeInput = accelerometerInput.on('change', onSensorInput);
     sync();
+    onSensorInput(accelerometerInput.get());
 
     return () => {
-      observer?.disconnect();
-      window.removeEventListener('devicemotion', onMotion);
+      unsubscribeEnvironment();
+      unsubscribeInput();
       window.removeEventListener('pointermove', onPointer);
-      desktopPointer.removeEventListener('change', sync);
-      document.removeEventListener('visibilitychange', sync);
-      reducedMotion.removeEventListener('change', sync);
       cancelAnimationFrame(frame);
-      clearTimeout(timeout);
     };
-  }, [chipRef, hologramRef, permission]);
+  }, [hologramRef, accelerometerInput, environment]);
 
-  return { status };
+  return { mode };
 };
 
 export { useHologramMotion };
-
-export type { Status };

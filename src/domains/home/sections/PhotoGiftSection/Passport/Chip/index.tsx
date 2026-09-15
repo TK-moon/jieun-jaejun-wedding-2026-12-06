@@ -1,15 +1,26 @@
-import type { FC, RefObject } from 'react';
+import { useRef, type FC } from 'react';
+import type { MotionPermissionStatus } from '../_hooks/useMotionPermission/_utils';
+import { useAccelerometer } from '../_hooks/useAccelerometer';
 import { Hologram } from '../Hologram';
-import type { Status } from './_hooks/useHologramMotion';
+import { useHologramMotion } from './_hooks/useHologramMotion';
+import { useMotionEnvironment } from './_hooks/useMotionEnvironment';
 import styles from './index.module.css';
 
 interface Props {
-  chipRef: RefObject<HTMLDivElement | null>;
-  hologramRef: RefObject<HTMLSpanElement | null>;
-  status: Status;
+  permission: MotionPermissionStatus;
 }
 
-const Chip: FC<Props> = ({ chipRef, hologramRef, status }) => {
+const Chip: FC<Props> = (props) => {
+  const { permission } = props;
+
+  const chipRef = useRef<HTMLDivElement>(null);
+  const hologramRef = useRef<HTMLSpanElement>(null);
+
+  const { environment, sensorEnabled } = useMotionEnvironment(chipRef);
+  const { input, status: sensorStatus } = useAccelerometer(permission, sensorEnabled);
+  const { mode } = useHologramMotion(hologramRef, input, environment);
+  const status = mode ?? sensorStatus;
+
   const description =
     status === 'active'
       ? '휴대폰을 기울이면 카메라의 빛이 달라져요.'

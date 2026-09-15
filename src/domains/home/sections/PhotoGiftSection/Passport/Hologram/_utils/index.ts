@@ -27,13 +27,19 @@ const createHologramRenderer = (canvas: HTMLCanvasElement, reflectionCanvas: HTM
     const cellY = Math.floor(y * 17);
     const facet = noise(cellX, cellY);
     const grain = noise(index % WIDTH, Math.floor(index / WIDTH));
+    const normalPhaseX = x * 11 + y * 5;
+    const normalPhaseY = y * 13 - x * 4;
     return {
       x,
       y,
       grain,
-      // Embossed ripples and differently oriented foil fragments.
-      normalX: Math.sin(x * 11 + y * 5) * 0.32 + (facet - 0.5) * 0.1,
-      normalY: Math.cos(y * 13 - x * 4) * 0.3 + (noise(cellY, cellX + 19) - 0.5) * 0.1,
+      // Cache both wave components so scrolling adds no per-pixel trigonometry.
+      normalXSin: Math.sin(normalPhaseX) * 0.32,
+      normalXCos: Math.cos(normalPhaseX) * 0.32,
+      normalYSin: Math.sin(normalPhaseY) * 0.3,
+      normalYCos: Math.cos(normalPhaseY) * 0.3,
+      normalXBias: (facet - 0.5) * 0.1,
+      normalYBias: (noise(cellY, cellX + 19) - 0.5) * 0.1,
       phase: x * 1.6 + y * 0.65 + Math.sin(x * 8 - y * 6) * 0.28 + facet * 0.04,
       groove: Math.sin((x * 96 + y * 58) * TAU) * 0.012,
       brushing: Math.sin((y * 115 + Math.sin(x * 9) * 0.15) * TAU) * 0.5 + (grain - 0.5) * 0.3,
@@ -44,33 +50,36 @@ const createHologramRenderer = (canvas: HTMLCanvasElement, reflectionCanvas: HTM
   const lit = [0, 0, 0];
 
   return (viewX: number, viewY: number, reflectionX: number, reflectionY: number) => {
-    // Bound both axes together: diagonal/extreme input must not move the light
-    // beyond the foil normals and extinguish every specular highlight.
-    const lightScale = 0.38 / Math.hypot(0.28, reflectionX, reflectionY);
-    const lightX = reflectionX * lightScale;
-    const lightY = reflectionY * lightScale;
     const viewPhase = viewX * 1.45 - viewY * 1.1;
     const diffractionX = reflectionX * 0.3;
     const diffractionY = reflectionY * 0.24;
+    // Move through a repeating reflection field instead of pinning one light at an edge.
+    // sin(a + b) / cos(a + b) let every pixel reuse these four values for this frame.
+    const normalShiftX = diffractionX * 11 - diffractionY * 5;
+    const normalShiftY = -diffractionY * 13 - diffractionX * 4;
+    const sinX = Math.sin(normalShiftX);
+    const cosX = Math.cos(normalShiftX);
+    const sinY = Math.sin(normalShiftY);
+    const cosY = Math.cos(normalShiftY);
 
     for (let index = 0; index < surface.length; index++) {
       const point = surface[index];
-      const { x, y, grain, normalX, normalY, phase, groove, brushing } = point;
+      const { x, y, grain, phase, groove, brushing } = point;
+      const normalX = point.normalXSin * cosX + point.normalXCos * sinX + point.normalXBias;
+      const normalY = point.normalYCos * cosY - point.normalYSin * sinY + point.normalYBias;
       const incidence = normalX * viewX + normalY * viewY;
       const spectrum = (phase + viewPhase + incidence * 0.85) * TAU;
       // Crossed diffraction waves slide in opposite directions as the view changes.
       const waveA = Math.sin((x + diffractionX) * 44 + (y - diffractionY) * 31);
       const waveB = Math.sin(Math.hypot(x - 0.3 - diffractionX, y - 0.65 + diffractionY) * 72);
       const diffraction = (waveA * waveB + 1) * 0.5;
-      const deltaX = normalX - lightX;
-      const deltaY = normalY - lightY;
-      const distance = deltaX ** 2 + deltaY ** 2;
+      const distance = normalX ** 2 + normalY ** 2;
       const specular = Math.exp(-distance * 12);
       // Soft ambient reflection preserves the embossed pattern away from the main light.
       const ambientReflection = 0.5 + normalX * 0.65 - normalY * 0.45;
       // A stretched highlight follows the foil's polishing direction.
-      const alongGrain = deltaX * 0.94 + deltaY * 0.34;
-      const acrossGrain = deltaY * 0.94 - deltaX * 0.34;
+      const alongGrain = normalX * 0.94 + normalY * 0.34;
+      const acrossGrain = normalY * 0.94 - normalX * 0.34;
       const highlight = Math.exp(-(alongGrain ** 2 * 24 + acrossGrain ** 2 * 85));
       // Keep the centre silver-white, with a faint spectrum on the reflection's shoulders.
       const iridescence = specular * (1 - specular) * 4;
@@ -122,6 +131,7 @@ const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail)
     context.save();
     context.scale(WIDTH / 71, HEIGHT / 48);
     const angle = ((reflectionAngle - 135) * Math.PI) / 180;
+    // Bound only the highlight's size and opacity, never its motion phase.
     const tilt = Math.min(1, Math.hypot(viewX, viewY));
 
     if (detail === 'lens-ring') {
@@ -155,14 +165,15 @@ const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail)
       context.arc(35.5, 28, 12.4, 0, TAU);
       context.stroke();
     } else if (detail === 'lens') {
-      // Curved reflections taper into the glass instead of reading as a painted white arc.
-      // Limit displacement radially so the bright arc remains inside the lens mask.
-      const displacement = 1.6 / Math.max(1, Math.hypot(viewX, viewY));
-      const centreX = 35.5 + viewX * displacement;
-      const centreY = 28 + viewY * displacement;
+      // Cycle the reflection across the glass rather than clamping it to the lens edge.
+      const offsetX = Math.sin(viewX);
+      const offsetY = Math.sin(viewY);
+      const lensAngle = angle + viewX * 0.7 - viewY * 0.55;
+      const centreX = 35.5 + offsetX * 1.6;
+      const centreY = 28 + offsetY * 1.6;
       const radius = 6 + tilt * 0.6;
-      const lightX = centreX + Math.cos(angle) * radius;
-      const lightY = centreY + Math.sin(angle) * radius;
+      const lightX = centreX + Math.cos(lensAngle) * radius;
+      const lightY = centreY + Math.sin(lensAngle) * radius;
       const reflection = context.createRadialGradient(lightX, lightY, 0, lightX, lightY, 5);
       reflection.addColorStop(0, `rgba(248, 251, 255, ${0.72 + tilt * 0.18})`);
       reflection.addColorStop(0.45, 'rgba(248, 251, 255, 0.38)');
@@ -171,18 +182,18 @@ const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail)
       context.lineWidth = 1.4 + tilt * 0.35;
       context.lineCap = 'round';
       context.beginPath();
-      context.arc(centreX, centreY, radius, angle - 0.85, angle + 0.85);
+      context.arc(centreX, centreY, radius, lensAngle - 0.85, lensAngle + 0.85);
       context.stroke();
       // A faint displaced return reflection hints at the second glass surface.
       context.globalAlpha = 0.22;
       context.lineWidth = 0.65;
       context.beginPath();
       context.arc(
-        centreX - viewX * 0.8,
-        centreY - viewY * 0.8,
+        centreX - offsetX * 0.8,
+        centreY - offsetY * 0.8,
         radius - 1.25,
-        angle - 0.7,
-        angle + 0.7,
+        lensAngle - 0.7,
+        lensAngle + 0.7,
       );
       context.stroke();
     } else {
@@ -206,5 +217,35 @@ const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail)
   };
 };
 
-export { createHologramRenderer, createDetailRenderer };
-export type { HologramDetail };
+const createHologramPainter = (hologram: HTMLSpanElement) => {
+  const createPart = (part: 'background' | HologramDetail, direction: 1 | -1) => {
+    const element = hologram.querySelector<HTMLElement>(`[data-hologram-part="${part}"]`);
+    const surface = element?.querySelector<HTMLCanvasElement>('[data-hologram-layer="surface"]');
+    const reflection = element?.querySelector<HTMLCanvasElement>(
+      '[data-hologram-layer="reflection"]',
+    );
+    if (!surface || !reflection) return;
+
+    const renderFoil = createHologramRenderer(surface, reflection);
+    const renderDetail = part === 'background' ? undefined : createDetailRenderer(reflection, part);
+    return (x: number, y: number, angle: number) => {
+      const reflectionX = x * direction;
+      const reflectionY = y * direction;
+      renderFoil?.(x, y, reflectionX, reflectionY);
+      // Reversing both axes also rotates the detail's reflection by 180 degrees.
+      renderDetail?.(reflectionX, reflectionY, angle + (direction === -1 ? 180 : 0));
+    };
+  };
+  const parts = [
+    createPart('background', 1),
+    createPart('lens-ring', -1),
+    createPart('lens', 1),
+    createPart('flash', -1),
+  ];
+
+  return (x: number, y: number, angle: number) => {
+    for (const paint of parts) paint?.(x, y, angle);
+  };
+};
+
+export { createHologramPainter };

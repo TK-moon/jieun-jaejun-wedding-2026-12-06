@@ -1,8 +1,8 @@
-interface GravityVector {
-  x: number;
-  y: number;
-  z: number;
-}
+import type { MotionInput } from './motion';
+import {
+  normalizeGravity as normalize,
+  type GravityVector,
+} from '../../../../_hooks/useAccelerometer/_utils';
 
 interface TiltCalibration {
   forward: GravityVector;
@@ -11,53 +11,23 @@ interface TiltCalibration {
   screenAngle: number;
 }
 
+interface TiltState {
+  gravity: GravityVector;
+  calibration: TiltCalibration;
+  input: MotionInput;
+  stillTimeMs: number;
+}
+
+const SENSOR_SMOOTHING_MS = 24;
+const POSTURE_FOLLOW_MS = 450;
+const RECENTER_DELAY_MS = 180;
+const STILL_ANGULAR_SPEED = (2 * Math.PI) / 180;
 const RESPONSE_ANGLE = (6 * Math.PI) / 180;
 const DEAD_ZONE = (0.15 * Math.PI) / 180;
-// The renderer bounds the light separately from the input's movement range.
-const MAX_LIGHT_OFFSET = 0.85;
+// Preserve the response near the centre without compressing larger angles.
+const TILT_SENSITIVITY = 0.85 * (2 / Math.PI);
 
 const dot = (a: GravityVector, b: GravityVector) => a.x * b.x + a.y * b.y + a.z * b.z;
-
-const normalize = (vector: GravityVector): GravityVector => {
-  const length = Math.hypot(vector.x, vector.y, vector.z);
-  return { x: vector.x / length, y: vector.y / length, z: vector.z / length };
-};
-
-const getScreenGravity = (
-  gravity: DeviceMotionEventAcceleration,
-  acceleration: DeviceMotionEventAcceleration | null,
-  screenAngle: number,
-): GravityVector | null => {
-  if (
-    gravity.x === null ||
-    gravity.y === null ||
-    gravity.z === null ||
-    !Number.isFinite(gravity.x) ||
-    !Number.isFinite(gravity.y) ||
-    !Number.isFinite(gravity.z)
-  )
-    return null;
-  const hasAcceleration =
-    acceleration &&
-    typeof acceleration.x === 'number' &&
-    Number.isFinite(acceleration.x) &&
-    typeof acceleration.y === 'number' &&
-    Number.isFinite(acceleration.y) &&
-    typeof acceleration.z === 'number' &&
-    Number.isFinite(acceleration.z);
-  // Remove translation when the browser supplies gravity-compensated acceleration.
-  const x = gravity.x - (hasAcceleration ? acceleration.x! : 0);
-  const y = gravity.y - (hasAcceleration ? acceleration.y! : 0);
-  const z = gravity.z - (hasAcceleration ? acceleration.z! : 0);
-  const length = Math.hypot(x, y, z);
-  if (length < 4 || length > 16) return null;
-  const radians = (screenAngle * Math.PI) / 180;
-  return normalize({
-    x: x * Math.cos(radians) + y * Math.sin(radians),
-    y: -x * Math.sin(radians) + y * Math.cos(radians),
-    z,
-  });
-};
 
 const createTiltCalibration = (
   gravity: GravityVector,
@@ -122,8 +92,7 @@ const getTiltInput = (gravity: GravityVector, calibration: TiltCalibration) => {
   const depth = dot(gravity, calibration.forward);
   const response = (angle: number) => {
     const offset = Math.sign(angle) * Math.max(0, Math.abs(angle) - DEAD_ZONE);
-    // Unlike tanh, this retains a gradual response at large posture offsets.
-    return MAX_LIGHT_OFFSET * (2 / Math.PI) * Math.atan(offset / RESPONSE_ANGLE);
+    return TILT_SENSITIVITY * (offset / RESPONSE_ANGLE);
   };
   return {
     x: response(Math.atan2(dot(gravity, calibration.right), depth)),
@@ -131,5 +100,57 @@ const getTiltInput = (gravity: GravityVector, calibration: TiltCalibration) => {
   };
 };
 
-export { getScreenGravity, createTiltCalibration, followTiltCalibration, getTiltInput };
-export type { GravityVector, TiltCalibration };
+const updateTilt = (
+  previous: TiltState | undefined,
+  gravity: GravityVector,
+  screenAngle: number,
+  elapsedMs: number,
+): TiltState => {
+  const elapsed = Math.max(0, elapsedMs);
+  const postureElapsed = Math.min(100, elapsed);
+  let filteredGravity = gravity;
+  let calibration: TiltCalibration;
+  let stillTimeMs = 0;
+
+  if (!previous || previous.calibration.screenAngle !== screenAngle) {
+    calibration = createTiltCalibration(gravity, screenAngle);
+  } else {
+    calibration = previous.calibration;
+    // Filter sensor noise independently of the slower posture adjustment below.
+    const blend = 1 - Math.exp(-elapsed / SENSOR_SMOOTHING_MS);
+    filteredGravity = {
+      x: previous.gravity.x + (gravity.x - previous.gravity.x) * blend,
+      y: previous.gravity.y + (gravity.y - previous.gravity.y) * blend,
+      z: previous.gravity.z + (gravity.z - previous.gravity.z) * blend,
+    };
+
+    // Compare the angle travelled with a speed threshold, independent of sensor frequency.
+    const lengthProduct =
+      Math.hypot(previous.gravity.x, previous.gravity.y, previous.gravity.z) *
+      Math.hypot(filteredGravity.x, filteredGravity.y, filteredGravity.z);
+    const isMoving =
+      dot(previous.gravity, filteredGravity) <
+      lengthProduct * Math.cos((STILL_ANGULAR_SPEED * postureElapsed) / 1000);
+    stillTimeMs = isMoving ? 0 : Math.min(RECENTER_DELAY_MS, previous.stillTimeMs + postureElapsed);
+  }
+
+  // Calculate this input before moving the neutral posture for the next event.
+  const input = getTiltInput(filteredGravity, calibration);
+  return {
+    gravity: filteredGravity,
+    // Keep a fixed reference while tilting so continued movement cannot be followed away.
+    calibration:
+      stillTimeMs < RECENTER_DELAY_MS
+        ? calibration
+        : followTiltCalibration(
+            filteredGravity,
+            calibration,
+            1 - Math.exp(-postureElapsed / POSTURE_FOLLOW_MS),
+          ),
+    input,
+    stillTimeMs,
+  };
+};
+
+export { updateTilt };
+export type { TiltState };
