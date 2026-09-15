@@ -1,148 +1,46 @@
-// A small, deterministic foil texture. All layers share the camera silhouette,
-// but their surface normals and optical phases respond differently to the view.
-const WIDTH = 142;
-const HEIGHT = 96;
-const TAU = Math.PI * 2;
-const SILVER = [174, 176, 179];
+import { WIDTH, HEIGHT, TAU } from '../_constants';
+import { createFoilMaterial, createFoilRenderer } from './foil';
 
-const noise = (x: number, y: number) => {
-  const value = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-  return value - Math.floor(value);
-};
+type HologramPart = 'background' | 'lens-ring' | 'lens' | 'flash';
 
-const createHologramRenderer = (canvas: HTMLCanvasElement, reflectionCanvas: HTMLCanvasElement) => {
-  const context = canvas.getContext('2d', { alpha: false });
-  const reflectionContext = reflectionCanvas.getContext('2d');
-  if (!context || !reflectionContext) return;
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
-  reflectionCanvas.width = WIDTH;
-  reflectionCanvas.height = HEIGHT;
-  const image = context.createImageData(WIDTH, HEIGHT);
-  const reflection = reflectionContext.createImageData(WIDTH, HEIGHT);
-  const surface = Array.from({ length: WIDTH * HEIGHT }, (_, index) => {
-    const x = (index % WIDTH) / WIDTH;
-    const y = Math.floor(index / WIDTH) / HEIGHT;
-    const cellX = Math.floor(x * 23);
-    const cellY = Math.floor(y * 17);
-    const facet = noise(cellX, cellY);
-    const grain = noise(index % WIDTH, Math.floor(index / WIDTH));
-    const normalPhaseX = x * 11 + y * 5;
-    const normalPhaseY = y * 13 - x * 4;
-    return {
-      x,
-      y,
-      grain,
-      // Cache both wave components so scrolling adds no per-pixel trigonometry.
-      normalXSin: Math.sin(normalPhaseX) * 0.32,
-      normalXCos: Math.cos(normalPhaseX) * 0.32,
-      normalYSin: Math.sin(normalPhaseY) * 0.3,
-      normalYCos: Math.cos(normalPhaseY) * 0.3,
-      normalXBias: (facet - 0.5) * 0.1,
-      normalYBias: (noise(cellY, cellX + 19) - 0.5) * 0.1,
-      phase: x * 1.6 + y * 0.65 + Math.sin(x * 8 - y * 6) * 0.28 + facet * 0.04,
-      groove: Math.sin((x * 96 + y * 58) * TAU) * 0.012,
-      brushing: Math.sin((y * 115 + Math.sin(x * 9) * 0.15) * TAU) * 0.5 + (grain - 0.5) * 0.3,
-    };
-  });
-
-  const base = [0, 0, 0];
-  const lit = [0, 0, 0];
-
-  return (viewX: number, viewY: number, reflectionX: number, reflectionY: number) => {
-    const viewPhase = viewX * 1.45 - viewY * 1.1;
-    const diffractionX = reflectionX * 0.3;
-    const diffractionY = reflectionY * 0.24;
-    // Move through a repeating reflection field instead of pinning one light at an edge.
-    // sin(a + b) / cos(a + b) let every pixel reuse these four values for this frame.
-    const normalShiftX = diffractionX * 11 - diffractionY * 5;
-    const normalShiftY = -diffractionY * 13 - diffractionX * 4;
-    const sinX = Math.sin(normalShiftX);
-    const cosX = Math.cos(normalShiftX);
-    const sinY = Math.sin(normalShiftY);
-    const cosY = Math.cos(normalShiftY);
-
-    for (let index = 0; index < surface.length; index++) {
-      const point = surface[index];
-      const { x, y, grain, phase, groove, brushing } = point;
-      const normalX = point.normalXSin * cosX + point.normalXCos * sinX + point.normalXBias;
-      const normalY = point.normalYCos * cosY - point.normalYSin * sinY + point.normalYBias;
-      const incidence = normalX * viewX + normalY * viewY;
-      const spectrum = (phase + viewPhase + incidence * 0.85) * TAU;
-      // Crossed diffraction waves slide in opposite directions as the view changes.
-      const waveA = Math.sin((x + diffractionX) * 44 + (y - diffractionY) * 31);
-      const waveB = Math.sin(Math.hypot(x - 0.3 - diffractionX, y - 0.65 + diffractionY) * 72);
-      const diffraction = (waveA * waveB + 1) * 0.5;
-      const distance = normalX ** 2 + normalY ** 2;
-      const specular = Math.exp(-distance * 12);
-      // Soft ambient reflection preserves the embossed pattern away from the main light.
-      const ambientReflection = 0.5 + normalX * 0.65 - normalY * 0.45;
-      // A stretched highlight follows the foil's polishing direction.
-      const alongGrain = normalX * 0.94 + normalY * 0.34;
-      const acrossGrain = normalY * 0.94 - normalX * 0.34;
-      const highlight = Math.exp(-(alongGrain ** 2 * 24 + acrossGrain ** 2 * 85));
-      // Keep the centre silver-white, with a faint spectrum on the reflection's shoulders.
-      const iridescence = specular * (1 - specular) * 4;
-      // Sparse grains light up only near their reflection angle; no timed flashing.
-      const sparkle = grain > 0.985 ? Math.exp(-distance * 70) * (grain - 0.985) * 24 : 0;
-      const brightness =
-        0.77 + ambientReflection * 0.08 + diffraction * 0.065 + specular * 0.12 + groove;
-      const offset = index * 4;
-
-      let alpha = 0;
-      for (let channel = 0; channel < 3; channel++) {
-        const colour = Math.cos(spectrum + (channel * TAU) / 3);
-        const metal = SILVER[channel];
-        // The material stays neutral; only the reflected light carries a subtle colour shift.
-        base[channel] = metal * (0.74 + groove) + brushing * 1.2;
-        const reflected =
-          metal * brightness +
-          specular * 70 +
-          highlight * (22 + brushing * 5) +
-          colour * iridescence * 8 +
-          sparkle * 80;
-        // Roll off bright peaks gently so the metal retains detail near white.
-        lit[channel] =
-          reflected > 230 ? 230 + 25 * (1 - Math.exp(-(reflected - 230) / 25)) : reflected;
-        image.data[offset + channel] = base[channel];
-        alpha = Math.max(alpha, (lit[channel] - base[channel]) / (255 - base[channel]));
-      }
-      // Express the foil light as a transparent layer over its material.
-      for (let channel = 0; channel < 3; channel++) {
-        reflection.data[offset + channel] =
-          alpha > 0 ? base[channel] + (lit[channel] - base[channel]) / alpha : 0;
-      }
-      image.data[offset + 3] = 255;
-      reflection.data[offset + 3] = alpha * 255;
-    }
-    context.putImageData(image, 0, 0);
-    reflectionContext.putImageData(reflection, 0, 0);
-  };
-};
-
-type HologramDetail = 'lens-ring' | 'lens' | 'flash';
-
-const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail) => {
+const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramPart) => {
   const context = canvas.getContext('2d');
   if (!context) return;
+  const foilEdge =
+    detail === 'background'
+      ? new Path2D(
+          'M7 10h14l5-8h19l5 8h14a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5Z',
+        )
+      : undefined;
 
   return (viewX: number, viewY: number, reflectionAngle: number) => {
     // The part's foil renderer clears and fills this reflection layer first.
     context.save();
     context.scale(WIDTH / 71, HEIGHT / 48);
     const angle = ((reflectionAngle - 135) * Math.PI) / 180;
-    // Bound only the highlight's size and opacity, never its motion phase.
-    const tilt = Math.min(1, Math.hypot(viewX, viewY));
+    const colourPhase = viewX * 0.7 - viewY * 0.55;
+    const hue = 180 + colourPhase * 75;
 
-    if (detail === 'lens-ring') {
+    if (foilEdge) {
+      // A thin cut edge keeps the camera reading as a foil sticker on the paper.
+      const edge = context.createLinearGradient(0, 0, 71, 48);
+      edge.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+      edge.addColorStop(0.42, `hsla(${hue}, 70%, 82%, 0.45)`);
+      edge.addColorStop(0.72, 'rgba(48, 55, 63, 0.48)');
+      edge.addColorStop(1, 'rgba(248, 251, 255, 0.65)');
+      context.strokeStyle = edge;
+      context.lineWidth = 0.7;
+      context.stroke(foilEdge);
+    } else if (detail === 'lens-ring') {
       // Input inversion is applied once by the caller, to the whole reflection layer.
-      const ringAngle = angle + viewX * 0.7 - viewY * 0.55;
+      const ringAngle = angle + colourPhase;
       const dx = Math.cos(ringAngle) * 13;
       const dy = Math.sin(ringAngle) * 13;
       const light = context.createLinearGradient(35.5 - dx, 28 - dy, 35.5 + dx, 28 + dy);
-      light.addColorStop(0, 'rgba(38, 42, 48, 0.22)');
+      light.addColorStop(0, 'rgba(38, 42, 48, 0.38)');
       light.addColorStop(0.38, 'rgba(248, 251, 255, 0)');
-      light.addColorStop(0.75, 'rgba(248, 251, 255, 0.28)');
+      light.addColorStop(0.65, `hsla(${hue}, 78%, 68%, 0.52)`);
+      light.addColorStop(0.84, `hsla(${hue + 80}, 82%, 82%, 0.64)`);
       light.addColorStop(1, 'rgba(248, 251, 255, 0.80)');
       context.strokeStyle = light;
       context.lineWidth = 3.5;
@@ -165,45 +63,42 @@ const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail)
       context.arc(35.5, 28, 12.4, 0, TAU);
       context.stroke();
     } else if (detail === 'lens') {
-      // Cycle the reflection across the glass rather than clamping it to the lens edge.
-      const offsetX = Math.sin(viewX);
-      const offsetY = Math.sin(viewY);
-      const lensAngle = angle + viewX * 0.7 - viewY * 0.55;
-      const centreX = 35.5 + offsetX * 1.6;
-      const centreY = 28 + offsetY * 1.6;
-      const radius = 6 + tilt * 0.6;
-      const lightX = centreX + Math.cos(lensAngle) * radius;
-      const lightY = centreY + Math.sin(lensAngle) * radius;
-      const reflection = context.createRadialGradient(lightX, lightY, 0, lightX, lightY, 5);
-      reflection.addColorStop(0, `rgba(248, 251, 255, ${0.72 + tilt * 0.18})`);
-      reflection.addColorStop(0.45, 'rgba(248, 251, 255, 0.38)');
-      reflection.addColorStop(1, 'rgba(248, 251, 255, 0)');
-      context.strokeStyle = reflection;
-      context.lineWidth = 1.4 + tilt * 0.35;
-      context.lineCap = 'round';
+      // Fixed Fresnel rings emerge in different colours over the hidden aperture image.
+      const exposure = (0.5 + 0.5 * Math.cos(colourPhase)) ** 4;
+      const spectral = context.createLinearGradient(28, 21, 43, 35);
+      spectral.addColorStop(0, `hsla(${hue + 100}, 85%, 65%, 0.6)`);
+      spectral.addColorStop(0.45, 'rgba(250, 253, 255, 0.86)');
+      spectral.addColorStop(1, `hsla(${hue - 80}, 80%, 72%, 0.72)`);
+      context.strokeStyle = spectral;
+      context.globalAlpha = 0.18 + exposure * 0.65;
+      context.lineWidth = 0.35;
+      for (const radius of [3.8, 5.1, 6.4, 7.7]) {
+        context.beginPath();
+        context.arc(35.5, 28, radius, 0, TAU);
+        context.stroke();
+      }
+
+      // A white glint passes over the stationary engraving; the lens itself never slides.
+      const glintAngle = angle + colourPhase;
+      const lightX = 35.5 + Math.cos(glintAngle) * 4.5;
+      const lightY = 28 + Math.sin(glintAngle) * 4.5;
+      const glint = context.createRadialGradient(lightX, lightY, 0, lightX, lightY, 4.5);
+      glint.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+      glint.addColorStop(0.3, 'rgba(240, 252, 255, 0.22)');
+      glint.addColorStop(1, 'rgba(240, 252, 255, 0)');
+      context.globalAlpha = 0.3 + exposure * 0.4;
+      context.fillStyle = glint;
       context.beginPath();
-      context.arc(centreX, centreY, radius, lensAngle - 0.85, lensAngle + 0.85);
-      context.stroke();
-      // A faint displaced return reflection hints at the second glass surface.
-      context.globalAlpha = 0.22;
-      context.lineWidth = 0.65;
-      context.beginPath();
-      context.arc(
-        centreX - offsetX * 0.8,
-        centreY - offsetY * 0.8,
-        radius - 1.25,
-        lensAngle - 0.7,
-        lensAngle + 0.7,
-      );
-      context.stroke();
+      context.arc(35.5, 28, 9.25, 0, TAU);
+      context.fill();
     } else {
       // A narrow sweep belongs only to the flash, moving across its own bounds.
       const sweep = 58.5 + Math.sin(viewX * 1.4 - viewY * 0.6) * 2.4;
       const light = context.createLinearGradient(sweep - 2, 16, sweep + 2, 20);
       light.addColorStop(0, 'rgba(248, 251, 255, 0)');
-      light.addColorStop(0.28, 'rgba(248, 251, 255, 0.16)');
+      light.addColorStop(0.28, `hsla(${hue + 60}, 85%, 70%, 0.45)`);
       light.addColorStop(0.48, 'rgba(248, 251, 255, 0.78)');
-      light.addColorStop(0.62, 'rgba(248, 251, 255, 0.32)');
+      light.addColorStop(0.62, `hsla(${hue - 60}, 85%, 72%, 0.48)`);
       light.addColorStop(1, 'rgba(248, 251, 255, 0)');
       context.fillStyle = light;
       context.fillRect(55, 16, 7, 4);
@@ -218,7 +113,8 @@ const createDetailRenderer = (canvas: HTMLCanvasElement, detail: HologramDetail)
 };
 
 const createHologramPainter = (hologram: HTMLSpanElement) => {
-  const createPart = (part: 'background' | HologramDetail, direction: 1 | -1) => {
+  const material = createFoilMaterial();
+  const createPart = (part: HologramPart, direction: 1 | -1) => {
     const element = hologram.querySelector<HTMLElement>(`[data-hologram-part="${part}"]`);
     const surface = element?.querySelector<HTMLCanvasElement>('[data-hologram-layer="surface"]');
     const reflection = element?.querySelector<HTMLCanvasElement>(
@@ -226,8 +122,8 @@ const createHologramPainter = (hologram: HTMLSpanElement) => {
     );
     if (!surface || !reflection) return;
 
-    const renderFoil = createHologramRenderer(surface, reflection);
-    const renderDetail = part === 'background' ? undefined : createDetailRenderer(reflection, part);
+    const renderFoil = createFoilRenderer(surface, reflection, material);
+    const renderDetail = createDetailRenderer(reflection, part);
     return (x: number, y: number, angle: number) => {
       const reflectionX = x * direction;
       const reflectionY = y * direction;
