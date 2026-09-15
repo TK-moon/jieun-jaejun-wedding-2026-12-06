@@ -1,0 +1,196 @@
+.book {
+  display: flex;
+  width: var(--layout-frame-width);
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-paper);
+  box-shadow:
+    0 14px 30px rgb(47 111 163 / 10%),
+    0 2px 8px rgb(28 36 48 / 5%);
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.book.is_visible {
+  animation: card-in 0.7s ease-out both;
+}
+
+.leaf {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  aspect-ratio: 125 / 88;
+}
+
+.pageOne {
+  z-index: 1;
+  background:
+    radial-gradient(circle at 12% 16%, rgb(255 253 249 / 76%) 0, transparent 33%),
+    linear-gradient(145deg, var(--color-sky-wash) 0%, var(--color-paper-raised) 70%);
+}
+
+.pageOne::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  height: 3.2cqi;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgb(47 111 163 / 2%) 34%,
+    rgb(28 36 48 / 7%) 78%,
+    rgb(28 36 48 / 11%) 100%
+  );
+  pointer-events: none;
+}
+
+.pageTwo {
+  background:
+    radial-gradient(circle at 88% 28%, rgb(255 253 249 / 64%) 0, transparent 36%),
+    linear-gradient(155deg, var(--color-paper-raised) 0%, var(--color-sky-wash) 100%);
+}
+
+.pageTwo::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  height: 3.6cqi;
+  background: linear-gradient(
+    180deg,
+    rgb(28 36 48 / 9%) 0%,
+    rgb(47 111 163 / 4%) 28%,
+    rgb(255 253 249 / 34%) 52%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 5.2cqi 6cqi 4cqi;
+}
+
+.pageOne .page {
+  display: block;
+  padding-right: 9cqi;
+}
+
+.request {
+  display: flex;
+  min-width: 0;
+  margin-left: 27cqi;
+  flex-direction: column;
+  gap: 1.8cqi;
+}
+
+.lead {
+  display: flex;
+  margin: 0;
+  flex-direction: column;
+  gap: 0.22em;
+  color: var(--color-ink);
+  font-size: clamp(1.24rem, 2.7cqi, 1.55rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.48;
+  text-align: left;
+  word-break: keep-all;
+}
+
+.lead p {
+  margin: 0;
+}
+
+.leadEn {
+  color: var(--color-ink-muted);
+  font-size: clamp(1rem, 2cqi, 1.18rem);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.42;
+}
+
+.portraitSlot {
+  position: absolute;
+  bottom: 4.2cqi;
+  left: 5.2cqi;
+  width: 20.5cqi;
+}
+
+.signatureSlot {
+  position: absolute;
+  right: 9cqi;
+  bottom: 4.2cqi;
+  left: 31cqi;
+  min-width: 0;
+}
+
+.body {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: 25cqi minmax(0, 1fr);
+  gap: 3cqi 4.2cqi;
+  align-items: stretch;
+}
+
+.mast {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.4cqi;
+  margin: 0 0 2.8cqi;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .page {
+    padding-right: 5cqi;
+    padding-left: 4.6cqi;
+  }
+
+  .pageOne .page {
+    padding-right: 8.6cqi;
+  }
+
+  .body {
+    grid-template-columns: 24cqi minmax(0, 1fr);
+    gap: 2.5cqi 3.6cqi;
+  }
+}

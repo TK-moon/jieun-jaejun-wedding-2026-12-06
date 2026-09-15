@@ -1,0 +1,51 @@
+.stamp {
+  --stamp-red: color-mix(in srgb, var(--color-failed) 76%, #9f302c);
+  position: relative;
+  z-index: 1;
+  width: 11cqi;
+  height: 11cqi;
+  flex: 0 0 auto;
+  color: var(--stamp-red);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  opacity: 0.66;
+}
+
+.mark {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.imprint {
+  color: inherit;
+}
+
+.frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4.6;
+}
+
+.character {
+  fill: currentColor;
+  font-family: 'Noto Serif KR', 'Apple SD Gothic Neo', serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.08em;
+}
+
+.character:nth-of-type(2) {
+  opacity: 0.86;
+}
+
+.character:nth-of-type(3) {
+  opacity: 0.72;
+}
+
+.character:nth-of-type(4) {
+  opacity: 0.9;
+}

@@ -1,0 +1,56 @@
+.pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--color-sky);
+  pointer-events: none;
+}
+
+.pattern path,
+.pattern circle {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.cloud {
+  stroke: rgb(255 253 249 / 76%);
+  stroke-width: 2;
+}
+
+.ridge {
+  stroke: rgb(91 159 212 / 9%);
+  stroke-width: 1;
+}
+
+.orbit {
+  stroke: rgb(91 159 212 / 9%);
+  stroke-width: 0.8;
+}
+
+.arc {
+  stroke: rgb(169 207 232 / 11%);
+  stroke-width: 9;
+}
+
+.watermark {
+  fill: rgb(91 159 212 / 3.5%);
+  font-family: var(--body-font);
+  font-size: 5.4rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.request .watermark,
+.request .orbit {
+  opacity: 0.56;
+}
+
+.identity .cloud {
+  opacity: 0.38;
+}
+
+.identity .ridge {
+  opacity: 0.72;
+}

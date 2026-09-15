@@ -1,0 +1,20 @@
+.serial {
+  position: absolute;
+  top: 5.6cqi;
+  right: 2.5cqi;
+  z-index: 2;
+  margin: 0;
+  background-image: radial-gradient(circle, rgb(47 111 163 / 62%) 0.72px, transparent 0.86px);
+  background-size: 0.75cqi 0.75cqi;
+  color: transparent;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: clamp(1.28rem, 3cqi, 1.68rem);
+  font-weight: 800;
+  letter-spacing: 0.38em;
+  line-height: 1;
+  text-orientation: mixed;
+  writing-mode: vertical-rl;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

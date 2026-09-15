@@ -8,18 +8,18 @@
 
 ## App Composition
 
-`src/App.tsx` composes the primary invitation UI inside `<main>` from `src/sections/*`, then site chrome such as the footer:
+`src/App.tsx` renders the router outlet inside `<main>`, then site chrome such as the footer:
 
-- Current order: `BannerSection` → `GreetingSection` → `TicketSection` → `ContactSection`, then `FooterSection` after `</main>`.
-- New screens, layout, and visual design belong in `src/sections`.
+- Home order (`src/domains/home`): `BannerSection` → `GreetingSection` → `TicketSection` → `GallerySection` → `ContactSection` → `PhotoGiftSection`, then `FooterSection` after `</main>`.
+- New screens, layout, and visual design belong in `src/domains/home/sections` (home) or `src/domains/gallery` (gallery page).
 - Shared UI (titles, toast, map links, icons) belongs in `src/components`.
 - Wedding facts (names, phones, accounts, venue, ceremony) live in `src/constants` (`WEDDING_INFO`). Do not hardcode those values inside section components.
-- Site/creator footer copy lives in `src/sections/FooterSection/_constants` (`SITE_INFO`).
+- Site/creator footer copy lives in `src/domains/home/sections/FooterSection/_constants` (`SITE_INFO`).
 
 ## Project Structure
 
-- Put page sections for the primary design under `src/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
-- Nested section components under `src/sections/<SectionName>/<ComponentName>/` also keep styles beside their `index.tsx` as `index.module.css`. Do not share a parent section stylesheet across children.
+- Put page sections for the home invitation under `src/domains/home/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
+- Nested section components under `src/domains/home/sections/<SectionName>/<ComponentName>/` also keep styles beside their `index.tsx` as `index.module.css`. Do not share a parent section stylesheet across children.
 - Put shared or reusable units under `src/components/<ComponentName>/` with `index.tsx` and `index.module.css`.
 - Put shared icons under `src/components/icons/<IconName>/` with `index.tsx` and `index.module.css`.
 - Put each component implementation in `<ComponentName>/index.tsx`; keep the component name and named export as `<ComponentName>`. Nested components follow the same rule. The root app entry files `src/App.tsx` and `src/main.tsx` retain their conventional names.
@@ -78,6 +78,11 @@
 - Build `tel:` / `sms:` hrefs by stripping non-digits in section `_utils`. Do not embed raw `tel:` strings in JSX.
 - Placeholder phones may ship temporarily as `010-0000-0000`; replace before public launch. Do not invent alternate fake formats.
 
+### PhotoGiftSection
+
+- Follow the Korean passport as two attached inner pages of equal landscape ID-3 ratio (`125 / 88`), as if the booklet is rotated open. The join is a page-fold shadow/gradient, not a dashed rule. Page 1: Korean request copy, couple names with a faded red four-character Korean official seal, English request copy, portrait and bearer signature along the bottom, and a vertical dotted (laser-perforated) serial on the right edge. Page 2: `여권 PASSPORT` at left, e-passport chip mark at the upper right with hologram only on that chip, portrait left of three Korean steps, then MRZ. Keep the hologram as a standalone component ready for device-orientation input. Keep page backgrounds quiet so body copy stays readable. Do not cover the pages with a full-sheet hologram, ghost portrait, or dense overlapping security print.
+- Do not reuse ticket chrome (sky banner, perforation, stub, barcode, flight route). Do not add a booklet spine.
+
 ## Styling
 
 - Use CSS Modules for all component and feature styles. Co-locate them as `index.module.css` next to the component `index.tsx`.
@@ -89,7 +94,7 @@
 ### Layout
 
 - Section content frames share one width and horizontal padding from `src/index.css`:
-  - `--layout-frame-width` for the main content frame (e.g. Banner `.frame`, Ticket `.ticket_frame`, Contact `.frame`)
+  - `--layout-frame-width` for the main content frame (e.g. Banner `.frame`, Ticket `.ticket_frame`, PhotoGift `.card`, Contact `.frame`)
   - `--layout-inline-padding` for section horizontal padding
   - `--layout-section-padding-block` for non-full-viewport section vertical padding
 - Do not hardcode a competing frame max-width in section CSS. Change the shared variables when the content column needs to grow or shrink.

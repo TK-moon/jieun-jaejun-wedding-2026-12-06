@@ -1,0 +1,32 @@
+.portrait {
+  position: relative;
+  align-self: start;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-paper);
+  box-shadow:
+    0 0 0 1px rgb(47 111 163 / 18%),
+    0 2px 5px rgb(47 111 163 / 8%);
+}
+
+.photo {
+  display: block;
+  aspect-ratio: 3 / 4;
+}
+
+.photo img {
+  object-fit: cover;
+  object-position: center 18%;
+}
+
+.mono .photo img {
+  filter: grayscale(1) contrast(1.06);
+}
+
+.mono::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgb(169 207 232 / 12%), transparent 62%);
+  pointer-events: none;
+}

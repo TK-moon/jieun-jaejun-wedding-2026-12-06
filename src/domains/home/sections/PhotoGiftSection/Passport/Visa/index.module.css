@@ -1,0 +1,41 @@
+.visa {
+  display: flex;
+  align-self: stretch;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6cqi;
+  padding: 1cqi 0;
+  border-bottom: 1px solid rgb(91 159 212 / 10%);
+}
+
+.entry:last-child {
+  border-bottom: 0;
+}
+
+.code {
+  color: var(--color-sky);
+  font-size: clamp(0.86rem, 1.7cqi, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+}
+
+.text {
+  color: var(--color-ink);
+  font-size: clamp(1.2rem, 2.6cqi, 1.48rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  word-break: keep-all;
+}
