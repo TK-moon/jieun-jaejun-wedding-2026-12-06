@@ -8,20 +8,22 @@
   background: color-mix(in srgb, var(--color-paper) 28%, transparent);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity 550ms ease,
-    visibility 0s;
 }
 
-.revealed {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity 550ms ease,
-    visibility 0s 550ms;
+.prompt {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.description {
+  margin: 0;
+  color: var(--color-sky-deep);
+  font-family: var(--body-font);
+  font-size: 1.3rem;
+  line-height: 1.6;
+  word-break: keep-all;
 }
 
 .button {
@@ -51,8 +53,12 @@
   outline-offset: 4px;
 }
 
+.button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .overlay,
   .button {
     transition: none;
   }

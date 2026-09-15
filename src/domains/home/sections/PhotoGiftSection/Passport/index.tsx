@@ -4,7 +4,8 @@ import { PHOTO_GIFT } from '../_constants';
 import { Bearer } from './Bearer';
 import { Chip } from './Chip';
 import { useHologramMotion } from './Chip/_hooks/useHologramMotion';
-import { EventReveal } from './EventReveal';
+import { SensorPermissionOverlay } from './SensorPermissionOverlay';
+import { useMotionPermission } from './_hooks/useMotionPermission';
 import { Header } from './Header';
 import { Mrz } from './Mrz';
 import { Pattern } from './Pattern';
@@ -20,13 +21,15 @@ const Passport: FC<Props> = () => {
   const bookRef = useRef<HTMLElement>(null);
   const chipRef = useRef<HTMLDivElement>(null);
   const hologramRef = useRef<HTMLSpanElement>(null);
-  const activationButtonRef = useRef<HTMLButtonElement>(null);
   const contentId = useId();
-  const [revealed, setRevealed] = useState(false);
-  const { status } = useHologramMotion(chipRef, hologramRef, activationButtonRef);
-  const reveal = () => {
-    setRevealed(true);
-    bookRef.current?.focus({ preventScroll: true });
+  const { permission, hasGrantedBefore, requestPermission } = useMotionPermission();
+  const { status } = useHologramMotion(chipRef, hologramRef, permission);
+  const showPermissionOverlay =
+    permission === 'prompt' || permission === 'requesting' || permission === 'denied';
+  const requestSensorAccess = () => {
+    void requestPermission().then((granted) => {
+      if (granted) bookRef.current?.focus({ preventScroll: true });
+    });
   };
   const [hasIntersected, setHasIntersected] = useState(false);
 
@@ -49,13 +52,20 @@ const Passport: FC<Props> = () => {
       aria-label="사진 선물 이벤트 여권"
       tabIndex={-1}
     >
-      <EventReveal
-        revealed={revealed}
-        onReveal={reveal}
-        contentId={contentId}
-        buttonRef={activationButtonRef}
-      />
-      <div id={contentId} className={styles.content} inert={!revealed} aria-hidden={!revealed}>
+      {showPermissionOverlay && (
+        <SensorPermissionOverlay
+          permission={permission}
+          hasGrantedBefore={hasGrantedBefore}
+          onRequest={requestSensorAccess}
+          contentId={contentId}
+        />
+      )}
+      <div
+        id={contentId}
+        className={styles.content}
+        inert={showPermissionOverlay}
+        aria-hidden={showPermissionOverlay}
+      >
         <div className={`${styles.leaf} ${styles.pageOne}`}>
           <Pattern variant="request" />
           <Serial />
