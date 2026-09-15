@@ -5,6 +5,14 @@ import {
   type HologramDetail,
 } from '../../../Hologram/_utils';
 
+import {
+  getScreenGravity,
+  createTiltCalibration,
+  getTiltInput,
+  type GravityVector,
+  type TiltCalibration,
+} from './_utils';
+
 // Safari exposes this method in addition to the standard DOM constructor type.
 interface MotionPermission {
   requestPermission?: () => Promise<'granted' | 'denied'>;
@@ -66,7 +74,9 @@ const useHologramMotion = (
     let frame = 0;
     let reflectionAngle = 0;
     let timeout: ReturnType<typeof setTimeout> | undefined;
-    let baseline: { x: number; y: number; angle: number } | undefined;
+    let baseline: TiltCalibration | undefined;
+    let filteredGravity: GravityVector | undefined;
+    let lastMotionTime = 0;
     const current = { x: 0, y: 0 };
     const target = { x: 0, y: 0 };
     const canAnimate = () => visible && !document.hidden && !reducedMotion.matches;
@@ -104,21 +114,32 @@ const useHologramMotion = (
       if (!frame) frame = requestAnimationFrame(animate);
     };
     const onMotion = (event: DeviceMotionEvent) => {
-      const gravity = event.accelerationIncludingGravity;
-      if (!gravity || typeof gravity.x !== 'number' || typeof gravity.y !== 'number') return;
-      if (!Number.isFinite(gravity.x) || !Number.isFinite(gravity.y)) return;
+      const rawGravity = event.accelerationIncludingGravity;
+      if (!rawGravity) return;
+      const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
+      const gravity = getScreenGravity(rawGravity, event.acceleration, screenAngle);
+      if (!gravity) return;
       if (!receivedMotion) {
         receivedMotion = true;
         clearTimeout(timeout);
         setStatus('active');
       }
-      const angle = window.screen.orientation?.angle ?? window.orientation ?? 0;
-      const radians = (angle * Math.PI) / 180;
-      const x = gravity.x * Math.cos(radians) + gravity.y * Math.sin(radians);
-      const y = -gravity.x * Math.sin(radians) + gravity.y * Math.cos(radians);
-      // Calibrate to the way the guest holds the phone, including landscape rotation.
-      if (!baseline || baseline.angle !== angle) baseline = { x, y, angle };
-      move((x - baseline.x) / 4.5, (y - baseline.y) / 4.5);
+      const now = performance.now();
+      if (!baseline || baseline.screenAngle !== screenAngle) {
+        filteredGravity = gravity;
+        baseline = createTiltCalibration(gravity, screenAngle);
+      } else if (filteredGravity) {
+        // Time-based filtering feels the same on 30/60/120 Hz sensor streams.
+        const blend = 1 - Math.exp(-Math.max(0, now - lastMotionTime) / 80);
+        filteredGravity = {
+          x: filteredGravity.x + (gravity.x - filteredGravity.x) * blend,
+          y: filteredGravity.y + (gravity.y - filteredGravity.y) * blend,
+          z: filteredGravity.z + (gravity.z - filteredGravity.z) * blend,
+        };
+      }
+      lastMotionTime = now;
+      const input = getTiltInput(filteredGravity ?? gravity, baseline);
+      move(input.x, input.y);
     };
     const onPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return;
