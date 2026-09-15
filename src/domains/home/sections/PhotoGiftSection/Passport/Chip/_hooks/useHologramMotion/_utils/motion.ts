@@ -1,7 +1,15 @@
-interface MotionInput {
-  x: number;
-  y: number;
-}
+import type { MotionInput } from '../../../_types';
+import { getSmoothingFactor } from '../../../_utils/motion';
+import type { MotionEnvironment } from '../../useMotionEnvironment';
+
+type HologramMode = 'pointer' | 'scroll' | 'reduced' | null;
+
+const getHologramMode = (environment: MotionEnvironment, sensorActive: boolean): HologramMode => {
+  if (environment.reducedMotion) return 'reduced';
+  if (sensorActive) return null;
+  if (environment.desktopPointer) return 'pointer';
+  return 'scroll';
+};
 
 interface MotionFrame extends MotionInput {
   angle: number;
@@ -44,7 +52,7 @@ const getNextFrame = (
   target: MotionInput,
   elapsedMs: number,
 ): MotionFrame => {
-  const blend = 1 - Math.exp(-Math.max(0, elapsedMs) / RENDER_SMOOTHING_MS);
+  const blend = getSmoothingFactor(elapsedMs, RENDER_SMOOTHING_MS);
   const x = current.x + (target.x - current.x) * blend;
   const y = current.y + (target.y - current.y) * blend;
   const angle = current.angle + getRotationDelta(target, current.angle) * blend;
@@ -59,5 +67,5 @@ const getNextFrame = (
   };
 };
 
-export { REST_FRAME, getPointerInput, combineMotionInputs, getNextFrame };
-export type { MotionInput };
+export { REST_FRAME, getPointerInput, combineMotionInputs, getNextFrame, getHologramMode };
+export type { HologramMode };

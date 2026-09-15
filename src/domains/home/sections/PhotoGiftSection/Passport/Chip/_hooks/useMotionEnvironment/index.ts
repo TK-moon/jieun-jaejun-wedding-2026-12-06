@@ -1,5 +1,6 @@
 import { useEffect, type RefObject } from 'react';
-import { useMotionValue } from 'motion/react';
+import { useMotionValue, useReducedMotion } from 'motion/react';
+import { useDesktopPointer } from '../../../_hooks/useDesktopPointer';
 
 interface MotionEnvironment {
   canAnimate: boolean;
@@ -8,6 +9,8 @@ interface MotionEnvironment {
 }
 
 const useMotionEnvironment = (targetRef: RefObject<HTMLElement | null>) => {
+  const shouldReduceMotion = Boolean(useReducedMotion());
+  const hasDesktopPointer = useDesktopPointer();
   const environment = useMotionValue<MotionEnvironment>({
     canAnimate: false,
     desktopPointer: false,
@@ -19,40 +22,36 @@ const useMotionEnvironment = (targetRef: RefObject<HTMLElement | null>) => {
     const target = targetRef.current;
     if (!target) return;
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const desktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     let visible = false;
     const sync = () => {
-      const canAnimate = visible && !document.hidden && !reducedMotion.matches;
+      const canAnimate = visible && !document.hidden && !shouldReduceMotion;
       environment.set({
         canAnimate,
-        desktopPointer: desktopPointer.matches,
-        reducedMotion: reducedMotion.matches,
+        desktopPointer: hasDesktopPointer,
+        reducedMotion: shouldReduceMotion,
       });
       motionEnabled.set(canAnimate);
     };
-    const observer =
-      typeof IntersectionObserver === 'undefined'
-        ? undefined
-        : new IntersectionObserver(([entry]) => {
-            visible = entry.isIntersecting;
-            sync();
-          });
-    if (observer) observer.observe(target.closest('section') ?? target);
-    else visible = true;
+    let observer: IntersectionObserver | undefined;
+    if (typeof IntersectionObserver === 'undefined') {
+      visible = true;
+    } else {
+      observer = new IntersectionObserver(([entry]) => {
+        if (!entry) return;
+        visible = entry.isIntersecting;
+        sync();
+      });
+      observer.observe(target.closest('section') ?? target);
+    }
 
-    desktopPointer.addEventListener('change', sync);
-    reducedMotion.addEventListener('change', sync);
     document.addEventListener('visibilitychange', sync);
     sync();
 
     return () => {
       observer?.disconnect();
-      desktopPointer.removeEventListener('change', sync);
-      reducedMotion.removeEventListener('change', sync);
       document.removeEventListener('visibilitychange', sync);
     };
-  }, [targetRef, environment, motionEnabled]);
+  }, [targetRef, environment, motionEnabled, shouldReduceMotion, hasDesktopPointer]);
 
   return { environment, motionEnabled };
 };

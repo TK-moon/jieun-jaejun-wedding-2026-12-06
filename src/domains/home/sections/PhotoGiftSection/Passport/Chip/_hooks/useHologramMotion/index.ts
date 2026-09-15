@@ -1,6 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react';
 import type { MotionValue } from 'motion/react';
 import { useAnimationFrameLoop } from '@/hooks/useAnimationFrameLoop';
+import type { MotionInput } from '../../_types';
 import type { AccelerometerInput } from '../useAccelerometer/_types';
 import { createHologramPainter } from '../../Hologram/_utils';
 import type { MotionEnvironment } from '../useMotionEnvironment';
@@ -9,7 +10,8 @@ import {
   getPointerInput,
   combineMotionInputs,
   getNextFrame,
-  type MotionInput,
+  getHologramMode,
+  type HologramMode,
 } from './_utils/motion';
 import { updateTilt, type TiltState } from './_utils/tilt';
 
@@ -19,7 +21,7 @@ const useHologramMotion = (
   scrollInput: MotionValue<MotionInput>,
   environment: MotionValue<MotionEnvironment>,
 ) => {
-  const [mode, setMode] = useState<'pointer' | 'scroll' | 'reduced' | null>(null);
+  const [mode, setMode] = useState<HologramMode>(null);
   const { start, stop } = useAnimationFrameLoop();
 
   useEffect(() => {
@@ -76,6 +78,7 @@ const useHologramMotion = (
     };
 
     const onPointer = (event: PointerEvent) => {
+      if (!canAnimate()) return;
       if (event.pointerType !== 'mouse' || accelerometerInput.get()) return;
       primaryInput = getPointerInput(
         event.clientX,
@@ -87,23 +90,22 @@ const useHologramMotion = (
     };
 
     const sync = () => {
-      const { canAnimate, desktopPointer, reducedMotion } = environment.get();
+      const currentEnvironment = environment.get();
+      const { canAnimate, desktopPointer } = currentEnvironment;
       const sensorActive = accelerometerInput.get() !== null;
+      setMode(getHologramMode(currentEnvironment, sensorActive));
+
       const shouldTrackPointer = canAnimate && desktopPointer && !sensorActive;
-      if (shouldTrackPointer && !pointerListening) {
-        window.addEventListener('pointermove', onPointer, { passive: true });
-      } else if (!shouldTrackPointer && pointerListening) {
+      if (!shouldTrackPointer) {
         window.removeEventListener('pointermove', onPointer);
+        pointerListening = false;
+        if (!canAnimate) reset();
+        return;
       }
-      pointerListening = shouldTrackPointer;
+      if (pointerListening) return;
 
-      if (!canAnimate) {
-        reset();
-      }
-
-      setMode(
-        reducedMotion ? 'reduced' : sensorActive ? null : desktopPointer ? 'pointer' : 'scroll',
-      );
+      window.addEventListener('pointermove', onPointer, { passive: true });
+      pointerListening = true;
     };
 
     const unsubscribeEnvironment = environment.on('change', sync);

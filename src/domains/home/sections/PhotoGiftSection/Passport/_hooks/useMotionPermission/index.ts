@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from 'motion/react';
+import { useAbortableTimeout } from '@/hooks/useAbortableTimeout';
+import { useDesktopPointer } from '../useDesktopPointer';
 import {
   getMotionPermissionApi,
   readMotionConsent,
@@ -7,24 +10,24 @@ import {
 } from './_utils';
 
 const useMotionPermission = () => {
+  const shouldReduceMotion = Boolean(useReducedMotion());
+  const hasDesktopPointer = useDesktopPointer();
   const [permission, setPermission] = useState<MotionPermissionStatus>('checking');
   const [hasGrantedBefore, setHasGrantedBefore] = useState(readMotionConsent);
   const requestRef = useRef<() => Promise<boolean>>(() => Promise.resolve(false));
+  const { start: scheduleProbe, cancel: cancelProbe } = useAbortableTimeout();
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const desktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     let disposed = false;
     let requesting = false;
     let generation = 0;
-    let timer: ReturnType<typeof setTimeout> | undefined;
 
     const remember = (granted: boolean) => {
       storeMotionConsent(granted);
       setHasGrantedBefore(granted);
     };
     const stopProbe = () => {
-      clearTimeout(timer);
+      cancelProbe();
       window.removeEventListener('devicemotion', onMotion);
     };
     const applyPermission = (result: 'granted' | 'denied') => {
@@ -50,7 +53,7 @@ const useMotionPermission = () => {
       stopProbe();
       const version = ++generation;
       const motion = getMotionPermissionApi();
-      if (reducedMotion.matches || desktopPointer.matches) {
+      if (shouldReduceMotion || hasDesktopPointer) {
         setPermission('not-required');
         return;
       }
@@ -62,6 +65,7 @@ const useMotionPermission = () => {
         setPermission('not-required');
         return;
       }
+      const requestPermission = motion.requestPermission.bind(motion);
 
       setPermission('checking');
       window.addEventListener('devicemotion', onMotion, { passive: true });
@@ -74,25 +78,28 @@ const useMotionPermission = () => {
           return;
         }
         if (navigator.userActivation.isActive) {
-          timer = setTimeout(probe, 250);
+          scheduleProbe(probe, 250);
           return;
         }
-        void motion.requestPermission!()
+        void requestPermission()
           .then((result) => {
-            if (!disposed && version === generation) applyPermission(result);
+            if (disposed || version !== generation) return;
+            applyPermission(result);
           })
           .catch(() => {
+            if (disposed || version !== generation) return;
             // A reset/prompt permission needs a real tap; remembered consent is not a grant.
-            if (!disposed && version === generation) setPermission('prompt');
+            setPermission('prompt');
           });
       };
       // Exit any synchronous navigation gesture before checking the cached browser grant.
-      timer = setTimeout(probe, 0);
+      scheduleProbe(probe, 0);
     };
 
     requestRef.current = async () => {
+      if (disposed || requesting) return false;
       const motion = getMotionPermissionApi();
-      if (disposed || requesting || !motion?.requestPermission) return false;
+      if (!motion?.requestPermission) return false;
       stopProbe();
       const version = ++generation;
       requesting = true;
@@ -104,15 +111,14 @@ const useMotionPermission = () => {
         applyPermission(result);
         return result === 'granted';
       } catch {
-        if (!disposed && version === generation) setPermission('prompt');
+        if (disposed || version !== generation) return false;
+        setPermission('prompt');
         return false;
       } finally {
         requesting = false;
       }
     };
 
-    reducedMotion.addEventListener('change', refresh);
-    desktopPointer.addEventListener('change', refresh);
     document.addEventListener('visibilitychange', refresh);
     window.addEventListener('pageshow', refresh);
     refresh();
@@ -122,12 +128,10 @@ const useMotionPermission = () => {
       generation++;
       stopProbe();
       requestRef.current = () => Promise.resolve(false);
-      reducedMotion.removeEventListener('change', refresh);
-      desktopPointer.removeEventListener('change', refresh);
       document.removeEventListener('visibilitychange', refresh);
       window.removeEventListener('pageshow', refresh);
     };
-  }, []);
+  }, [scheduleProbe, cancelProbe, shouldReduceMotion, hasDesktopPointer]);
 
   const requestPermission = useCallback(() => requestRef.current(), []);
 

@@ -1,26 +1,43 @@
 import { useEffect, useState } from 'react';
 import { useMotionValue, type MotionValue } from 'motion/react';
+import { useAbortableTimeout } from '@/hooks/useAbortableTimeout';
 import type { MotionPermissionStatus } from '../../../_hooks/useMotionPermission/_utils';
 import type { AccelerometerInput, AccelerometerStatus } from './_types';
 import { getScreenGravity } from './_utils';
 
+const SENSOR_TIMEOUT_MS = 1800;
+
 const useAccelerometer = (permission: MotionPermissionStatus, enabled: MotionValue<boolean>) => {
   const input = useMotionValue<AccelerometerInput | null>(null);
   const [status, setStatus] = useState<AccelerometerStatus>('idle');
+  const { start: startTimeout, cancel: cancelTimeout } = useAbortableTimeout();
+  const canUseSensor = permission === 'granted' || permission === 'not-required';
 
   useEffect(() => {
-    const canUseSensor = permission === 'granted' || permission === 'not-required';
+    if (!canUseSensor) return;
+
     let listening = false;
     let receivedMotion = false;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let lastMotionTime = 0;
 
     const onTimeout = () => {
+      if (!enabled.get()) return;
+
+      // Recheck the last sample instead of creating a native timeout for every event.
+      const remainingMs = SENSOR_TIMEOUT_MS - (performance.now() - lastMotionTime);
+      if (remainingMs > 0) {
+        startTimeout(onTimeout, Math.ceil(remainingMs));
+        return;
+      }
+
       receivedMotion = false;
       input.set(null);
       setStatus('fallback');
     };
 
     const onMotion = (event: DeviceMotionEvent) => {
+      if (!enabled.get()) return;
+
       const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
       const gravity = getScreenGravity(
         event.accelerationIncludingGravity,
@@ -29,34 +46,36 @@ const useAccelerometer = (permission: MotionPermissionStatus, enabled: MotionVal
       );
       if (!gravity) return;
 
+      lastMotionTime = performance.now();
       if (!receivedMotion) {
         receivedMotion = true;
         setStatus('active');
+        startTimeout(onTimeout, SENSOR_TIMEOUT_MS);
       }
-      // Fall back again if a previously working sensor stops sending valid samples.
-      clearTimeout(timeout);
-      timeout = setTimeout(onTimeout, 1800);
-      input.set({ gravity, screenAngle, time: performance.now() });
+      input.set({ gravity, screenAngle, time: lastMotionTime });
     };
 
     const stop = () => {
       window.removeEventListener('devicemotion', onMotion);
-      clearTimeout(timeout);
+      cancelTimeout();
       listening = false;
       receivedMotion = false;
       input.set(null);
     };
 
     const sync = () => {
-      const shouldListen = canUseSensor && enabled.get();
-      if (shouldListen && !listening) {
-        listening = true;
-        window.addEventListener('devicemotion', onMotion, { passive: true });
-        timeout = setTimeout(onTimeout, 1800);
-      } else if (!shouldListen && listening) {
+      if (!enabled.get()) {
         stop();
+        setStatus('idle');
+        return;
       }
-      setStatus(!canUseSensor ? 'fallback' : receivedMotion ? 'active' : 'idle');
+      if (listening) return;
+
+      listening = true;
+      lastMotionTime = performance.now();
+      window.addEventListener('devicemotion', onMotion, { passive: true });
+      startTimeout(onTimeout, SENSOR_TIMEOUT_MS);
+      setStatus('idle');
     };
 
     const unsubscribe = enabled.on('change', sync);
@@ -65,9 +84,10 @@ const useAccelerometer = (permission: MotionPermissionStatus, enabled: MotionVal
       unsubscribe();
       stop();
     };
-  }, [permission, enabled, input]);
+  }, [canUseSensor, enabled, input, startTimeout, cancelTimeout]);
 
-  return { input, status };
+  const sensorStatus: AccelerometerStatus = canUseSensor ? status : 'fallback';
+  return { input, status: sensorStatus };
 };
 
 export { useAccelerometer };

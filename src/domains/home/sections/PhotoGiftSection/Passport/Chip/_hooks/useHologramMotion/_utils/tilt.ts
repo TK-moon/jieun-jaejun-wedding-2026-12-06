@@ -1,4 +1,5 @@
-import type { MotionInput } from './motion';
+import type { MotionInput } from '../../../_types';
+import { getSmoothingFactor } from '../../../_utils/motion';
 import { normalizeGravity as normalize, type GravityVector } from '../../useAccelerometer/_utils';
 
 interface TiltCalibration {
@@ -26,6 +27,15 @@ const TILT_SENSITIVITY = 0.85 * (2 / Math.PI);
 
 const dot = (a: GravityVector, b: GravityVector) => a.x * b.x + a.y * b.y + a.z * b.z;
 
+const getCalibrationAxis = (
+  forward: GravityVector,
+  previousRight?: GravityVector,
+): GravityVector => {
+  if (previousRight && Math.abs(dot(previousRight, forward)) < 0.95) return previousRight;
+  if (Math.abs(forward.x) < 0.9) return { x: 1, y: 0, z: 0 };
+  return { x: 0, y: 0, z: 1 };
+};
+
 const createTiltCalibration = (
   gravity: GravityVector,
   screenAngle: number,
@@ -34,12 +44,7 @@ const createTiltCalibration = (
   const forward = normalize(gravity);
   // Project the screen's horizontal axis onto the initial gravity tangent plane.
   // A second axis handles a phone initially held on its side without a singularity.
-  const axis =
-    previousRight && Math.abs(dot(previousRight, forward)) < 0.95
-      ? previousRight
-      : Math.abs(forward.x) < 0.9
-        ? { x: 1, y: 0, z: 0 }
-        : { x: 0, y: 0, z: 1 };
+  const axis = getCalibrationAxis(forward, previousRight);
   const projection = dot(axis, forward);
   const right = normalize({
     x: axis.x - projection * forward.x,
@@ -103,50 +108,44 @@ const updateTilt = (
   screenAngle: number,
   elapsedMs: number,
 ): TiltState => {
+  if (!previous || previous.calibration.screenAngle !== screenAngle) {
+    const calibration = createTiltCalibration(gravity, screenAngle);
+    return { gravity, calibration, input: getTiltInput(gravity, calibration), stillTimeMs: 0 };
+  }
+
   const elapsed = Math.max(0, elapsedMs);
   const postureElapsed = Math.min(100, elapsed);
-  let filteredGravity = gravity;
-  let calibration: TiltCalibration;
-  let stillTimeMs = 0;
+  let calibration = previous.calibration;
+  // Filter sensor noise independently of the slower posture adjustment below.
+  const blend = getSmoothingFactor(elapsed, SENSOR_SMOOTHING_MS);
+  const filteredGravity = {
+    x: previous.gravity.x + (gravity.x - previous.gravity.x) * blend,
+    y: previous.gravity.y + (gravity.y - previous.gravity.y) * blend,
+    z: previous.gravity.z + (gravity.z - previous.gravity.z) * blend,
+  };
 
-  if (!previous || previous.calibration.screenAngle !== screenAngle) {
-    calibration = createTiltCalibration(gravity, screenAngle);
-  } else {
-    calibration = previous.calibration;
-    // Filter sensor noise independently of the slower posture adjustment below.
-    const blend = 1 - Math.exp(-elapsed / SENSOR_SMOOTHING_MS);
-    filteredGravity = {
-      x: previous.gravity.x + (gravity.x - previous.gravity.x) * blend,
-      y: previous.gravity.y + (gravity.y - previous.gravity.y) * blend,
-      z: previous.gravity.z + (gravity.z - previous.gravity.z) * blend,
-    };
-
-    // Compare the angle travelled with a speed threshold, independent of sensor frequency.
-    const lengthProduct =
-      Math.hypot(previous.gravity.x, previous.gravity.y, previous.gravity.z) *
-      Math.hypot(filteredGravity.x, filteredGravity.y, filteredGravity.z);
-    const isMoving =
-      dot(previous.gravity, filteredGravity) <
-      lengthProduct * Math.cos((STILL_ANGULAR_SPEED * postureElapsed) / 1000);
-    stillTimeMs = isMoving ? 0 : Math.min(RECENTER_DELAY_MS, previous.stillTimeMs + postureElapsed);
-  }
+  // Compare the angle travelled with a speed threshold, independent of sensor frequency.
+  const lengthProduct =
+    Math.hypot(previous.gravity.x, previous.gravity.y, previous.gravity.z) *
+    Math.hypot(filteredGravity.x, filteredGravity.y, filteredGravity.z);
+  const isMoving =
+    dot(previous.gravity, filteredGravity) <
+    lengthProduct * Math.cos((STILL_ANGULAR_SPEED * postureElapsed) / 1000);
+  const stillTimeMs = isMoving
+    ? 0
+    : Math.min(RECENTER_DELAY_MS, previous.stillTimeMs + postureElapsed);
 
   // Calculate this input before moving the neutral posture for the next event.
   const input = getTiltInput(filteredGravity, calibration);
-  return {
-    gravity: filteredGravity,
-    // Keep a fixed reference while tilting so continued movement cannot be followed away.
-    calibration:
-      stillTimeMs < RECENTER_DELAY_MS
-        ? calibration
-        : followTiltCalibration(
-            filteredGravity,
-            calibration,
-            1 - Math.exp(-postureElapsed / POSTURE_FOLLOW_MS),
-          ),
-    input,
-    stillTimeMs,
-  };
+  // Keep a fixed reference while tilting so continued movement cannot be followed away.
+  if (stillTimeMs >= RECENTER_DELAY_MS) {
+    calibration = followTiltCalibration(
+      filteredGravity,
+      calibration,
+      getSmoothingFactor(postureElapsed, POSTURE_FOLLOW_MS),
+    );
+  }
+  return { gravity: filteredGravity, calibration, input, stillTimeMs };
 };
 
 export { updateTilt };

@@ -19,6 +19,8 @@ const useScrollMotion = (enabled: MotionValue<boolean>) => {
     };
 
     const onScroll = () => {
+      if (!enabled.get()) return;
+
       const deltaY = window.scrollY - lastScrollY;
       lastScrollY = window.scrollY;
       if (deltaY === 0) return;
@@ -27,19 +29,19 @@ const useScrollMotion = (enabled: MotionValue<boolean>) => {
     };
 
     const sync = () => {
-      const shouldListen = enabled.get();
-      if (shouldListen && !listening) {
-        // Entering the visible area must not replay scrolling that happened offscreen.
-        lastScrollY = window.scrollY;
-        window.addEventListener('scroll', onScroll, { passive: true });
-      } else if (!shouldListen && listening) {
+      if (!enabled.get()) {
         window.removeEventListener('scroll', onScroll);
-      }
-      listening = shouldListen;
-      if (!shouldListen) {
+        listening = false;
         stop();
         input.set(REST_SCROLL);
+        return;
       }
+      if (listening) return;
+
+      // Entering the visible area must not replay scrolling that happened offscreen.
+      lastScrollY = window.scrollY;
+      window.addEventListener('scroll', onScroll, { passive: true });
+      listening = true;
     };
 
     const unsubscribe = enabled.on('change', sync);
