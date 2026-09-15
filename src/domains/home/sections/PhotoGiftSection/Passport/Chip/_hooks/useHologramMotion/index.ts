@@ -3,15 +3,22 @@ import type { MotionValue } from 'motion/react';
 import type { AccelerometerInput } from '../../../_hooks/useAccelerometer/_types';
 import { createHologramPainter } from '../../../Hologram/_utils';
 import type { MotionEnvironment } from '../useMotionEnvironment';
-import { REST_FRAME, getPointerInput, getNextFrame, type MotionInput } from './_utils/motion';
+import {
+  REST_FRAME,
+  getPointerInput,
+  combineMotionInputs,
+  getNextFrame,
+  type MotionInput,
+} from './_utils/motion';
 import { updateTilt, type TiltState } from './_utils/tilt';
 
 const useHologramMotion = (
   hologramRef: RefObject<HTMLSpanElement | null>,
   accelerometerInput: MotionValue<AccelerometerInput | null>,
+  scrollInput: MotionValue<MotionInput>,
   environment: MotionValue<MotionEnvironment>,
 ) => {
-  const [mode, setMode] = useState<'pointer' | 'reduced' | null>(null);
+  const [mode, setMode] = useState<'pointer' | 'scroll' | 'reduced' | null>(null);
 
   useEffect(() => {
     const hologram = hologramRef.current;
@@ -26,6 +33,7 @@ const useHologramMotion = (
     let lastFrameTime = 0;
     let current = REST_FRAME;
     let target: MotionInput = REST_FRAME;
+    let primaryInput: MotionInput = REST_FRAME;
     const canAnimate = () => environment.get().canAnimate;
 
     const animate = (now: number) => {
@@ -39,9 +47,9 @@ const useHologramMotion = (
       }
     };
 
-    const move = (input: MotionInput) => {
+    const move = () => {
       if (!canAnimate()) return;
-      target = input;
+      target = combineMotionInputs(primaryInput, scrollInput.get());
       if (!frame) {
         lastFrameTime = performance.now();
         frame = requestAnimationFrame(animate);
@@ -53,30 +61,43 @@ const useHologramMotion = (
       frame = 0;
       current = REST_FRAME;
       target = REST_FRAME;
+      primaryInput = REST_FRAME;
       paint(current.x, current.y, current.angle);
     };
 
     const onSensorInput = (input: AccelerometerInput | null) => {
       if (!input) {
         tilt = undefined;
-        if (!environment.get().desktopPointer) reset();
+        primaryInput = REST_FRAME;
+        sync();
+        move();
         return;
       }
-      if (!canAnimate() || environment.get().desktopPointer) return;
+      if (!canAnimate()) return;
 
+      const firstInput = !tilt;
       tilt = updateTilt(tilt, input.gravity, input.screenAngle, input.time - lastMotionTime);
       lastMotionTime = input.time;
-      move(tilt.input);
+      primaryInput = tilt.input;
+      if (firstInput) sync();
+      move();
     };
 
     const onPointer = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
-      move(getPointerInput(event.clientX, event.clientY, window.innerWidth, window.innerHeight));
+      if (event.pointerType !== 'mouse' || accelerometerInput.get()) return;
+      primaryInput = getPointerInput(
+        event.clientX,
+        event.clientY,
+        window.innerWidth,
+        window.innerHeight,
+      );
+      move();
     };
 
     const sync = () => {
       const { canAnimate, desktopPointer, reducedMotion } = environment.get();
-      const shouldTrackPointer = canAnimate && desktopPointer;
+      const sensorActive = accelerometerInput.get() !== null;
+      const shouldTrackPointer = canAnimate && desktopPointer && !sensorActive;
       if (shouldTrackPointer && !pointerListening) {
         window.addEventListener('pointermove', onPointer, { passive: true });
       } else if (!shouldTrackPointer && pointerListening) {
@@ -88,21 +109,25 @@ const useHologramMotion = (
         reset();
       }
 
-      setMode(reducedMotion ? 'reduced' : desktopPointer ? 'pointer' : null);
+      setMode(
+        reducedMotion ? 'reduced' : sensorActive ? null : desktopPointer ? 'pointer' : 'scroll',
+      );
     };
 
     const unsubscribeEnvironment = environment.on('change', sync);
     const unsubscribeInput = accelerometerInput.on('change', onSensorInput);
+    const unsubscribeScroll = scrollInput.on('change', move);
     sync();
     onSensorInput(accelerometerInput.get());
 
     return () => {
       unsubscribeEnvironment();
       unsubscribeInput();
+      unsubscribeScroll();
       window.removeEventListener('pointermove', onPointer);
       cancelAnimationFrame(frame);
     };
-  }, [hologramRef, accelerometerInput, environment]);
+  }, [hologramRef, accelerometerInput, scrollInput, environment]);
 
   return { mode };
 };

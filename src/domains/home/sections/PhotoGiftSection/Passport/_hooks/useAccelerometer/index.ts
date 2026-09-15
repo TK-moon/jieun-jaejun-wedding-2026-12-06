@@ -14,6 +14,12 @@ const useAccelerometer = (permission: MotionPermissionStatus, enabled: MotionVal
     let receivedMotion = false;
     let timeout: ReturnType<typeof setTimeout> | undefined;
 
+    const onTimeout = () => {
+      receivedMotion = false;
+      input.set(null);
+      setStatus('fallback');
+    };
+
     const onMotion = (event: DeviceMotionEvent) => {
       const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
       const gravity = getScreenGravity(
@@ -25,9 +31,11 @@ const useAccelerometer = (permission: MotionPermissionStatus, enabled: MotionVal
 
       if (!receivedMotion) {
         receivedMotion = true;
-        clearTimeout(timeout);
         setStatus('active');
       }
+      // Fall back again if a previously working sensor stops sending valid samples.
+      clearTimeout(timeout);
+      timeout = setTimeout(onTimeout, 1800);
       input.set({ gravity, screenAngle, time: performance.now() });
     };
 
@@ -44,7 +52,7 @@ const useAccelerometer = (permission: MotionPermissionStatus, enabled: MotionVal
       if (shouldListen && !listening) {
         listening = true;
         window.addEventListener('devicemotion', onMotion, { passive: true });
-        timeout = setTimeout(() => setStatus('fallback'), 1800);
+        timeout = setTimeout(onTimeout, 1800);
       } else if (!shouldListen && listening) {
         stop();
       }

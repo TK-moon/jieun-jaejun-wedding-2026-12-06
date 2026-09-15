@@ -27,6 +27,11 @@ const getPointerInput = (
     y: (clientY / height) * 2 - 1,
   });
 
+const combineMotionInputs = (primary: MotionInput, scroll: MotionInput): MotionInput => ({
+  x: primary.x + scroll.x,
+  y: primary.y + scroll.y,
+});
+
 const getRotationDelta = (target: MotionInput, currentAngle: number) => {
   // Keep the last direction near the centre, where atan2 becomes unstable.
   if (Math.hypot(target.x, target.y) < 0.06) return 0;
@@ -54,5 +59,5 @@ const getNextFrame = (
   };
 };
 
-export { REST_FRAME, getPointerInput, getNextFrame };
+export { REST_FRAME, getPointerInput, combineMotionInputs, getNextFrame };
 export type { MotionInput };

@@ -13,7 +13,7 @@ const useMotionEnvironment = (targetRef: RefObject<HTMLElement | null>) => {
     desktopPointer: false,
     reducedMotion: false,
   });
-  const sensorEnabled = useMotionValue(false);
+  const motionEnabled = useMotionValue(false);
 
   useEffect(() => {
     const target = targetRef.current;
@@ -29,7 +29,7 @@ const useMotionEnvironment = (targetRef: RefObject<HTMLElement | null>) => {
         desktopPointer: desktopPointer.matches,
         reducedMotion: reducedMotion.matches,
       });
-      sensorEnabled.set(canAnimate && !desktopPointer.matches);
+      motionEnabled.set(canAnimate);
     };
     const observer =
       typeof IntersectionObserver === 'undefined'
@@ -52,9 +52,9 @@ const useMotionEnvironment = (targetRef: RefObject<HTMLElement | null>) => {
       reducedMotion.removeEventListener('change', sync);
       document.removeEventListener('visibilitychange', sync);
     };
-  }, [targetRef, environment, sensorEnabled]);
+  }, [targetRef, environment, motionEnabled]);
 
-  return { environment, sensorEnabled };
+  return { environment, motionEnabled };
 };
 
 export { useMotionEnvironment };

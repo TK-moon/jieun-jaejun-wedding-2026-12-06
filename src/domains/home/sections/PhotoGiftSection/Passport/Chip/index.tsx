@@ -4,6 +4,7 @@ import { useAccelerometer } from '../_hooks/useAccelerometer';
 import { Hologram } from '../Hologram';
 import { useHologramMotion } from './_hooks/useHologramMotion';
 import { useMotionEnvironment } from './_hooks/useMotionEnvironment';
+import { useScrollMotion } from './_hooks/useScrollMotion';
 import styles from './index.module.css';
 
 interface Props {
@@ -16,19 +17,22 @@ const Chip: FC<Props> = (props) => {
   const chipRef = useRef<HTMLDivElement>(null);
   const hologramRef = useRef<HTMLSpanElement>(null);
 
-  const { environment, sensorEnabled } = useMotionEnvironment(chipRef);
-  const { input, status: sensorStatus } = useAccelerometer(permission, sensorEnabled);
-  const { mode } = useHologramMotion(hologramRef, input, environment);
+  const { environment, motionEnabled } = useMotionEnvironment(chipRef);
+  const { input, status: sensorStatus } = useAccelerometer(permission, motionEnabled);
+  const scrollInput = useScrollMotion(motionEnabled);
+  const { mode } = useHologramMotion(hologramRef, input, scrollInput, environment);
   const status = mode ?? sensorStatus;
 
   const description =
     status === 'active'
-      ? '휴대폰을 기울이면 카메라의 빛이 달라져요.'
+      ? '휴대폰을 기울이거나 스크롤하면 카메라의 빛이 달라져요.'
       : status === 'pointer'
-        ? '화면에서 마우스를 움직이면 카메라의 빛이 달라져요.'
+        ? '마우스를 움직이거나 스크롤하면 카메라의 빛이 달라져요.'
         : status === 'reduced'
           ? '동작 줄이기 설정에 따라 정적인 홀로그램을 표시해요.'
-          : '사진 이벤트 카메라 홀로그램';
+          : status === 'scroll'
+            ? '스크롤하면 카메라의 빛이 달라져요.'
+            : '사진 이벤트 카메라 홀로그램';
 
   return (
     <div ref={chipRef} className={styles.chip} title={description}>
