@@ -11,40 +11,12 @@
   flex: 0 0 auto;
 }
 
-.permission {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  place-items: center;
-  cursor: pointer;
-  touch-action: pan-y;
-}
-
-.permission:focus-visible {
-  outline: 2px solid var(--color-sky-deep);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
 .camera {
   position: relative;
   display: block;
   width: 8cqi;
   aspect-ratio: 71 / 48;
   filter: drop-shadow(0 1px 1px rgb(28 36 48 / 12%));
-}
-
-.hint {
-  position: absolute;
-  top: 100%;
-  color: var(--color-sky-deep);
-  font-family: var(--body-font);
-  font-size: 0.9rem;
-  line-height: 1;
-  white-space: nowrap;
 }
 
 .status {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useState, type RefObject } from 'react';
 import {
   createHologramRenderer,
   createDetailRenderer,
@@ -10,7 +10,7 @@ interface MotionPermission {
   requestPermission?: () => Promise<'granted' | 'denied'>;
 }
 
-type Status = 'idle' | 'pointer' | 'permission' | 'requesting' | 'active' | 'fallback' | 'reduced';
+type Status = 'idle' | 'pointer' | 'active' | 'fallback' | 'reduced';
 
 const clamp = (value: number) => Math.max(-1, Math.min(1, value));
 
@@ -19,7 +19,6 @@ const useHologramMotion = (
   hologramRef: RefObject<HTMLSpanElement | null>,
 ) => {
   const [status, setStatus] = useState<Status>('idle');
-  const activateRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const chip = chipRef.current;
@@ -57,6 +56,7 @@ const useHologramMotion = (
     const needsPermission = typeof motion?.requestPermission === 'function';
     let permissionGranted = false;
     let pointerListening = false;
+    let gestureListening = false;
     let disposed = false;
     let visible = false;
     let listening = false;
@@ -133,6 +133,43 @@ const useHologramMotion = (
       receivedMotion = false;
       clearTimeout(timeout);
     };
+    const stopGesture = () => {
+      window.removeEventListener('click', onGesture, true);
+      gestureListening = false;
+    };
+    const onGesture = () => {
+      if (requesting || desktopPointer.matches || reducedMotion.matches) return;
+      if (
+        !supported ||
+        receivedMotion ||
+        denied ||
+        permissionGranted ||
+        !motion?.requestPermission
+      ) {
+        stopGesture();
+        return;
+      }
+      requesting = true;
+      // Keep this call directly in the user gesture for iOS Safari.
+      void motion
+        .requestPermission()
+        .then((permission) => {
+          if (disposed) return;
+          permissionGranted = permission === 'granted';
+          denied = !permissionGranted;
+        })
+        .catch(() => {
+          if (disposed) return;
+          denied = true;
+        })
+        .finally(() => {
+          requesting = false;
+          if (disposed) return;
+          stopGesture();
+          stopMotion();
+          sync();
+        });
+    };
     const sync = () => {
       const shouldTrackPointer = desktopPointer.matches && canAnimate();
       if (shouldTrackPointer && !pointerListening) {
@@ -141,6 +178,20 @@ const useHologramMotion = (
       } else if (!shouldTrackPointer && pointerListening) {
         window.removeEventListener('pointermove', onPointer);
         pointerListening = false;
+      }
+      const shouldCaptureGesture =
+        needsPermission &&
+        supported &&
+        !desktopPointer.matches &&
+        !reducedMotion.matches &&
+        !denied &&
+        !permissionGranted &&
+        !receivedMotion;
+      if (shouldCaptureGesture && !gestureListening) {
+        window.addEventListener('click', onGesture, true);
+        gestureListening = true;
+      } else if (!shouldCaptureGesture && gestureListening) {
+        stopGesture();
       }
       // Listening is passive: existing permission can deliver data without another tap.
       const shouldListen = !desktopPointer.matches && supported && !denied && canAnimate();
@@ -151,7 +202,7 @@ const useHologramMotion = (
         listening = true;
         timeout = setTimeout(() => {
           if (!receivedMotion) {
-            setStatus(needsPermission && !permissionGranted ? 'permission' : 'fallback');
+            setStatus(needsPermission && !permissionGranted ? 'idle' : 'fallback');
           }
         }, 1800);
       } else if (!shouldListen && listening) {
@@ -168,28 +219,7 @@ const useHologramMotion = (
       else if (desktopPointer.matches) setStatus('pointer');
       else if (!supported || denied) setStatus('fallback');
       else if (receivedMotion) setStatus('active');
-      else if (!requesting) setStatus('idle');
-    };
-    activateRef.current = async () => {
-      if (requesting || !canAnimate() || desktopPointer.matches) return;
-      if (!supported || receivedMotion || denied || !motion?.requestPermission) return;
-      requesting = true;
-      setStatus('requesting');
-      try {
-        // Keep this call directly in the user gesture for iOS Safari.
-        const permission = await motion.requestPermission();
-        if (disposed) return;
-        permissionGranted = permission === 'granted';
-        denied = !permissionGranted;
-      } catch {
-        if (disposed) return;
-        denied = true;
-      }
-      requesting = false;
-      if (!disposed) {
-        stopMotion();
-        sync();
-      }
+      else setStatus('idle');
     };
 
     const observer =
@@ -208,8 +238,8 @@ const useHologramMotion = (
 
     return () => {
       disposed = true;
-      activateRef.current = () => {};
       observer?.disconnect();
+      stopGesture();
       window.removeEventListener('devicemotion', onMotion);
       window.removeEventListener('pointermove', onPointer);
       desktopPointer.removeEventListener('change', sync);
@@ -220,7 +250,7 @@ const useHologramMotion = (
     };
   }, [chipRef, hologramRef]);
 
-  return { status, activate: () => activateRef.current() };
+  return { status };
 };
 
 export { useHologramMotion };
