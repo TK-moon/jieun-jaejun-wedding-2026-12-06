@@ -18,6 +18,9 @@
 
 ## Project Structure
 
+- Directory structure must follow component composition by default. Put a child component used only by one parent inside that parent's directory, recursively: `<Parent>/<Child>/index.tsx`. Do not place a dedicated child beside its parent (e.g. use `Passport/Chip/Hologram/` and `Passport/Signatures/Stamp/`).
+- Components shared by multiple parents belong under their nearest common owning component; app-wide shared UI belongs in `src/components`. Native HTML wrappers do not require directories or new components.
+- Keep component-specific hooks, constants, types, utilities, styles, and assets with their owning component. When moving a component, move its supporting files with it and update all affected imports.
 - Put page sections for the home invitation under `src/domains/home/sections/<SectionName>/` with `index.tsx` and `index.module.css`.
 - Nested section components under `src/domains/home/sections/<SectionName>/<ComponentName>/` also keep styles beside their `index.tsx` as `index.module.css`. Do not share a parent section stylesheet across children.
 - Put shared or reusable units under `src/components/<ComponentName>/` with `index.tsx` and `index.module.css`.
@@ -25,6 +28,7 @@
 - Put each component implementation in `<ComponentName>/index.tsx`; keep the component name and named export as `<ComponentName>`. Nested components follow the same rule. The root app entry files `src/App.tsx` and `src/main.tsx` retain their conventional names.
 - Keep component-scoped styles beside the implementation as `index.module.css`. Do not use `<ComponentName>.module.css`.
 - Co-locate component-specific supporting code in underscored directories:
+  - `_hooks/use<HookName>/index.ts` for component-specific hooks; hooks reused across unrelated components belong in `src/hooks`.
   - `_constants/index.ts` for static values, labels, and configuration.
   - `_types/index.ts` for shared TypeScript interfaces and types.
   - `_utils/index.ts` for pure helper functions.

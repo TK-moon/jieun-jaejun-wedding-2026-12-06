@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMotionValue, type MotionValue } from 'motion/react';
-import type { MotionPermissionStatus } from '../useMotionPermission/_utils';
+import type { MotionPermissionStatus } from '../../../_hooks/useMotionPermission/_utils';
 import type { AccelerometerInput, AccelerometerStatus } from './_types';
 import { getScreenGravity } from './_utils';
 

@@ -1,7 +1,7 @@
 import { useRef, type FC } from 'react';
 import type { MotionPermissionStatus } from '../_hooks/useMotionPermission/_utils';
-import { useAccelerometer } from '../_hooks/useAccelerometer';
-import { Hologram } from '../Hologram';
+import { useAccelerometer } from './_hooks/useAccelerometer';
+import { Hologram } from './Hologram';
 import { useHologramMotion } from './_hooks/useHologramMotion';
 import { useMotionEnvironment } from './_hooks/useMotionEnvironment';
 import { useScrollMotion } from './_hooks/useScrollMotion';

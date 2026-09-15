@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { WEDDING_INFO } from '@/constants';
-import { Stamp } from '../Stamp';
+import { Stamp } from './Stamp';
 import styles from './index.module.css';
 
 interface Props {}

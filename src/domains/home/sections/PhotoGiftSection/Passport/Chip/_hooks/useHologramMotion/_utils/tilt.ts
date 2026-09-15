@@ -1,8 +1,5 @@
 import type { MotionInput } from './motion';
-import {
-  normalizeGravity as normalize,
-  type GravityVector,
-} from '../../../../_hooks/useAccelerometer/_utils';
+import { normalizeGravity as normalize, type GravityVector } from '../../useAccelerometer/_utils';
 
 interface TiltCalibration {
   forward: GravityVector;

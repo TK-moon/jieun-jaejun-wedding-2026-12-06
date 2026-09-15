@@ -1,8 +1,8 @@
 import { useEffect, useState, type RefObject } from 'react';
 import type { MotionValue } from 'motion/react';
 import { useAnimationFrameLoop } from '@/hooks/useAnimationFrameLoop';
-import type { AccelerometerInput } from '../../../_hooks/useAccelerometer/_types';
-import { createHologramPainter } from '../../../Hologram/_utils';
+import type { AccelerometerInput } from '../useAccelerometer/_types';
+import { createHologramPainter } from '../../Hologram/_utils';
 import type { MotionEnvironment } from '../useMotionEnvironment';
 import {
   REST_FRAME,

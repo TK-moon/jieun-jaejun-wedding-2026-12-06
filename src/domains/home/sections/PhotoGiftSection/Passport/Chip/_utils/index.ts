@@ -1,4 +1,4 @@
-import type { AccelerometerStatus } from '../../_hooks/useAccelerometer/_types';
+import type { AccelerometerStatus } from '../_hooks/useAccelerometer/_types';
 
 type ChipStatus = AccelerometerStatus | 'pointer' | 'scroll' | 'reduced';
 
