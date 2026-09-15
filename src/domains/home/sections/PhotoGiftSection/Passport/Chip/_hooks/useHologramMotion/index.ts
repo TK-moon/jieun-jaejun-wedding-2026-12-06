@@ -1,5 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react';
 import type { MotionValue } from 'motion/react';
+import { useAnimationFrameLoop } from '@/hooks/useAnimationFrameLoop';
 import type { AccelerometerInput } from '../../../_hooks/useAccelerometer/_types';
 import { createHologramPainter } from '../../../Hologram/_utils';
 import type { MotionEnvironment } from '../useMotionEnvironment';
@@ -19,6 +20,7 @@ const useHologramMotion = (
   environment: MotionValue<MotionEnvironment>,
 ) => {
   const [mode, setMode] = useState<'pointer' | 'scroll' | 'reduced' | null>(null);
+  const { start, stop } = useAnimationFrameLoop();
 
   useEffect(() => {
     const hologram = hologramRef.current;
@@ -29,36 +31,26 @@ const useHologramMotion = (
     let tilt: TiltState | undefined;
     let lastMotionTime = 0;
 
-    let frame = 0;
-    let lastFrameTime = 0;
     let current = REST_FRAME;
     let target: MotionInput = REST_FRAME;
     let primaryInput: MotionInput = REST_FRAME;
     const canAnimate = () => environment.get().canAnimate;
 
-    const animate = (now: number) => {
-      frame = 0;
-      if (!canAnimate()) return;
-      current = getNextFrame(current, target, now - lastFrameTime);
-      lastFrameTime = now;
+    const animate = (elapsedMs: number) => {
+      if (!canAnimate()) return false;
+      current = getNextFrame(current, target, elapsedMs);
       paint(current.x, current.y, current.angle);
-      if (current.needsFrame) {
-        frame = requestAnimationFrame(animate);
-      }
+      return current.needsFrame;
     };
 
     const move = () => {
       if (!canAnimate()) return;
       target = combineMotionInputs(primaryInput, scrollInput.get());
-      if (!frame) {
-        lastFrameTime = performance.now();
-        frame = requestAnimationFrame(animate);
-      }
+      start(animate);
     };
 
     const reset = () => {
-      cancelAnimationFrame(frame);
-      frame = 0;
+      stop();
       current = REST_FRAME;
       target = REST_FRAME;
       primaryInput = REST_FRAME;
@@ -125,9 +117,9 @@ const useHologramMotion = (
       unsubscribeInput();
       unsubscribeScroll();
       window.removeEventListener('pointermove', onPointer);
-      cancelAnimationFrame(frame);
+      stop();
     };
-  }, [hologramRef, accelerometerInput, scrollInput, environment]);
+  }, [hologramRef, accelerometerInput, scrollInput, environment, start, stop]);
 
   return { mode };
 };

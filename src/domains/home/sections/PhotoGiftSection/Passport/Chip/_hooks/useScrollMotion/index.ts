@@ -1,23 +1,21 @@
 import { useEffect } from 'react';
 import { useMotionValue, type MotionValue } from 'motion/react';
+import { useAnimationFrameLoop } from '@/hooks/useAnimationFrameLoop';
 import { REST_SCROLL, getScrollInput, decayScrollInput } from './_utils';
 
 const useScrollMotion = (enabled: MotionValue<boolean>) => {
   const input = useMotionValue(REST_SCROLL);
+  const { start, stop } = useAnimationFrameLoop();
 
   useEffect(() => {
     let listening = false;
     let lastScrollY = window.scrollY;
-    let lastFrameTime = 0;
-    let frame = 0;
 
-    const decay = (now: number) => {
-      frame = 0;
-      if (!enabled.get()) return;
-      const next = decayScrollInput(input.get(), now - lastFrameTime);
-      lastFrameTime = now;
+    const decay = (elapsedMs: number) => {
+      if (!enabled.get()) return false;
+      const next = decayScrollInput(input.get(), elapsedMs);
       input.set(next);
-      if (next.y !== 0) frame = requestAnimationFrame(decay);
+      return next.y !== 0;
     };
 
     const onScroll = () => {
@@ -25,10 +23,7 @@ const useScrollMotion = (enabled: MotionValue<boolean>) => {
       lastScrollY = window.scrollY;
       if (deltaY === 0) return;
       input.set(getScrollInput(input.get(), deltaY, window.innerHeight));
-      if (!frame) {
-        lastFrameTime = performance.now();
-        frame = requestAnimationFrame(decay);
-      }
+      start(decay);
     };
 
     const sync = () => {
@@ -42,8 +37,7 @@ const useScrollMotion = (enabled: MotionValue<boolean>) => {
       }
       listening = shouldListen;
       if (!shouldListen) {
-        cancelAnimationFrame(frame);
-        frame = 0;
+        stop();
         input.set(REST_SCROLL);
       }
     };
@@ -53,10 +47,10 @@ const useScrollMotion = (enabled: MotionValue<boolean>) => {
     return () => {
       unsubscribe();
       window.removeEventListener('scroll', onScroll);
-      cancelAnimationFrame(frame);
+      stop();
       input.set(REST_SCROLL);
     };
-  }, [enabled, input]);
+  }, [enabled, input, start, stop]);
 
   return input;
 };
