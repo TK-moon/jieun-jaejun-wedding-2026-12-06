@@ -11,10 +11,10 @@ interface TiltCalibration {
   screenAngle: number;
 }
 
-const RESPONSE_ANGLE = (12 * Math.PI) / 180;
+const RESPONSE_ANGLE = (6 * Math.PI) / 180;
 const DEAD_ZONE = (0.15 * Math.PI) / 180;
-// Keep the virtual light near the foil normals instead of losing the reflection at +/-1.
-const MAX_LIGHT_OFFSET = 0.65;
+// The renderer bounds the light separately from the input's movement range.
+const MAX_LIGHT_OFFSET = 0.85;
 
 const dot = (a: GravityVector, b: GravityVector) => a.x * b.x + a.y * b.y + a.z * b.z;
 
@@ -59,11 +59,20 @@ const getScreenGravity = (
   });
 };
 
-const createTiltCalibration = (gravity: GravityVector, screenAngle: number): TiltCalibration => {
+const createTiltCalibration = (
+  gravity: GravityVector,
+  screenAngle: number,
+  previousRight?: GravityVector,
+): TiltCalibration => {
   const forward = normalize(gravity);
   // Project the screen's horizontal axis onto the initial gravity tangent plane.
   // A second axis handles a phone initially held on its side without a singularity.
-  const axis = Math.abs(forward.x) < 0.9 ? { x: 1, y: 0, z: 0 } : { x: 0, y: 0, z: 1 };
+  const axis =
+    previousRight && Math.abs(dot(previousRight, forward)) < 0.95
+      ? previousRight
+      : Math.abs(forward.x) < 0.9
+        ? { x: 1, y: 0, z: 0 }
+        : { x: 0, y: 0, z: 1 };
   const projection = dot(axis, forward);
   const right = normalize({
     x: axis.x - projection * forward.x,
@@ -78,11 +87,43 @@ const createTiltCalibration = (gravity: GravityVector, screenAngle: number): Til
   return { forward, right, up, screenAngle };
 };
 
+const followTiltCalibration = (
+  gravity: GravityVector,
+  calibration: TiltCalibration,
+  blend: number,
+): TiltCalibration => {
+  if (Math.hypot(gravity.x, gravity.y, gravity.z) < 0.001) return calibration;
+  const direction = normalize(gravity);
+  const alignment = Math.max(-1, Math.min(1, dot(direction, calibration.forward)));
+  const angle = Math.acos(alignment);
+  if (angle < 0.00001) return calibration;
+  const tangent = {
+    x: direction.x - calibration.forward.x * alignment,
+    y: direction.y - calibration.forward.y * alignment,
+    z: direction.z - calibration.forward.z * alignment,
+  };
+  // Spherical interpolation also handles lying back or turning the phone over.
+  const turn =
+    Math.hypot(tangent.x, tangent.y, tangent.z) > 0.001 ? normalize(tangent) : calibration.up;
+  const cosine = Math.cos(angle * blend);
+  const sine = Math.sin(angle * blend);
+  return createTiltCalibration(
+    {
+      x: calibration.forward.x * cosine + turn.x * sine,
+      y: calibration.forward.y * cosine + turn.y * sine,
+      z: calibration.forward.z * cosine + turn.z * sine,
+    },
+    calibration.screenAngle,
+    calibration.right,
+  );
+};
+
 const getTiltInput = (gravity: GravityVector, calibration: TiltCalibration) => {
   const depth = dot(gravity, calibration.forward);
   const response = (angle: number) => {
     const offset = Math.sign(angle) * Math.max(0, Math.abs(angle) - DEAD_ZONE);
-    return MAX_LIGHT_OFFSET * Math.tanh(offset / RESPONSE_ANGLE);
+    // Unlike tanh, this retains a gradual response at large posture offsets.
+    return MAX_LIGHT_OFFSET * (2 / Math.PI) * Math.atan(offset / RESPONSE_ANGLE);
   };
   return {
     x: response(Math.atan2(dot(gravity, calibration.right), depth)),
@@ -90,5 +131,5 @@ const getTiltInput = (gravity: GravityVector, calibration: TiltCalibration) => {
   };
 };
 
-export { getScreenGravity, createTiltCalibration, getTiltInput };
+export { getScreenGravity, createTiltCalibration, followTiltCalibration, getTiltInput };
 export type { GravityVector, TiltCalibration };

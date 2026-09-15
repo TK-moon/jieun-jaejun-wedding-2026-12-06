@@ -141,5 +141,5 @@ Do not reverse role/name fonts (serif role + bold sans name). That hierarchy rea
   - single quotes enabled;
   - trailing commas enabled.
 - Format changed files with `npm run format` before handing off work.
-- Run `npm run lint` and `npm run build` after TypeScript or React changes.
+- Verification is performed by the user. Unless explicitly requested, do not run lint, builds, tests, browser checks, or other validation commands; make the requested changes and report them as unverified.
 - `@typescript-eslint/no-empty-object-type` is intentionally disabled; empty `Props` interfaces are allowed for the established component pattern.

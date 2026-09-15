@@ -8,6 +8,7 @@ import {
 import {
   getScreenGravity,
   createTiltCalibration,
+  followTiltCalibration,
   getTiltInput,
   type GravityVector,
   type TiltCalibration,
@@ -21,6 +22,10 @@ interface MotionPermission {
 type Status = 'idle' | 'pointer' | 'active' | 'fallback' | 'reduced';
 
 const clamp = (value: number) => Math.max(-1, Math.min(1, value));
+
+const SENSOR_SMOOTHING_MS = 24;
+const RENDER_SMOOTHING_MS = 22;
+const POSTURE_FOLLOW_MS = 450;
 
 const useHologramMotion = (
   chipRef: RefObject<HTMLDivElement | null>,
@@ -79,6 +84,7 @@ const useHologramMotion = (
     let baseline: TiltCalibration | undefined;
     let filteredGravity: GravityVector | undefined;
     let lastMotionTime = 0;
+    let lastFrameTime = 0;
     const current = { x: 0, y: 0 };
     const target = { x: 0, y: 0 };
     const canAnimate = () => visible && !document.hidden && !reducedMotion.matches;
@@ -95,12 +101,15 @@ const useHologramMotion = (
       renderLens?.(current.x, current.y, reflectionAngle);
       renderFlash?.(current.x, current.y, reflectionAngle);
     };
-    const animate = () => {
+    const animate = (now: number) => {
       frame = 0;
       if (!canAnimate()) return;
-      current.x += (target.x - current.x) * 0.16;
-      current.y += (target.y - current.y) * 0.16;
-      reflectionAngle += rotationDelta() * 0.16;
+      // A short, time-based blend keeps the response consistent across refresh rates.
+      const blend = 1 - Math.exp(-Math.max(0, now - lastFrameTime) / RENDER_SMOOTHING_MS);
+      lastFrameTime = now;
+      current.x += (target.x - current.x) * blend;
+      current.y += (target.y - current.y) * blend;
+      reflectionAngle += rotationDelta() * blend;
       paint();
       if (
         Math.abs(target.x - current.x) + Math.abs(target.y - current.y) > 0.002 ||
@@ -113,7 +122,10 @@ const useHologramMotion = (
       if (!canAnimate()) return;
       target.x = clamp(x);
       target.y = clamp(y);
-      if (!frame) frame = requestAnimationFrame(animate);
+      if (!frame) {
+        lastFrameTime = performance.now();
+        frame = requestAnimationFrame(animate);
+      }
     };
     const onMotion = (event: DeviceMotionEvent) => {
       const rawGravity = event.accelerationIncludingGravity;
@@ -127,12 +139,13 @@ const useHologramMotion = (
         setStatus('active');
       }
       const now = performance.now();
+      const elapsed = Math.max(0, Math.min(100, now - lastMotionTime));
       if (!baseline || baseline.screenAngle !== screenAngle) {
         filteredGravity = gravity;
         baseline = createTiltCalibration(gravity, screenAngle);
       } else if (filteredGravity) {
         // Time-based filtering feels the same on 30/60/120 Hz sensor streams.
-        const blend = 1 - Math.exp(-Math.max(0, now - lastMotionTime) / 80);
+        const blend = 1 - Math.exp(-Math.max(0, now - lastMotionTime) / SENSOR_SMOOTHING_MS);
         filteredGravity = {
           x: filteredGravity.x + (gravity.x - filteredGravity.x) * blend,
           y: filteredGravity.y + (gravity.y - filteredGravity.y) * blend,
@@ -142,6 +155,13 @@ const useHologramMotion = (
       lastMotionTime = now;
       const input = getTiltInput(filteredGravity ?? gravity, baseline);
       move(input.x, input.y);
+      // Re-centre the neutral posture independently of the fast visual response.
+      // A new seated/lying position must not leave subsequent movement saturated.
+      baseline = followTiltCalibration(
+        filteredGravity ?? gravity,
+        baseline,
+        1 - Math.exp(-elapsed / POSTURE_FOLLOW_MS),
+      );
     };
     const onPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return;

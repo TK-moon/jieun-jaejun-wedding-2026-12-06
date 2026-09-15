@@ -5,7 +5,7 @@
   pointer-events: none;
   isolation: isolate;
   overflow: hidden;
-  background: #769e9b;
+  background: #aeb0b3;
   /* A camera body with a raised viewfinder; no e-passport horizontal split. */
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Cpath d='M7 10h14l5-8h19l5 8h14a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
