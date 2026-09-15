@@ -1,42 +1,57 @@
 .hologram {
-  --hologram-angle: 112deg;
-  --hologram-x: 50%;
-  --hologram-y: 50%;
-  --hologram-rotate-x: 0deg;
-  --hologram-rotate-y: 0deg;
   position: absolute;
   inset: 0;
   display: block;
-  background:
-    linear-gradient(
-      var(--hologram-angle),
-      transparent 20%,
-      rgb(255 253 249 / 48%) 46%,
-      transparent 70%
-    ),
-    linear-gradient(180deg, #405a45 0 48%, #896e2d 52%, #59440f 100%);
-  background-position:
-    var(--hologram-x) var(--hologram-y),
-    center;
-  background-size:
-    220% 100%,
-    100% 100%;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 40'%3E%3Crect width='71' height='17.25'/%3E%3Crect y='22.75' width='71' height='17.25'/%3E%3Ccircle cx='35.5' cy='20' r='9.5'/%3E%3C/svg%3E")
+  pointer-events: none;
+  isolation: isolate;
+  overflow: hidden;
+  background: #769e9b;
+  /* A camera body with a raised viewfinder; no e-passport horizontal split. */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Cpath d='M7 10h14l5-8h19l5 8h14a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 40'%3E%3Crect width='71' height='17.25'/%3E%3Crect y='22.75' width='71' height='17.25'/%3E%3Ccircle cx='35.5' cy='20' r='9.5'/%3E%3C/svg%3E")
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Cpath d='M7 10h14l5-8h19l5 8h14a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
-  transform: perspective(12rem) rotateX(var(--hologram-rotate-x)) rotateY(var(--hologram-rotate-y));
-  transform-origin: center;
 }
 
-.hologram::after {
-  content: '';
+.foil,
+.light {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.light {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at var(--hologram-x) var(--hologram-y),
-    rgb(255 253 249 / 34%),
-    transparent 42%
-  );
-  mix-blend-mode: screen;
+}
+
+/* Each part owns a material canvas and an independent reflection canvas. */
+.background,
+.lensRing,
+.lens,
+.flash {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.lensRing {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Ccircle cx='35.5' cy='28' r='11' fill='none' stroke='black' stroke-width='3.5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Ccircle cx='35.5' cy='28' r='11' fill='none' stroke='black' stroke-width='3.5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.lens {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Ccircle cx='35.5' cy='28' r='9.25'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Ccircle cx='35.5' cy='28' r='9.25'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.flash {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Crect x='55' y='16' width='7' height='4' rx='1'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 71 48'%3E%3Crect x='55' y='16' width='7' height='4' rx='1'/%3E%3C/svg%3E")
+    center / contain no-repeat;
 }

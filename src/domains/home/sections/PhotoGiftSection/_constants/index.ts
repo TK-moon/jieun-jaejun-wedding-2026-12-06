@@ -11,17 +11,17 @@ export const PHOTO_GIFT = {
   messages: [
     '식장에서 저희 둘의 모습을 사진으로 남겨 주세요.',
     '카카오톡으로 보내 주시면',
-    '작은 기프티콘으로 마음을 전하겠습니다.',
+    '그중 가장 예쁜 사진에 작은 기프티콘으로 마음을 전하겠습니다.',
   ],
   messagesEn: [
     'Please photograph the two of us at the ceremony',
     'and send it via KakaoTalk.',
-    'We will send a small gifticon in return.',
+    'A small gifticon will go to the loveliest photos.',
   ],
   steps: [
     { code: '01', text: '신랑·신부를 사진에 담아 주세요' },
     { code: '02', text: '카카오톡으로 보내 주세요' },
-    { code: '03', text: '기프티콘을 받아 가세요' },
+    { code: '03', text: '가장 예쁜 사진에 기프티콘을 드려요' },
   ],
   passport: {
     kickerKo: '여권',
@@ -33,7 +33,7 @@ export const PHOTO_GIFT = {
     bearerLabel: '소지인의 서명',
     bearerLabelEn: 'Signature of bearer',
     mrz: [
-      padMrz(`P<KOR${bride.name.en}<<${groom.name.en}`),
+      padMrz(`K<WEDDING<<${bride.name.en}<<${groom.name.en}`),
       padMrz(`${groom.code}${bride.code}${ceremony.format('YYMMDD')}<<<GIFT`),
     ],
   },
