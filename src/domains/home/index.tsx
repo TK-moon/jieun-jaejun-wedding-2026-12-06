@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { BannerSection } from './sections/BannerSection';
+import { ClosingSection } from './sections/ClosingSection';
 import { ContactSection } from './sections/ContactSection';
 import { GallerySection } from './sections/GallerySection';
 import { GreetingSection } from './sections/GreetingSection';
@@ -17,6 +18,7 @@ const HomeMain: FC<Props> = () => {
       <GallerySection />
       <ContactSection />
       <PhotoGiftSection />
+      <ClosingSection />
     </>
   );
 };
