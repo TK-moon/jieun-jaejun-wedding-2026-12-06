@@ -4,8 +4,7 @@ import { useAbortableTimeout } from '@/hooks/useAbortableTimeout';
 import { useDesktopPointer } from '../useDesktopPointer';
 import {
   getMotionPermissionApi,
-  readMotionConsent,
-  storeMotionConsent,
+  querySensorPermission,
   type MotionPermissionStatus,
 } from './_utils';
 
@@ -13,7 +12,6 @@ const useMotionPermission = () => {
   const shouldReduceMotion = Boolean(useReducedMotion());
   const hasDesktopPointer = useDesktopPointer();
   const [permission, setPermission] = useState<MotionPermissionStatus>('checking');
-  const [hasGrantedBefore, setHasGrantedBefore] = useState(readMotionConsent);
   const requestRef = useRef<() => Promise<boolean>>(() => Promise.resolve(false));
   const { start: scheduleProbe, cancel: cancelProbe } = useAbortableTimeout();
 
@@ -22,17 +20,12 @@ const useMotionPermission = () => {
     let requesting = false;
     let generation = 0;
 
-    const remember = (granted: boolean) => {
-      storeMotionConsent(granted);
-      setHasGrantedBefore(granted);
-    };
     const stopProbe = () => {
       cancelProbe();
       window.removeEventListener('devicemotion', onMotion);
     };
     const applyPermission = (result: 'granted' | 'denied') => {
       setPermission(result);
-      remember(result === 'granted');
       stopProbe();
     };
     const onMotion = (event: DeviceMotionEvent) => {
@@ -69,7 +62,8 @@ const useMotionPermission = () => {
 
       setPermission('checking');
       window.addEventListener('devicemotion', onMotion, { passive: true });
-      const probe = () => {
+
+      const probeBrowserGrant = () => {
         if (disposed || version !== generation) return;
         // Never turn a background permission check into a system prompt.
         // A previous navigation click may still carry transient activation.
@@ -78,7 +72,7 @@ const useMotionPermission = () => {
           return;
         }
         if (navigator.userActivation.isActive) {
-          scheduleProbe(probe, 250);
+          scheduleProbe(probeBrowserGrant, 250);
           return;
         }
         void requestPermission()
@@ -88,12 +82,22 @@ const useMotionPermission = () => {
           })
           .catch(() => {
             if (disposed || version !== generation) return;
-            // A reset/prompt permission needs a real tap; remembered consent is not a grant.
             setPermission('prompt');
           });
       };
-      // Exit any synchronous navigation gesture before checking the cached browser grant.
-      scheduleProbe(probe, 0);
+
+      void querySensorPermission().then((state) => {
+        if (disposed || version !== generation) return;
+        if (state === 'granted' || state === 'denied') {
+          applyPermission(state);
+          return;
+        }
+        if (state === 'prompt') {
+          setPermission('prompt');
+          return;
+        }
+        scheduleProbe(probeBrowserGrant, 0);
+      });
     };
 
     requestRef.current = async () => {
@@ -112,7 +116,7 @@ const useMotionPermission = () => {
         return result === 'granted';
       } catch {
         if (disposed || version !== generation) return false;
-        setPermission('prompt');
+        applyPermission('denied');
         return false;
       } finally {
         requesting = false;
@@ -135,7 +139,7 @@ const useMotionPermission = () => {
 
   const requestPermission = useCallback(() => requestRef.current(), []);
 
-  return { permission, hasGrantedBefore, requestPermission };
+  return { permission, requestPermission };
 };
 
 export { useMotionPermission };

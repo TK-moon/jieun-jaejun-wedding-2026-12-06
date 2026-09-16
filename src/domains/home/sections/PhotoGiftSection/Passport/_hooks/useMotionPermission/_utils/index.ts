@@ -1,6 +1,3 @@
-// localStorage is scoped to the origin. This records consent history, not browser permission.
-const CONSENT_KEY = 'wedding:motion-consent:v1';
-
 interface MotionPermissionApi {
   requestPermission?: () => Promise<'granted' | 'denied'>;
 }
@@ -8,25 +5,28 @@ interface MotionPermissionApi {
 type MotionPermissionStatus =
   'checking' | 'prompt' | 'requesting' | 'granted' | 'denied' | 'not-required' | 'unavailable';
 
+type SensorPermissionState = 'granted' | 'denied' | 'prompt';
+
 const getMotionPermissionApi = () =>
   window.DeviceMotionEvent as unknown as MotionPermissionApi | undefined;
 
-const readMotionConsent = () => {
+const querySensorPermission = async (): Promise<SensorPermissionState | null> => {
+  if (!navigator.permissions?.query) return null;
+
   try {
-    return window.localStorage.getItem(CONSENT_KEY) === 'granted';
+    const status = await navigator.permissions.query({
+      name: 'accelerometer' as PermissionName,
+    });
+
+    if (status.state === 'granted' || status.state === 'denied' || status.state === 'prompt') {
+      return status.state;
+    }
+
+    return null;
   } catch {
-    return false;
+    return null;
   }
 };
 
-const storeMotionConsent = (granted: boolean) => {
-  try {
-    if (granted) window.localStorage.setItem(CONSENT_KEY, 'granted');
-    else window.localStorage.removeItem(CONSENT_KEY);
-  } catch {
-    // Storage restrictions must not prevent sensor access.
-  }
-};
-
-export { getMotionPermissionApi, readMotionConsent, storeMotionConsent };
+export { getMotionPermissionApi, querySensorPermission };
 export type { MotionPermissionStatus };

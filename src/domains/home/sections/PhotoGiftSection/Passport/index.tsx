@@ -20,14 +20,13 @@ const Passport: FC<Props> = () => {
   const bookRef = useRef<HTMLElement>(null);
   const contentId = useId();
 
-  const { permission, hasGrantedBefore, requestPermission } = useMotionPermission();
+  const { permission, requestPermission } = useMotionPermission();
 
-  const showPermissionOverlay =
-    permission === 'prompt' || permission === 'requesting' || permission === 'denied';
+  const showPermissionOverlay = permission === 'prompt' || permission === 'requesting';
 
   const requestSensorAccess = async () => {
-    const granted = await requestPermission();
-    if (granted) bookRef.current?.focus({ preventScroll: true });
+    await requestPermission();
+    bookRef.current?.focus({ preventScroll: true });
   };
 
   const [hasIntersected, setHasIntersected] = useState(false);
@@ -53,8 +52,7 @@ const Passport: FC<Props> = () => {
     >
       {showPermissionOverlay && (
         <SensorPermissionOverlay
-          permission={permission}
-          hasGrantedBefore={hasGrantedBefore}
+          requesting={permission === 'requesting'}
           onRequest={requestSensorAccess}
           contentId={contentId}
         />
