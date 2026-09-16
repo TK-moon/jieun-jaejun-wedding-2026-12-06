@@ -35,16 +35,20 @@ const Ticket: FC<Props> = () => {
         .filter(Boolean)
         .join(' ')}
     >
-      <Title />
-      <div className={styles.body}>
-        <Route isVisible={isVisible} />
-        <Schedule />
-        <Countdown />
-        <Meta />
-        <Venue />
+      <div className={`${styles.paper} ${styles.main}`}>
+        <Title />
+        <div className={styles.body}>
+          <Route isVisible={isVisible} />
+          <Schedule />
+          <Countdown />
+          <Meta />
+          <Venue />
+        </div>
       </div>
       <Perforation />
-      <Stub isVisible={isVisible} />
+      <div className={`${styles.paper} ${styles.stub}`}>
+        <Stub isVisible={isVisible} />
+      </div>
     </article>
   );
 };

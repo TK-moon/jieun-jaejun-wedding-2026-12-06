@@ -1,22 +1,20 @@
 .countdown {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin: 2px 0;
-  padding: 18px 14px 16px;
-  border: 1px solid var(--color-line-soft);
-  border-radius: 12px;
-  background-color: var(--color-sky-wash);
+  gap: 16px;
+  margin: 6px 0;
+  padding: 12px 0 16px;
 }
 
 .countdown_caption {
   margin: 0;
-  color: var(--color-stamp);
+  color: var(--color-sky);
   font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-align: center;
-  text-indent: 0.22em;
+  text-indent: 0.16em;
   text-transform: uppercase;
 }
 
@@ -27,19 +25,14 @@
 }
 
 .countdown_segment {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-}
-
-.countdown_segment:last-child {
-  grid-template-columns: minmax(0, 1fr);
+  position: relative;
+  min-width: 0;
 }
 
 .countdown_item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin: 0;
   text-align: center;
 }
@@ -49,26 +42,28 @@
   margin: 0;
   color: var(--color-sky-deep);
   font-family: var(--body-font);
-  font-size: clamp(2.4rem, 7vw, 3.2rem);
+  font-size: clamp(3.4rem, 12.5cqi, 5rem);
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 400;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
 .countdown_item dt {
   order: 2;
-  color: var(--color-sky);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  color: var(--color-ink-muted);
+  font-size: clamp(0.95rem, 2.5cqi, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
 }
 
 .countdown_divider {
+  position: absolute;
+  top: 0.2em;
+  right: -0.1em;
   color: var(--color-sky-soft);
   font-family: var(--body-font);
-  font-size: clamp(1.8rem, 5vw, 2.4rem);
-  font-weight: 600;
+  font-size: clamp(2rem, 7cqi, 2.8rem);
+  font-weight: 400;
   line-height: 1;
-  transform: translateY(-0.45em);
 }

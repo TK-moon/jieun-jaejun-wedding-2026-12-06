@@ -5,10 +5,5 @@
   align-items: center;
   gap: 22px;
   padding: var(--layout-section-padding-block) var(--layout-inline-padding);
-  background: linear-gradient(
-    to bottom,
-    var(--color-canvas),
-    var(--color-sky-wash),
-    var(--color-canvas)
-  );
+  background-color: var(--color-canvas);
 }

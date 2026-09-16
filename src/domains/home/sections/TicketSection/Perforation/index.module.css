@@ -3,33 +3,68 @@
   display: flex;
   align-items: center;
   height: 28px;
-  margin: 8px 0 0;
+  margin: 0;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 35%,
+      rgb(28 36 48 / 6%) 48%,
+      rgb(255 255 255 / 80%) 54%,
+      transparent 68%
+    ),
+    var(--ticket-paper-background);
+  /* Cut both edges out of the paper so the section itself shows through. */
+  mask:
+    radial-gradient(circle at left center, transparent 11.5px, #000 12px) left / 51% 100% no-repeat,
+    radial-gradient(circle at right center, transparent 11.5px, #000 12px) right / 51% 100%
+      no-repeat;
+}
+
+.perforation::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+        circle at left center,
+        transparent 11.5px,
+        rgb(28 36 48 / 18%) 12px,
+        rgb(255 255 255 / 85%) 12.75px,
+        transparent 13.75px
+      )
+      left / 51% 100% no-repeat,
+    radial-gradient(
+        circle at right center,
+        transparent 11.5px,
+        rgb(28 36 48 / 18%) 12px,
+        rgb(255 255 255 / 85%) 12.75px,
+        transparent 13.75px
+      )
+      right / 51% 100% no-repeat;
+  pointer-events: none;
+}
+
+.perforation::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image: var(--ticket-paper-texture);
+  background-size: 160px 160px;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .dash {
   display: block;
-  width: 100%;
-  height: 0;
-  border-top: 1.5px dashed var(--color-line);
-}
-
-.notch_left,
-.notch_right {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--color-canvas);
-  box-shadow: inset 0 0 0 1px rgb(47 111 163 / 6%);
-  transform: translateY(-50%);
-}
-
-.notch_left {
-  left: -11px;
-}
-
-.notch_right {
-  right: -11px;
+  width: calc(100% - 44px);
+  height: 1.5px;
+  margin-inline: auto;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-sky-soft) 70%, var(--color-ink-muted)) 0 4px,
+    transparent 4px 9px
+  );
+  filter: drop-shadow(0 1px 0 var(--color-paper-raised));
 }

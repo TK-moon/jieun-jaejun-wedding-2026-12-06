@@ -5,6 +5,7 @@ const ceremony = dayjs.tz(WEDDING_INFO.ceremony);
 
 export const TICKET = {
   title: 'BOARDING PASS',
+  priority: 'PRIORITY',
   from: {
     code: WEDDING_INFO.bride.code,
     name: WEDDING_INFO.bride.name.en,

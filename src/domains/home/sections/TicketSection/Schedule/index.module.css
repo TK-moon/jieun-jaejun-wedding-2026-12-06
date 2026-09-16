@@ -1,6 +1,8 @@
 .schedule {
   display: flex;
   justify-content: center;
+  padding-block: 12px;
+  border-block: 1px solid var(--color-line);
 }
 
 .schedule_date {
@@ -15,8 +17,9 @@
   color: var(--color-sky-deep);
   font-family: var(--body-font);
   font-size: 1.45rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
   line-height: 1.2;
 }
 
@@ -28,7 +31,7 @@
 }
 
 .schedule_date_time {
-  color: var(--color-stamp);
+  color: var(--color-sky-deep);
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 0.12em;

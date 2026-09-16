@@ -1,15 +1,64 @@
 .ticket_frame {
+  --ticket-paper-background: linear-gradient(90deg, var(--color-paper-raised), var(--color-paper));
+  --ticket-paper-texture: url('./_images/paper-grain.svg');
   position: relative;
+  isolation: isolate;
   width: var(--layout-frame-width);
-  overflow: hidden;
-  border-radius: 18px;
-  background: var(--color-paper-raised);
-  box-shadow:
-    0 -6px 16px rgb(47 111 163 / 10%),
-    0 18px 40px rgb(47 111 163 / 12%),
-    0 2px 8px rgb(28 36 48 / 6%);
+  filter: drop-shadow(0 1px 0 rgb(28 36 48 / 16%)) drop-shadow(0 2px 1px rgb(28 36 48 / 9%))
+    drop-shadow(0 12px 12px rgb(28 36 48 / 12%));
   opacity: 0;
   transform: translateY(18px) scale(0.98);
+}
+
+.paper {
+  position: relative;
+  overflow: hidden;
+  background: var(--ticket-paper-background);
+}
+
+.main {
+  border-radius: 6px 6px 0 0;
+}
+
+.stub {
+  border-radius: 0 0 6px 6px;
+}
+
+.paper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  box-shadow:
+    inset 1px 0 0 rgb(255 255 255 / 75%),
+    inset -1px 0 0 rgb(28 36 48 / 8%);
+  pointer-events: none;
+}
+
+.main::before {
+  border-top: 1px solid rgb(255 255 255 / 40%);
+}
+
+.stub::before {
+  box-shadow:
+    inset 1px 0 0 rgb(255 255 255 / 75%),
+    inset -1px 0 0 rgb(28 36 48 / 8%),
+    inset 0 -1px 0 rgb(28 36 48 / 9%),
+    inset 0 -2px 0 rgb(255 255 255 / 40%);
+}
+
+.paper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background-image: var(--ticket-paper-texture);
+  background-size: 160px 160px;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .ticket_frame.is_visible {
@@ -19,8 +68,8 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 22px 22px 8px;
+  gap: 20px;
+  padding: 26px clamp(22px, 5vw, 32px) 14px;
 }
 
 @keyframes ticket-rise {
