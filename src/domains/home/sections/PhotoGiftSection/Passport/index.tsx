@@ -1,7 +1,9 @@
 import { useId, useRef, useState, type FC } from 'react';
+import { AnimatePresence } from 'motion/react';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { SensorPermissionOverlay } from './SensorPermissionOverlay';
 import { useMotionPermission } from './_hooks/useMotionPermission';
+import { useOverlayPresence } from './_hooks/useOverlayPresence';
 import { PageOne } from './PageOne';
 import { PageTwo } from './PageTwo';
 import styles from './index.module.css';
@@ -13,11 +15,14 @@ const Passport: FC<Props> = () => {
   const contentId = useId();
 
   const { permission, requestPermission } = useMotionPermission();
+  const { isVisible: overlayOpen, isBlocking, onExitComplete } = useOverlayPresence(permission);
 
-  const showPermissionOverlay = permission === 'prompt' || permission === 'requesting';
+  const requestSensorAccess = () => {
+    void requestPermission();
+  };
 
-  const requestSensorAccess = async () => {
-    await requestPermission();
+  const finishOverlayExit = () => {
+    onExitComplete();
     bookRef.current?.focus({ preventScroll: true });
   };
 
@@ -42,19 +47,18 @@ const Passport: FC<Props> = () => {
       aria-label="사진 선물 이벤트 여권"
       tabIndex={-1}
     >
-      {showPermissionOverlay && (
-        <SensorPermissionOverlay
-          requesting={permission === 'requesting'}
-          onRequest={requestSensorAccess}
-          contentId={contentId}
-        />
-      )}
-      <div
-        id={contentId}
-        className={styles.content}
-        inert={showPermissionOverlay}
-        aria-hidden={showPermissionOverlay}
-      >
+      <AnimatePresence onExitComplete={finishOverlayExit}>
+        {overlayOpen ? (
+          <SensorPermissionOverlay
+            key="sensor-permission-overlay"
+            requesting={permission === 'requesting'}
+            disabled={permission !== 'prompt'}
+            onRequest={requestSensorAccess}
+            contentId={contentId}
+          />
+        ) : null}
+      </AnimatePresence>
+      <div id={contentId} className={styles.content} inert={isBlocking} aria-hidden={isBlocking}>
         <PageOne />
         <PageTwo permission={permission} />
       </div>
