@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAbortableTimeout } from '@/hooks/useAbortableTimeout';
 import type { MotionPermissionStatus } from '../useMotionPermission/_utils';
 import { SYSTEM_DIALOG_DISMISS_MS } from './_constants';
@@ -8,42 +8,26 @@ const isPromptPermission = (permission: MotionPermissionStatus) =>
 
 const useOverlayPresence = (permission: MotionPermissionStatus) => {
   const isPrompting = isPromptPermission(permission);
-  const [isVisible, setIsVisible] = useState(isPrompting);
-  const [isExiting, setIsExiting] = useState(false);
-  const requestedRef = useRef(false);
+  const [isHolding, setIsHolding] = useState(false);
+  const [isBlocking, setIsBlocking] = useState(isPrompting);
   const { start, cancel } = useAbortableTimeout();
+  const isVisible = isPrompting || isHolding;
 
-  if (permission === 'requesting') {
-    requestedRef.current = true;
+  if (isVisible && !isBlocking) {
+    setIsBlocking(true);
   }
 
   useEffect(() => {
-    if (isPrompting) {
+    if (isPrompting || !isHolding) {
       cancel();
-      setIsExiting(false);
-      setIsVisible(true);
       return;
     }
 
-    if (!isVisible) {
-      return;
-    }
-
-    const close = () => {
-      requestedRef.current = false;
-      setIsVisible(false);
-      setIsExiting(true);
-    };
-
-    if (!requestedRef.current) {
-      close();
-      return;
-    }
-
-    const delayClose = () => start(close, SYSTEM_DIALOG_DISMISS_MS);
+    const releaseHold = () => setIsHolding(false);
+    const delayRelease = () => start(releaseHold, SYSTEM_DIALOG_DISMISS_MS);
 
     if (!document.hidden) {
-      delayClose();
+      delayRelease();
       return () => cancel();
     }
 
@@ -53,7 +37,7 @@ const useOverlayPresence = (permission: MotionPermissionStatus) => {
       }
 
       document.removeEventListener('visibilitychange', onVisibilityChange);
-      delayClose();
+      delayRelease();
     };
 
     document.addEventListener('visibilitychange', onVisibilityChange);
@@ -62,15 +46,20 @@ const useOverlayPresence = (permission: MotionPermissionStatus) => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
       cancel();
     };
-  }, [isPrompting, isVisible, start, cancel]);
+  }, [isPrompting, isHolding, start, cancel]);
+
+  const onRequestStart = () => {
+    setIsHolding(true);
+  };
 
   const onExitComplete = () => {
-    setIsExiting(false);
+    setIsBlocking(false);
   };
 
   return {
     isVisible,
-    isBlocking: isVisible || isExiting,
+    isBlocking,
+    onRequestStart,
     onExitComplete,
   };
 };

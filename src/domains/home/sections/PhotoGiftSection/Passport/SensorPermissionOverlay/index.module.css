@@ -6,6 +6,8 @@
   place-items: center;
   padding: 24px;
   background: rgb(from var(--color-paper) r g b / var(--overlay-alpha, 0.28));
+  -webkit-backdrop-filter: blur(var(--overlay-blur, 8px));
+  backdrop-filter: blur(var(--overlay-blur, 8px));
 }
 
 .prompt {

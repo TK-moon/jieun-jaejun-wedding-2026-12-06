@@ -15,9 +15,15 @@ const Passport: FC<Props> = () => {
   const contentId = useId();
 
   const { permission, requestPermission } = useMotionPermission();
-  const { isVisible: overlayOpen, isBlocking, onExitComplete } = useOverlayPresence(permission);
+  const {
+    isVisible: overlayOpen,
+    isBlocking,
+    onRequestStart,
+    onExitComplete,
+  } = useOverlayPresence(permission);
 
   const requestSensorAccess = () => {
+    onRequestStart();
     void requestPermission();
   };
 

@@ -8,24 +8,18 @@ const getOverlayMotionVariants = (shouldReduceMotion: boolean | null) => {
   const duration = shouldReduceMotion ? 0 : MOTION_DURATION;
   const transition = { duration, ease: MOTION_EASE };
 
-  const frost = `blur(${OVERLAY_BLUR}px)`;
-  const clear = 'blur(0px)';
-
   const overlayVariants: Variants = {
     hidden: {
-      backdropFilter: clear,
-      WebkitBackdropFilter: clear,
+      '--overlay-blur': '0px',
       '--overlay-alpha': 0,
     },
     visible: {
-      backdropFilter: frost,
-      WebkitBackdropFilter: frost,
+      '--overlay-blur': `${OVERLAY_BLUR}px`,
       '--overlay-alpha': OVERLAY_WASH,
       transition,
     },
     exit: {
-      backdropFilter: clear,
-      WebkitBackdropFilter: clear,
+      '--overlay-blur': '0px',
       '--overlay-alpha': 0,
       pointerEvents: 'none',
       transition,
