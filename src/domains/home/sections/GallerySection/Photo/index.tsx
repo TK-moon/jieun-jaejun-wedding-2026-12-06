@@ -8,11 +8,10 @@ interface Props {
     jpg: string;
   };
   alt: string;
-  onReady?: () => void;
 }
 
 const Photo: FC<Props> = (props) => {
-  const { src, alt, onReady } = props;
+  const { src, alt } = props;
 
   return (
     <div className={styles.frame}>
@@ -25,8 +24,6 @@ const Photo: FC<Props> = (props) => {
         height={1800}
         loading="lazy"
         decoding="async"
-        onLoad={onReady}
-        onError={onReady}
       />
     </div>
   );

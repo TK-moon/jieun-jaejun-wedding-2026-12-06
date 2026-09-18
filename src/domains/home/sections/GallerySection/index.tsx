@@ -16,12 +16,12 @@ const GallerySection: FC<Props> = () => {
       <SectionTitle label="갤러리" title="우리의 순간" titleId={titleId} />
       <div className={styles.frame}>
         <ol className={styles.grid}>
-          {GALLERY_PREVIEW_PHOTOS.map((photo, index) => (
-            <Item key={photo.id} index={index}>
+          {GALLERY_PREVIEW_PHOTOS.map((photo) => (
+            <Item key={photo.id}>
               <Photo src={photo.src} alt={photo.alt} />
             </Item>
           ))}
-          <Item index={GALLERY_PREVIEW_PHOTOS.length}>
+          <Item>
             <Cover />
           </Item>
         </ol>

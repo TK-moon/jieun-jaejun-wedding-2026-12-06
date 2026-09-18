@@ -1,13 +1,81 @@
 .item {
+  --gallery-reveal-distance: clamp(56px, 12vw, 96px);
+  /* Keep the fallback's revealEase curve in sync. */
+  --gallery-reveal-ease: cubic-bezier(0.37, 0, 0.63, 1);
+
+  position: relative;
   min-width: 0;
   aspect-ratio: 2 / 3;
-  box-shadow: 0 0 10px 0 rgb(0 0 0 / 10%);
 }
 
 .item:nth-child(even) {
-  translate: 0 50%;
+  /* Use layout positioning so both timelines measure the staggered position. */
+  top: 50%;
 }
 
-.item:has(a) {
+.content {
+  width: 100%;
+  height: 100%;
+  opacity: var(--gallery-reveal-opacity, 1);
+  transform: translateY(
+    calc(var(--gallery-reveal-distance) * (1 - var(--gallery-reveal-progress, 1)))
+  );
+  box-shadow: 0 0 10px 0 rgb(0 0 0 / 10%);
+}
+
+.content:has(a) {
   box-shadow: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (view-timeline-name: --gallery-item) and (animation-timeline: --gallery-item) and
+    (animation-range: cover 0% cover 50%) {
+    .item {
+      view-timeline: --gallery-item block;
+    }
+
+    .content {
+      animation:
+        reveal-opacity linear both,
+        reveal-rise var(--gallery-reveal-ease) both;
+      animation-timeline: --gallery-item, --gallery-item;
+      /* Finish the fade before the upward movement settles. */
+      animation-range:
+        cover 0% cover 30%,
+        cover 0% cover 50%;
+    }
+  }
+}
+
+@keyframes reveal-opacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    transform: translateY(var(--gallery-reveal-distance));
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.item:focus-within .content {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    opacity: 1;
+    transform: none;
+  }
 }
