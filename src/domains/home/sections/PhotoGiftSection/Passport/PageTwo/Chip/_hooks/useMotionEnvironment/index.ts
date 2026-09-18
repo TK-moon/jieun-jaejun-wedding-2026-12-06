@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from 'react';
 import { useMotionValue, useReducedMotion } from 'motion/react';
-import { useDesktopPointer } from '../../../_hooks/useDesktopPointer';
+import { useDesktopPointer } from '../../../../_hooks/useDesktopPointer';
 
 interface MotionEnvironment {
   canAnimate: boolean;

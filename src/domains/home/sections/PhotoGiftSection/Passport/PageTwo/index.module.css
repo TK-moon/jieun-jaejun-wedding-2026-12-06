@@ -1,0 +1,72 @@
+.leaf {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  aspect-ratio: 125 / 88;
+  background:
+    radial-gradient(circle at 88% 28%, rgb(255 253 249 / 64%) 0, transparent 36%),
+    linear-gradient(155deg, var(--color-paper-raised) 0%, var(--color-sky-wash) 100%);
+}
+
+.leaf::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  height: 3.6cqi;
+  background: linear-gradient(
+    180deg,
+    rgb(28 36 48 / 9%) 0%,
+    rgb(47 111 163 / 4%) 28%,
+    rgb(255 253 249 / 34%) 52%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 5.2cqi 6cqi 4cqi;
+}
+
+.body {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: 25cqi minmax(0, 1fr);
+  gap: 3cqi 4.2cqi;
+  align-items: stretch;
+}
+
+.mast {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.4cqi;
+  margin: 0 0 2.8cqi;
+}
+
+@media (max-width: 360px) {
+  .page {
+    padding-right: 5cqi;
+    padding-left: 4.6cqi;
+  }
+
+  .body {
+    grid-template-columns: 24cqi minmax(0, 1fr);
+    gap: 2.5cqi 3.6cqi;
+  }
+}

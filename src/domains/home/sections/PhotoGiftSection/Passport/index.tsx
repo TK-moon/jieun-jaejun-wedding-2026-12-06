@@ -1,17 +1,9 @@
 import { useId, useRef, useState, type FC } from 'react';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { PHOTO_GIFT } from '../_constants';
-import { Bearer } from './Bearer';
-import { Chip } from './Chip';
 import { SensorPermissionOverlay } from './SensorPermissionOverlay';
 import { useMotionPermission } from './_hooks/useMotionPermission';
-import { Header } from './Header';
-import { Mrz } from './Mrz';
-import { Pattern } from './Pattern';
-import { Portrait } from './Portrait';
-import { Serial } from './Serial';
-import { Signatures } from './Signatures';
-import { Visa } from './Visa';
+import { PageOne } from './PageOne';
+import { PageTwo } from './PageTwo';
 import styles from './index.module.css';
 
 interface Props {}
@@ -63,41 +55,8 @@ const Passport: FC<Props> = () => {
         inert={showPermissionOverlay}
         aria-hidden={showPermissionOverlay}
       >
-        <div className={`${styles.leaf} ${styles.pageOne}`}>
-          <Pattern variant="request" />
-          <Serial />
-          <div className={styles.page}>
-            <div className={styles.request}>
-              <div className={styles.lead}>
-                <p>{PHOTO_GIFT.messages.join(' ')}</p>
-              </div>
-              <Signatures />
-              <div className={`${styles.lead} ${styles.leadEn}`}>
-                <p>{PHOTO_GIFT.messagesEn.join(' ')}</p>
-              </div>
-            </div>
-            <div className={styles.portraitSlot}>
-              <Portrait />
-            </div>
-            <div className={styles.signatureSlot}>
-              <Bearer />
-            </div>
-          </div>
-        </div>
-        <div className={`${styles.leaf} ${styles.pageTwo}`}>
-          <Pattern variant="identity" />
-          <div className={styles.page}>
-            <div className={styles.mast}>
-              <Header />
-              <Chip permission={permission} />
-            </div>
-            <div className={styles.body}>
-              <Portrait variant="mono" />
-              <Visa />
-            </div>
-            <Mrz />
-          </div>
-        </div>
+        <PageOne />
+        <PageTwo permission={permission} />
       </div>
     </article>
   );

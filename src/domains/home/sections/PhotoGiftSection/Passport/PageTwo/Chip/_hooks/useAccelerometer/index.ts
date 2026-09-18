@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMotionValue, type MotionValue } from 'motion/react';
 import { useAbortableTimeout } from '@/hooks/useAbortableTimeout';
-import type { MotionPermissionStatus } from '../../../_hooks/useMotionPermission/_utils';
+import type { MotionPermissionStatus } from '../../../../_hooks/useMotionPermission/_utils';
 import type { AccelerometerInput, AccelerometerStatus } from './_types';
 import {
   getScreenGravity,
