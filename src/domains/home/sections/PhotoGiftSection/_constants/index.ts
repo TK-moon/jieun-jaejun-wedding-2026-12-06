@@ -14,9 +14,9 @@ export const PHOTO_GIFT = {
     '그중 가장 예쁜 사진에 작은 기프티콘으로 마음을 전하겠습니다.',
   ],
   messagesEn: [
-    'Please photograph the two of us at the ceremony',
+    'Please take a photo of the two of us at the ceremony',
     'and send it via KakaoTalk.',
-    'A small gifticon will go to the loveliest photos.',
+    'We will send a small gifticon as our thanks for the loveliest photos.',
   ],
   steps: [
     { code: '01', text: '신랑·신부를 사진에 담아 주세요' },
