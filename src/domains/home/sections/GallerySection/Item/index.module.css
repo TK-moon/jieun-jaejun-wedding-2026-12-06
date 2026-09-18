@@ -9,8 +9,10 @@
 }
 
 .item:nth-child(even) {
-  /* Use layout positioning so both timelines measure the staggered position. */
-  top: 50%;
+  /* Half of a 2:3 tile's height is 75% of its grid column's width.
+     Avoid percentage top on auto-sized rows and keep both timelines aligned. */
+  margin-top: 75%;
+  margin-bottom: -75%;
 }
 
 .content {
