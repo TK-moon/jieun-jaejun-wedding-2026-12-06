@@ -2,17 +2,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 16px 22px 26px;
+  gap: 6px;
+  padding: 6px 18px 14px;
 }
 
 .stub_code {
   margin: 0;
-  color: var(--color-ink-muted);
-  font-size: 1.05rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-indent: 0.22em;
+  color: var(--color-ink-subtle);
+  font-family: var(--ticket-print-font);
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-indent: 0.12em;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
   text-align: center;

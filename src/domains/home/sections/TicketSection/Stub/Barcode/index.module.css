@@ -1,9 +1,9 @@
 .barcode {
   display: flex;
   justify-content: center;
-  gap: 2px;
-  width: min(100%, 240px);
-  height: 40px;
+  gap: 1px;
+  width: min(100%, 180px);
+  height: 24px;
   opacity: 0;
   transform: scaleY(0.7);
 }
@@ -16,7 +16,7 @@
   display: block;
   min-width: 1px;
   height: 100%;
-  background: var(--color-ink);
+  background: var(--color-ink-muted);
 }
 
 @keyframes barcode-in {

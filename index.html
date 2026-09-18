@@ -26,6 +26,18 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+KR:wght@400;500;600&display=block"
     />
 
+    <!-- 티켓 폰트 CSS: 낮은 우선순위로 받아 렌더링을 막지 않고 로드 완료 후 적용 -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"
+      fetchpriority="low"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+
     <title>지은 ♥ 재준 결혼식 초대장 · 2026.12.06</title>
     <meta
       name="description"
