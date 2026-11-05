@@ -6,7 +6,7 @@ export interface CountdownUnits {
 }
 
 export interface Countdown extends CountdownUnits {
-  isComplete: boolean;
+  hasReachedTarget: boolean;
 }
 
 export interface Params {

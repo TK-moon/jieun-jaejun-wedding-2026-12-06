@@ -6,25 +6,17 @@ export const getCountdown = (
   targetDate: Date | string,
   timeZone: CountdownTimeZone = 'local',
 ): Countdown => {
-  const now = getZonedNow(timeZone);
   const target = getZonedTarget(targetDate, timeZone);
-  const totalSeconds = Math.max(target.diff(now, 'second'), 0);
+  const elapsedMilliseconds = dayjs().diff(target);
+  const totalSeconds = Math.abs(Math.floor(elapsedMilliseconds / 1_000));
 
   return {
     days: Math.floor(totalSeconds / 86_400),
     hours: Math.floor((totalSeconds % 86_400) / 3_600),
     minutes: Math.floor((totalSeconds % 3_600) / 60),
     seconds: totalSeconds % 60,
-    isComplete: totalSeconds === 0,
+    hasReachedTarget: elapsedMilliseconds >= 0,
   };
-};
-
-const getZonedNow = (timeZone: CountdownTimeZone) => {
-  if (timeZone === 'local') {
-    return dayjs();
-  }
-
-  return dayjs().tz(TIME_ZONE_IDS[timeZone]);
 };
 
 const getZonedTarget = (targetDate: Date | string, timeZone: CountdownTimeZone) => {

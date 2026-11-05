@@ -13,20 +13,11 @@ const useCountdown = (params: Params, options?: Options): Countdown => {
   useEffect(() => {
     const resolvedTarget = typeof targetKey === 'number' ? new Date(targetKey) : targetKey;
     const tick = () => {
-      const next = getCountdown(resolvedTarget, timeZone);
-      setCountdown(next);
-      return next.isComplete;
+      setCountdown(getCountdown(resolvedTarget, timeZone));
     };
 
-    if (tick()) {
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      if (tick()) {
-        window.clearInterval(timer);
-      }
-    }, 1_000);
+    tick();
+    const timer = window.setInterval(tick, 1_000);
 
     return () => window.clearInterval(timer);
   }, [targetKey, timeZone]);
